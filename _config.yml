@@ -1,7 +1,8 @@
 title: "你的博客名称"
 author: "你的名字"
 description: "这是一个个人博客，记录学习与思考"
-theme: minima
+theme: hacker
 baseurl: ""
 
 url: "https://huangzy-hub.github.io"
+
