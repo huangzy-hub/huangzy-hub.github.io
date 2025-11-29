@@ -3,4 +3,11 @@ author: "你的名字"
 description: "这是一个个人博客，记录学习与思考"
 theme: minima
 baseurl: ""
+
 url: "https://huangzy-hub.github.io"
+
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  syntax_highlighter: rouge
+  input: GFM
