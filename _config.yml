@@ -3,7 +3,7 @@ title: "你的博客名称"
 author: "你的名字"
 description: "你的博客描述"
 baseurl: ""
-url: "https://huangzy-hub.github.io"
+url: "https://你的名字.io"
 
 # 布局配置
 layout: default
@@ -14,4 +14,5 @@ highlighter: rouge
 kramdown:
   input: GFM
   syntax_highlighter: rouge
+
 
