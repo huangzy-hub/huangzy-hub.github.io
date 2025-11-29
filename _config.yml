@@ -5,9 +5,3 @@ theme: minima
 baseurl: ""
 
 url: "https://huangzy-hub.github.io"
-
-markdown: kramdown
-highlighter: rouge
-kramdown:
-  syntax_highlighter: rouge
-  input: GFM
