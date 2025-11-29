@@ -1,0 +1,30 @@
+---
+layout: default
+---
+
+<section class="hero">
+    <h2>欢迎来到我的博客</h2>
+    <p>这里记录着我的学习、思考和成长历程</p >
+</section>
+
+<section class="blog-list">
+    <h3>最新文章</h3>
+    
+    {% for post in site.posts %}
+    <article class="post-preview">
+        <h4>
+            <a href=" ">{{ post.title }}</a >
+        </h4>
+        <div class="post-meta">
+            <time>{{ post.date | date: "%Y年%m月%d日" }}</time>
+            {% if post.categories %}
+            <span class="categories">· {{ post.categories | join: ", " }}</span>
+            {% endif %}
+        </div>
+        <p class="post-excerpt">
+            {{ post.excerpt | strip_html | truncate: 150 }}
+        </p >
+        <a href="{{ post.url | relative_url }}" class="read-more">阅读全文 →</a >
+    </article>
+    {% endfor %}
+</section>
