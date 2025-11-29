@@ -1,0 +1,16 @@
+# 基本配置
+title: "你的博客名称"
+author: "你的名字"
+description: "你的博客描述"
+baseurl: ""
+url: "https://你的用户名.github.io"
+
+# 布局配置
+layout: default
+
+# 构建设置
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
