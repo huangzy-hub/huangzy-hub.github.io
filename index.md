@@ -12,9 +12,10 @@ title: "我的个人博客"
 <ul>
   {% for post in site.posts %}
     <li>
-      <a href=" ">{{ post.title }}</a > - {{ post.date | date: "%Y年%m月%d日" }}
+      <a href="{{post.url}}">{{ post.title }}</a > - {{ post.date | date: "%Y年%m月%d日" }}
     </li>
   {% endfor %}
 </ul>
+
 
 [关于我](/about)
