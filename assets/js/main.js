@@ -231,30 +231,27 @@ function initTagsCloud() {
             this.classList.toggle('active');
             
             // 显示/隐藏相关文章
+            let showAll = !this.classList.contains('active');
+            
             postCards.forEach(postCard => {
-                const postTags = postCard.querySelectorAll('.post-tags .tag');
-                let hasTag = false;
+                let shouldShow = showAll;
                 
-                // 检查文章是否包含当前标签
-                postTags.forEach(postTag => {
-                    const tagText = postTag.textContent.replace('#', '').trim();
-                    if (tagText === tagName) {
-                        hasTag = true;
+                if (!showAll) {
+                    const postTags = postCard.querySelectorAll('.post-tags .tag');
+                    for (let postTag of postTags) {
+                        const tagText = postTag.textContent.replace('#', '').trim();
+                        if (tagText === tagName) {
+                            shouldShow = true;
+                            break;
+                        }
                     }
-                });
+                }
                 
-                // 如果标签被激活，只显示包含该标签的文章
-                if (this.classList.contains('active')) {
-                    if (hasTag) {
-                        postCard.style.display = 'block';
-                        postCard.style.animation = 'fadeIn 0.5s ease-in';
-                    } else {
-                        postCard.style.display = 'none';
-                    }
-                } else {
-                    // 如果标签未被激活，显示所有文章
+                if (shouldShow) {
                     postCard.style.display = 'block';
                     postCard.style.animation = 'fadeIn 0.5s ease-in';
+                } else {
+                    postCard.style.display = 'none';
                 }
             });
             
