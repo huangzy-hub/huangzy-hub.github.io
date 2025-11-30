@@ -237,19 +237,33 @@ git pull origin main
    - `_config.yml` 中 `theme` 配置是否正确（如 `theme: jekyll-theme-primer`）。
 
 ## 七、常用命令速查表
-| 功能描述                | 命令代码                                                                 |
-|-------------------------|--------------------------------------------------------------------------|
-| 查看配置                | `git config --global --list`                                             |
-| 关联远程仓库            | `git remote add origin 仓库地址`                                          |
-| 查看远程关联            | `git remote -v`                                                          |
-| 暂存所有文件            | `git add .`                                                              |
-| 提交修改                | `git commit -m "备注"`                                                   |
-| 首次推送                | `git push -u origin main`                                                |
-| 后续推送                | `git push`                                                               |
-| 拉取远程代码            | `git pull origin main`（已绑定分支可直接 `git pull`）                     |
-| 查看提交历史            | `git log`                                                               |
-| 回退到历史版本          | `git reset --hard commitID`                                              |
-| 放弃本地所有修改        | `git checkout -- .`                                                      |
+
+查看配置                
+
+```bash
+#查看配置  
+git config --global --list
+#关联远程仓库
+git remote add origin 仓库地址
+#查看远程关联
+git remote -v
+#暂存所有文件
+git add .
+#提交修改
+git commit -m "备注"
+#首次推送
+git push -u origin main
+#后续推送
+git push             
+#拉取远程代码（已绑定分支可直接 `git pull`)
+git pull origin main`（已绑定分支可直接 `git pull`）
+#查看提交历史
+git log
+#回退到历史版本
+git reset --hard commitID
+#放弃本地所有修改
+git checkout -- .
+```
 
 ## 总结
 
