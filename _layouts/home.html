@@ -69,9 +69,19 @@ layout: default
                 <h3>📝 最新文章</h3>
                 <div class="header-actions">
                     <div class="tags-cloud-display">
-                        {% assign all_tags = site.tags | sort %}
+                        {% assign all_tags = '' | split: '' %}
+                        {% for post in site.posts %}
+                            {% if post.tags %}
+                                {% for tag in post.tags %}
+                                    {% unless all_tags contains tag %}
+                                        {% assign all_tags = all_tags | push: tag %}
+                                    {% endunless %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                        {% assign all_tags = all_tags | sort %}
                         {% for tag in all_tags %}
-                            <a href="{{ '/tags/' | append: tag[0] | relative_url }}" class="tag-cloud-item" data-tag="{{ tag[0] }}">{{ tag[0] }}</a>
+                            <a href="#" class="tag-cloud-item" data-tag="{{ tag }}">{{ tag }}</a>
                         {% endfor %}
                     </div>
                 </div>
@@ -99,7 +109,7 @@ layout: default
                     {% if post.tags %}
                     <div class="post-tags">
                         {% for tag in post.tags %}
-                        <a href="{{ '/tags/' | relative_url }}{{ tag | slugify }}" class="tag">#{{ tag }}</a>
+                        <span class="tag">#{{ tag }}</span>
                         {% endfor %}
                     </div>
                     {% endif %}
