@@ -1,13 +1,13 @@
 # 站点设置
-title: "我的技术博客"
-author: "您的名字"
+title: "huangzy"
+author: "huangzy"
 description: "记录技术学习与思考的地方"
-email: "your-email@example.com"
+email: "2078368371@qq.com"
 
 # URL设置 - 请修改为您的真实用户名
 url: "https://huangzy-hub.github.io"
 baseurl: ""
-github_username: "您的用户名"
+github_username: "huangzy-hub"
 
 # 构建设置
 markdown: kramdown
