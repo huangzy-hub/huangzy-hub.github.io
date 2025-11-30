@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // 代码块复制功能
     initCodeCopy();
     
-    // 标签下拉菜单功能
-    initTagsDropdown();
+    // 标签云交互功能
+    initTagsCloud();
 });
 
 // 时间轴功能
@@ -202,70 +202,97 @@ function initLazyLoad() {
     images.forEach(img => imageObserver.observe(img));
 }
 
-// 标签下拉菜单功能
-function initTagsDropdown() {
-    const dropdowns = document.querySelectorAll('.tags-dropdown');
+// 标签云交互功能
+function initTagsCloud() {
+    const tagItems = document.querySelectorAll('.tag-cloud-item');
+    const postCards = document.querySelectorAll('.post-card');
     
-    dropdowns.forEach(dropdown => {
-        const trigger = dropdown.querySelector('.tags-trigger');
-        const menu = dropdown.querySelector('.tags-menu');
-        
-        // 点击触发器时切换菜单显示
-        trigger.addEventListener('click', function(e) {
+    // 为每个标签添加点击事件
+    tagItems.forEach(tag => {
+        tag.addEventListener('click', function(e) {
             e.preventDefault();
-            e.stopPropagation();
             
-            // 关闭其他下拉菜单
-            dropdowns.forEach(otherDropdown => {
-                if (otherDropdown !== dropdown) {
-                    otherDropdown.querySelector('.tags-menu').style.maxHeight = '0';
-                    otherDropdown.querySelector('.tags-menu').style.opacity = '0';
+            const tagName = this.getAttribute('data-tag');
+            
+            // 添加点击动画效果
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1.1)';
+            }, 150);
+            
+            // 移除其他标签的激活状态
+            tagItems.forEach(otherTag => {
+                if (otherTag !== this) {
+                    otherTag.classList.remove('active');
                 }
             });
             
-            // 切换当前菜单
-            if (menu.style.maxHeight === '0px' || !menu.style.maxHeight) {
-                menu.style.maxHeight = '300px';
-                menu.style.opacity = '1';
+            // 切换当前标签的激活状态
+            this.classList.toggle('active');
+            
+            // 显示/隐藏相关文章
+            postCards.forEach(postCard => {
+                const postTags = postCard.querySelectorAll('.post-tags .tag');
+                let hasTag = false;
+                
+                // 检查文章是否包含当前标签
+                postTags.forEach(postTag => {
+                    const tagText = postTag.textContent.replace('#', '').trim();
+                    if (tagText === tagName) {
+                        hasTag = true;
+                    }
+                });
+                
+                // 如果标签被激活，只显示包含该标签的文章
+                if (this.classList.contains('active')) {
+                    if (hasTag) {
+                        postCard.style.display = 'block';
+                        postCard.style.animation = 'fadeIn 0.5s ease-in';
+                    } else {
+                        postCard.style.display = 'none';
+                    }
+                } else {
+                    // 如果标签未被激活，显示所有文章
+                    postCard.style.display = 'block';
+                    postCard.style.animation = 'fadeIn 0.5s ease-in';
+                }
+            });
+            
+            // 更新URL参数
+            const url = new URL(window.location);
+            if (this.classList.contains('active')) {
+                url.searchParams.set('tag', tagName);
             } else {
-                menu.style.maxHeight = '0';
-                menu.style.opacity = '0';
+                url.searchParams.delete('tag');
             }
+            window.history.pushState({}, '', url);
         });
         
-        // 点击标签项时添加点击效果
-        const tagItems = menu.querySelectorAll('.tag-item');
-        tagItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                // 添加点击动画效果
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1)';
-                }, 150);
-                
-                // 可以在这里添加更多交互效果，比如高亮显示相关文章
-                const tag = this.textContent.trim();
-                console.log('点击了标签:', tag);
-            });
-        });
+        // 根据标签使用频率设置大小
+        const tagName = this.getAttribute('data-tag');
+        const tagCount = document.querySelectorAll(`.post-tags .tag:contains("${tagName}")`).length;
+        
+        if (tagCount >= 5) {
+            this.classList.add('size-5');
+        } else if (tagCount >= 4) {
+            this.classList.add('size-4');
+        } else if (tagCount >= 3) {
+            this.classList.add('size-3');
+        } else if (tagCount >= 2) {
+            this.classList.add('size-2');
+        } else {
+            this.classList.add('size-1');
+        }
     });
     
-    // 点击页面其他地方关闭下拉菜单
-    document.addEventListener('click', function() {
-        dropdowns.forEach(dropdown => {
-            const menu = dropdown.querySelector('.tags-menu');
-            menu.style.maxHeight = '0';
-            menu.style.opacity = '0';
-        });
-    });
+    // 检查URL参数，如果有标签参数则自动激活对应标签
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTag = urlParams.get('tag');
     
-    // 防止菜单内部点击时关闭菜单
-    dropdowns.forEach(dropdown => {
-        const menu = dropdown.querySelector('.tags-menu');
-        menu.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-    });
+    if (activeTag) {
+        const activeTagElement = document.querySelector(`.tag-cloud-item[data-tag="${activeTag}"]`);
+        if (activeTagElement) {
+            activeTagElement.click();
+        }
+    }
 }

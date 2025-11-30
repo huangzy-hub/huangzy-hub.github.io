@@ -6,6 +6,9 @@
     <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
     <meta name="description" content="{{ page.description | default: site.description }}">
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ '/favicon.ico' | relative_url }}">
+    
     <!-- CSS -->
     <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/syntax.css' | relative_url }}">
@@ -15,9 +18,12 @@
     <header class="site-header">
         <div class="container">
             <div class="header-content">
-                <h1 class="site-title">
-                    <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
-                </h1>
+                <div class="site-title-container">
+                    <img src="{{ '/assets/images/backgrounds/head.png' | relative_url }}" alt="头像" class="site-avatar">
+                    <h1 class="site-title">
+                        <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
+                    </h1>
+                </div>
                 <nav class="site-nav">
                     <a href="{{ '/' | relative_url }}" class="nav-link">首页</a>
                     <a href="{{ '/about' | relative_url }}" class="nav-link">关于</a>
