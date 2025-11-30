@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 代码块复制功能
     initCodeCopy();
+    
+    // 标签下拉菜单功能
+    initTagsDropdown();
 });
 
 // 时间轴功能
@@ -197,4 +200,72 @@ function initLazyLoad() {
     });
     
     images.forEach(img => imageObserver.observe(img));
+}
+
+// 标签下拉菜单功能
+function initTagsDropdown() {
+    const dropdowns = document.querySelectorAll('.tags-dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const trigger = dropdown.querySelector('.tags-trigger');
+        const menu = dropdown.querySelector('.tags-menu');
+        
+        // 点击触发器时切换菜单显示
+        trigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // 关闭其他下拉菜单
+            dropdowns.forEach(otherDropdown => {
+                if (otherDropdown !== dropdown) {
+                    otherDropdown.querySelector('.tags-menu').style.maxHeight = '0';
+                    otherDropdown.querySelector('.tags-menu').style.opacity = '0';
+                }
+            });
+            
+            // 切换当前菜单
+            if (menu.style.maxHeight === '0px' || !menu.style.maxHeight) {
+                menu.style.maxHeight = '300px';
+                menu.style.opacity = '1';
+            } else {
+                menu.style.maxHeight = '0';
+                menu.style.opacity = '0';
+            }
+        });
+        
+        // 点击标签项时添加点击效果
+        const tagItems = menu.querySelectorAll('.tag-item');
+        tagItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // 添加点击动画效果
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+                
+                // 可以在这里添加更多交互效果，比如高亮显示相关文章
+                const tag = this.textContent.trim();
+                console.log('点击了标签:', tag);
+            });
+        });
+    });
+    
+    // 点击页面其他地方关闭下拉菜单
+    document.addEventListener('click', function() {
+        dropdowns.forEach(dropdown => {
+            const menu = dropdown.querySelector('.tags-menu');
+            menu.style.maxHeight = '0';
+            menu.style.opacity = '0';
+        });
+    });
+    
+    // 防止菜单内部点击时关闭菜单
+    dropdowns.forEach(dropdown => {
+        const menu = dropdown.querySelector('.tags-menu');
+        menu.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    });
 }

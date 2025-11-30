@@ -23,7 +23,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
     line-height: 1.7;
     color: var(--text-color);
-    background: linear-gradient(rgba(255,255,255,0.93), rgba(255,255,255,0.93)),
+    background: linear-gradient(rgba(255,255,255,0.85), rgba(255,255,255,0.85)),
                 url('../images/backgrounds/main-bg.png') no-repeat center center fixed;
     background-size: cover;
     background-attachment: fixed;
@@ -279,6 +279,73 @@ body {
     background: var(--secondary-color);
     color: white;
     transform: translateY(-2px);
+}
+
+/* 标签下拉菜单样式 */
+.tags-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.tags-trigger {
+    display: inline-block;
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border: 2px solid var(--secondary-color);
+    border-radius: 25px;
+    transition: all 0.3s;
+    cursor: pointer;
+    background: white;
+}
+
+.tags-trigger:hover {
+    background: var(--secondary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.tags-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    min-width: 200px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    margin-top: 5px;
+}
+
+.tags-dropdown:hover .tags-menu {
+    max-height: 300px;
+    opacity: 1;
+    overflow-y: auto;
+}
+
+.tag-item {
+    display: block;
+    padding: 0.7rem 1rem;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: all 0.2s;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tag-item:last-child {
+    border-bottom: none;
+}
+
+.tag-item:hover {
+    background: var(--background-color);
+    color: var(--secondary-color);
+    padding-left: 1.2rem;
 }
 
 .posts-grid {

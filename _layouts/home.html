@@ -68,8 +68,15 @@ layout: default
             <div class="section-header">
                 <h3>📝 最新文章</h3>
                 <div class="header-actions">
-                    <a href="{{ '/tags' | relative_url }}" class="action-link">所有标签</a>
-                    <a href="{{ '/archive' | relative_url }}" class="action-link">全部归档</a>
+                    <div class="tags-dropdown">
+                        <span class="tags-trigger">标签</span>
+                        <div class="tags-menu">
+                            {% assign all_tags = site.tags | sort %}
+                            {% for tag in all_tags %}
+                                <a href="{{ '/tags/' | append: tag[0] | relative_url }}" class="tag-item">{{ tag[0] }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
             </div>
 
