@@ -270,7 +270,18 @@ function initTagsCloud() {
         
         // 根据标签使用频率设置大小
         const tagName = this.getAttribute('data-tag');
-        const tagCount = document.querySelectorAll(`.post-tags .tag:contains("${tagName}")`).length;
+        let tagCount = 0;
+        
+        // 手动计算标签使用频率
+        postCards.forEach(postCard => {
+            const postTags = postCard.querySelectorAll('.post-tags .tag');
+            postTags.forEach(postTag => {
+                const tagText = postTag.textContent.replace('#', '').trim();
+                if (tagText === tagName) {
+                    tagCount++;
+                }
+            });
+        });
         
         if (tagCount >= 5) {
             this.classList.add('size-5');
