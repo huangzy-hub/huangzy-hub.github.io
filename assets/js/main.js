@@ -8,9 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 代码块复制功能
     initCodeCopy();
-    
-    // 标签云交互功能
-    initTagsCloud();
 });
 
 // 时间轴功能
@@ -200,107 +197,4 @@ function initLazyLoad() {
     });
     
     images.forEach(img => imageObserver.observe(img));
-}
-
-// 标签云交互功能
-function initTagsCloud() {
-    const tagItems = document.querySelectorAll('.tag-cloud-item');
-    const postCards = document.querySelectorAll('.post-card');
-    
-    // 为每个标签添加点击事件
-    tagItems.forEach(tag => {
-        tag.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const tagName = this.getAttribute('data-tag');
-            
-            // 添加点击动画效果
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = 'scale(1.1)';
-            }, 150);
-            
-            // 移除其他标签的激活状态
-            tagItems.forEach(otherTag => {
-                if (otherTag !== this) {
-                    otherTag.classList.remove('active');
-                }
-            });
-            
-            // 切换当前标签的激活状态
-            this.classList.toggle('active');
-            
-            // 显示/隐藏相关文章
-            let showAll = !this.classList.contains('active');
-            
-            postCards.forEach(postCard => {
-                let shouldShow = showAll;
-                
-                if (!showAll) {
-                    const postTags = postCard.querySelectorAll('.post-tags .tag');
-                    for (let postTag of postTags) {
-                        const tagText = postTag.textContent.replace('#', '').trim();
-                        if (tagText === tagName) {
-                            shouldShow = true;
-                            break;
-                        }
-                    }
-                }
-                
-                if (shouldShow) {
-                    postCard.style.display = 'block';
-                    postCard.style.animation = 'fadeIn 0.5s ease-in';
-                } else {
-                    postCard.style.display = 'none';
-                }
-            });
-            
-            // 更新URL参数
-            const url = new URL(window.location);
-            if (this.classList.contains('active')) {
-                url.searchParams.set('tag', tagName);
-            } else {
-                url.searchParams.delete('tag');
-            }
-            window.history.pushState({}, '', url);
-        });
-        
-        // 根据标签使用频率设置大小
-        const tagName = this.getAttribute('data-tag');
-        let tagCount = 0;
-        
-        // 手动计算标签使用频率
-        postCards.forEach(postCard => {
-            const postTags = postCard.querySelectorAll('.post-tags .tag');
-            postTags.forEach(postTag => {
-                const tagText = postTag.textContent.replace('#', '').trim();
-                if (tagText === tagName) {
-                    tagCount++;
-                }
-            });
-        });
-        
-        if (tagCount >= 5) {
-            this.classList.add('size-5');
-        } else if (tagCount >= 4) {
-            this.classList.add('size-4');
-        } else if (tagCount >= 3) {
-            this.classList.add('size-3');
-        } else if (tagCount >= 2) {
-            this.classList.add('size-2');
-        } else {
-            this.classList.add('size-1');
-        }
-    });
-    
-    // 检查URL参数，如果有标签参数则自动激活对应标签
-    const urlParams = new URLSearchParams(window.location.search);
-    const activeTag = urlParams.get('tag');
-    
-    if (activeTag) {
-        const activeTagElement = document.querySelector(`.tag-cloud-item[data-tag="${activeTag}"]`);
-        if (activeTagElement) {
-            activeTagElement.click();
-        }
-    }
 }
