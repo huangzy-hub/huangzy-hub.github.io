@@ -32,7 +32,7 @@ function initBackgroundSwitcher() {
     } while (backgrounds.length > 1 && newBgIndex === lastBgIndex);
     
     // 设置新的背景
-    document.body.style.background = `linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)),
+    document.body.style.background = `linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.7)),
                                      url('${backgrounds[newBgIndex]}') no-repeat center center fixed`;
     document.body.style.backgroundSize = 'cover';
     document.body.style.backgroundAttachment = 'fixed';
