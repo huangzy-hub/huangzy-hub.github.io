@@ -33,7 +33,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('/assets/images/backgrounds/head.png') no-repeat center;
+            background: url('/images/head/head.png') no-repeat center;
             background-size: cover;
             opacity: 0.1;
             z-index: 1;
@@ -224,7 +224,7 @@
         <div class="container">
             <div class="header-content">
                 <div class="site-title-container">
-                    <img src="{{ '/assets/images/backgrounds/head.png' | relative_url }}" alt="头像" class="site-avatar">
+                    <img src="{{ '/images/head/head.png' | relative_url }}" alt="头像" class="site-avatar">
                     <h1 class="site-title">
                         <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
                     </h1>
@@ -246,7 +246,7 @@
                     {% if site.avatar %}
                     <img src="{{ site.avatar | relative_url }}" alt="个人头像" class="about-avatar">
                     {% else %}
-                    <img src="{{ '/assets/images/backgrounds/head.png' | relative_url }}" alt="个人头像" class="about-avatar">
+                    <img src="{{ '/images/head/head.png' | relative_url }}" alt="个人头像" class="about-avatar">
                     {% endif %}
                     <h1>你好，我是 {{ site.author }} 👋</h1>
                     <p>{{ site.description }}</p>
