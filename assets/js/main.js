@@ -17,10 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
 function initBackgroundSwitcher() {
     // 背景图片列表
     const backgrounds = [
-        '/images/backgrounds/main-bg.png',
-        '/images/backgrounds/head.png',
-        '/images/backgrounds/【哲风壁纸】炼狱杏寿郎-猗窝座.png',
-        '/images/backgrounds/【哲风壁纸】我妻善逸-鬼灭之刃.png'
+        '/assets/images/backgrounds/bg1.png',
+        '/assets/images/backgrounds/bg2.png',
+        '/assets/images/backgrounds/bg3.png'
     ];
     
     // 从localStorage获取上次使用的背景索引，如果没有则随机选择
@@ -195,38 +194,3 @@ function initCodeCopy() {
     });
 }
 
-// 主题切换功能（可选）
-function toggleTheme() {
-    const body = document.body;
-    body.classList.toggle('dark-theme');
-    
-    // 保存用户偏好
-    const isDark = body.classList.contains('dark-theme');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-}
-
-// 加载保存的主题
-function loadTheme() {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark-theme');
-    }
-}
-
-// 图片懒加载
-function initLazyLoad() {
-    const images = document.querySelectorAll('img[data-src]');
-    
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.getAttribute('data-src');
-                img.classList.remove('lazy');
-                imageObserver.unobserve(img);
-            }
-        });
-    });
-    
-    images.forEach(img => imageObserver.observe(img));
-}
