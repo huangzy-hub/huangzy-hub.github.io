@@ -1,5 +1,8 @@
 // 博客交互功能
 document.addEventListener('DOMContentLoaded', function() {
+    // 背景图片切换功能
+    initBackgroundSwitcher();
+    
     // 时间轴交互功能
     initTimeline();
     
@@ -9,6 +12,35 @@ document.addEventListener('DOMContentLoaded', function() {
     // 代码块复制功能
     initCodeCopy();
 });
+
+// 背景图片切换功能
+function initBackgroundSwitcher() {
+    // 背景图片列表
+    const backgrounds = [
+        '../images/backgrounds/main-bg.png',
+        '../images/backgrounds/head.png',
+        '../images/backgrounds/【哲风壁纸】炼狱杏寿郎-猗窝座.png',
+        '../images/backgrounds/【哲风壁纸】我妻善逸-鬼灭之刃.png'
+    ];
+    
+    // 从localStorage获取上次使用的背景索引，如果没有则随机选择
+    let lastBgIndex = parseInt(localStorage.getItem('lastBgIndex') || '-1');
+    
+    // 确保每次都是不同的背景
+    let newBgIndex;
+    do {
+        newBgIndex = Math.floor(Math.random() * backgrounds.length);
+    } while (backgrounds.length > 1 && newBgIndex === lastBgIndex);
+    
+    // 设置新的背景
+    document.body.style.background = `linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)),
+                                     url('${backgrounds[newBgIndex]}') no-repeat center center fixed`;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundAttachment = 'fixed';
+    
+    // 保存当前背景索引
+    localStorage.setItem('lastBgIndex', newBgIndex.toString());
+}
 
 // 时间轴功能
 function initTimeline() {

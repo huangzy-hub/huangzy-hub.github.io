@@ -28,6 +28,7 @@ body {
     background-size: cover;
     background-attachment: fixed;
     min-height: 100vh;
+    /* 背景将由JavaScript动态设置 */
 }
 
 .container {

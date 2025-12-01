@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+    <meta name="description" content="{{ page.description | default: site.description }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ '/favicon.ico' | relative_url }}">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/syntax.css' | relative_url }}">
+    
+    <!-- 关于页面专用样式 -->
+    <style>
+        .about-hero {
+            background: linear-gradient(135deg, var(--gradient));
+            color: white;
+            padding: 4rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .about-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('/assets/images/backgrounds/head.png') no-repeat center;
+            background-size: cover;
+            opacity: 0.1;
+            z-index: 1;
+        }
+        
+        .about-hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .about-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.3);
+            margin: 0 auto 1.5rem;
+            object-fit: cover;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+        
+        .about-section {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .about-section:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .about-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 0.8rem;
+            display: inline-block;
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .skill-category {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .skill-category h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .skill-list {
+            list-style: none;
+        }
+        
+        .skill-list li {
+            padding: 0.3rem 0;
+            color: var(--text-color);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .skill-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+        
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--background-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-item:hover {
+            background: var(--secondary-color);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .contact-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .interests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .interest-tag {
+            background: linear-gradient(135deg, var(--gradient));
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 25px;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        
+        .interest-tag:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .about-hero {
+                padding: 2rem 1rem;
+            }
+            
+            .about-section {
+                padding: 1.5rem;
+            }
+            
+            .skills-grid,
+            .contact-info,
+            .interests-grid,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <header class="site-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="site-title-container">
+                    <img src="{{ '/assets/images/backgrounds/head.png' | relative_url }}" alt="头像" class="site-avatar">
+                    <h1 class="site-title">
+                        <a href="{{ '/' | relative_url }}">{{ site.title }}</a>
+                    </h1>
+                </div>
+                <nav class="site-nav">
+                    <a href="{{ '/' | relative_url }}" class="nav-link">首页</a>
+                    <a href="{{ '/about' | relative_url }}" class="nav-link">关于</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容 -->
+    <main class="site-main">
+        <div class="container">
+            <!-- 英雄区域 -->
+            <section class="about-hero">
+                <div class="about-hero-content">
+                    {% if site.avatar %}
+                    <img src="{{ site.avatar | relative_url }}" alt="个人头像" class="about-avatar">
+                    {% else %}
+                    <img src="{{ '/assets/images/backgrounds/head.png' | relative_url }}" alt="个人头像" class="about-avatar">
+                    {% endif %}
+                    <h1>你好，我是 {{ site.author }} 👋</h1>
+                    <p>{{ site.description }}</p>
+                </div>
+            </section>
+
+            <!-- 个人简介 -->
+            <section class="about-section">
+                <h2>📝 个人简介</h2>
+                <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-color);">
+                    欢迎来到我的数字花园！我是一名热爱技术的开发者，专注于创建优雅、高效的解决方案。
+                    在这里，我记录技术学习的点点滴滴，分享项目开发的经验教训，以及一些生活思考。
+                    希望我的分享能够对你有所帮助，也期待与志同道合的朋友交流学习！
+                </p>
+            </section>
+
+            <!-- 技能栈 -->
+            <section class="about-section">
+                <h2>💻 技能栈</h2>
+                <div class="skills-grid">
+                    <div class="skill-category">
+                        <h3>前端开发</h3>
+                        <ul class="skill-list">
+                            <li>HTML5 / CSS3 / JavaScript</li>
+                            <li>Vue.js / React</li>
+                            <li>TypeScript</li>
+                            <li>响应式设计</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h3>后端开发</h3>
+                        <ul class="skill-list">
+                            <li>Node.js / Express</li>
+                            <li>Python / Django</li>
+                            <li>RESTful API</li>
+                            <li>数据库设计</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h3>开发工具</h3>
+                        <ul class="skill-list">
+                            <li>Git / GitHub</li>
+                            <li>VS Code</li>
+                            <li>Linux</li>
+                            <li>Docker</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 兴趣爱好 -->
+            <section class="about-section">
+                <h2>🎯 兴趣爱好</h2>
+                <div class="interests-grid">
+                    <div class="interest-tag">💻 技术探索</div>
+                    <div class="interest-tag">📚 持续学习</div>
+                    <div class="interest-tag">🎮 游戏娱乐</div>
+                    <div class="interest-tag">📷 摄影记录</div>
+                    <div class="interest-tag">🎵 音乐欣赏</div>
+                    <div class="interest-tag">✈️ 旅行探索</div>
+                </div>
+            </section>
+
+            <!-- 博客统计 -->
+            <section class="about-section">
+                <h2>📊 博客统计</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">{{ site.posts.size }}</div>
+                        <div class="stat-label">篇文章</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ site.tags.size }}</div>
+                        <div class="stat-label">个标签</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-item">
+                        <div class="stat-number">{{ site.categories.size }}</div>
+                        <div class="stat-label">个分类</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 联系方式 -->
+            <section class="about-section">
+                <h2>📬 联系我</h2>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div>
+                            <strong>邮箱</strong><br>
+                            {{ site.email }}
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">🐱</div>
+                        <div>
+                            <strong>GitHub</strong><br>
+                            <a href="https://github.com/{{ site.github_username }}" target="_blank" style="color: inherit; text-decoration: none;">{{ site.github_username }}</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 结语 -->
+            <section class="about-section">
+                <h2>💭 结语</h2>
+                <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-color); text-align: center; font-style: italic;">
+                    "学而时习之，不亦说乎"<br>
+                    感谢你的访问！希望你能在这里找到有价值的内容，让我们一起在技术的道路上不断前行！
+                </p>
+            </section>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; {{ site.time | date: '%Y' }} {{ site.author }}. 由 GitHub Pages 提供支持.</p>
+                <div class="social-links">
+                    <a href="https://github.com/{{ site.github_username }}" target="_blank">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
+</body>
+</html>
