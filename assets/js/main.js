@@ -375,6 +375,7 @@ function initTagFilter() {
         return; // 如果没有找到元素，不执行
     }
     
+    // 为每个按钮添加点击事件
     tagFilterBtns.forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -399,6 +400,8 @@ function initTagFilter() {
                     const tags = card.querySelectorAll('.tag');
                     let hasTag = false;
                     
+                    console.log('检查文章标签：', card.querySelector('.post-title a').textContent);
+                    
                     tags.forEach(tag => {
                         const tagText = tag.textContent.replace('#', '').trim();
                         console.log('检查标签：', tagText, 'vs', selectedTag);
@@ -411,8 +414,10 @@ function initTagFilter() {
                         card.style.display = 'block';
                         card.style.animation = 'fadeIn 0.5s ease';
                         visibleCount++;
+                        console.log('显示文章：', card.querySelector('.post-title a').textContent);
                     } else {
                         card.style.display = 'none';
+                        console.log('隐藏文章：', card.querySelector('.post-title a').textContent);
                     }
                 }
             });
