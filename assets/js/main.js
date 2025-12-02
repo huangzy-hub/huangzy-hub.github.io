@@ -366,24 +366,34 @@ function initTagFilter() {
     const tagFilterBtns = document.querySelectorAll('.tag-filter-btn');
     const postCards = document.querySelectorAll('.post-card');
     
+    console.log('标签筛选功能初始化');
+    console.log('找到标签按钮数量:', tagFilterBtns.length);
+    console.log('找到文章卡片数量:', postCards.length);
+    
     if (tagFilterBtns.length === 0 || postCards.length === 0) {
+        console.log('标签筛选功能：未找到按钮或文章卡片');
         return; // 如果没有找到元素，不执行
     }
     
     tagFilterBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
             const selectedTag = this.getAttribute('data-tag');
+            
+            console.log('点击了标签按钮：', selectedTag);
             
             // 更新按钮状态
             tagFilterBtns.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             
             // 筛选文章
+            let visibleCount = 0;
             postCards.forEach(card => {
                 if (selectedTag === 'all') {
                     // 显示所有文章
                     card.style.display = 'block';
                     card.style.animation = 'fadeIn 0.5s ease';
+                    visibleCount++;
                 } else {
                     // 检查文章是否包含选中的标签
                     const tags = card.querySelectorAll('.tag');
@@ -391,6 +401,7 @@ function initTagFilter() {
                     
                     tags.forEach(tag => {
                         const tagText = tag.textContent.replace('#', '').trim();
+                        console.log('检查标签：', tagText, 'vs', selectedTag);
                         if (tagText === selectedTag) {
                             hasTag = true;
                         }
@@ -399,11 +410,14 @@ function initTagFilter() {
                     if (hasTag) {
                         card.style.display = 'block';
                         card.style.animation = 'fadeIn 0.5s ease';
+                        visibleCount++;
                     } else {
                         card.style.display = 'none';
                     }
                 }
             });
+            
+            console.log('显示的文章数量：', visibleCount);
             
             // 更新URL参数
             const url = new URL(window.location);
@@ -421,9 +435,12 @@ function initTagFilter() {
     const tagParam = urlParams.get('tag');
     
     if (tagParam) {
+        console.log('从URL参数获取标签：', tagParam);
         const targetBtn = document.querySelector(`.tag-filter-btn[data-tag="${tagParam}"]`);
         if (targetBtn) {
             targetBtn.click();
+        } else {
+            console.log('未找到对应的标签按钮');
         }
     }
 }
