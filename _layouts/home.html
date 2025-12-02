@@ -67,6 +67,12 @@ layout: default
         <section class="posts-section">
             <div class="section-header">
                 <h3>📝 最新文章</h3>
+                <div class="all-tags">
+                    {% assign all_tags = site.tags | sort %}
+                    {% for tag in all_tags %}
+                    <a href="#" class="tag tag-filter" data-tag="{{ tag }}" onclick="filterByTag(event, '{{ tag }}')">#{{ tag }}</a>
+                    {% endfor %}
+                </div>
             </div>
 
             <div class="posts-grid">

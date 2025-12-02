@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 代码块复制功能
     initCodeCopy();
+    
+    // 标签过滤功能
+    initTagFilter();
 });
 
 // 背景图片切换功能
@@ -123,6 +126,120 @@ function highlightPost(dateString) {
         targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
+
+// 标签过滤功能
+function initTagFilter() {
+    // 为所有标签添加点击事件
+    document.querySelectorAll('.tag-filter').forEach(tagElement => {
+        tagElement.addEventListener('click', function(e) {
+            e.preventDefault();
+            const tagName = this.getAttribute('data-tag');
+            filterByTag(e, tagName);
+        });
+    });
+}
+
+// 根据标签过滤文章
+function filterByTag(event, tagName) {
+    event.preventDefault();
+    
+    const allPosts = document.querySelectorAll('.post-card');
+    let hasVisiblePosts = false;
+    
+    allPosts.forEach(post => {
+        const postTags = post.querySelectorAll('.tag');
+        let hasTag = false;
+        
+        // 检查文章是否包含该标签
+        postTags.forEach(tag => {
+            const tagText = tag.textContent.substring(1); // 移除 # 符号
+            if (tagText === tagName) {
+                hasTag = true;
+            }
+        });
+        
+        // 显示或隐藏文章
+        if (hasTag || tagName === 'all') {
+            post.style.display = 'block';
+            hasVisiblePosts = true;
+        } else {
+            post.style.display = 'none';
+        }
+    });
+    
+    // 更新URL状态
+    const url = new URL(window.location);
+    url.searchParams.set('tag', tagName);
+    window.history.pushState({ tag: tagName }, '', url);
+    
+    // 显示提示信息
+    showFilterMessage(tagName, hasVisiblePosts);
+}
+
+// 显示过滤提示信息
+function showFilterMessage(tagName, hasPosts) {
+    // 移除之前的提示信息
+    const existingMessage = document.querySelector('.filter-message');
+    if (existingMessage) {
+        existingMessage.remove();
+    }
+    
+    // 创建新的提示信息
+    const message = document.createElement('div');
+    message.className = 'filter-message';
+    message.textContent = hasPosts ? `显示标签 "${tagName}" 的文章` : `没有找到标签 "${tagName}" 的文章`;
+    message.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--secondary-color);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: var(--shadow-hover);
+        z-index: 1001;
+        animation: slideIn 0.3s ease;
+    `;
+    
+    document.body.appendChild(message);
+    
+    // 3秒后自动移除
+    setTimeout(() => {
+        message.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+            if (message.parentNode) {
+                message.parentNode.removeChild(message);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// 添加动画样式
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
 
 // 平滑滚动
 function initSmoothScroll() {
