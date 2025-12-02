@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 代码块复制功能
     initCodeCopy();
+    
+    // 搜索功能
+    initSearch();
+    
+    // 标签筛选功能
+    initTagFilter();
 });
 
 // 背景图片切换功能
@@ -192,5 +198,233 @@ function initCodeCopy() {
         
         block.appendChild(button);
     });
+}
+
+// 搜索功能
+function initSearch() {
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    const clearButton = document.getElementById('clear-button');
+    const resultsContainer = document.getElementById('results-container');
+    const searchStats = document.getElementById('search-stats');
+    const resultsCount = document.getElementById('results-count');
+    
+    // 搜索选项
+    const searchTitle = document.getElementById('search-title');
+    const searchContent = document.getElementById('search-content');
+    const searchTags = document.getElementById('search-tags');
+    
+    // 文章数据（从页面中提取）
+    const articles = [];
+    document.querySelectorAll('.post-card').forEach(post => {
+        const title = post.querySelector('.post-title').textContent.trim();
+        const excerpt = post.querySelector('.post-excerpt').textContent.trim();
+        const url = post.querySelector('.post-title a').getAttribute('href');
+        const date = post.querySelector('.post-date').textContent.trim();
+        const tags = Array.from(post.querySelectorAll('.tag')).map(tag => tag.textContent.replace('#', '').trim());
+        
+        articles.push({
+            title,
+            excerpt,
+            url,
+            date,
+            tags,
+            element: post
+        });
+    });
+    
+    // 执行搜索
+    function performSearch() {
+        const query = searchInput.value.trim().toLowerCase();
+        
+        if (!query) {
+            showPlaceholder();
+            return;
+        }
+        
+        const searchInTitle = searchTitle.checked;
+        const searchInContent = searchContent.checked;
+        const searchInTags = searchTags.checked;
+        
+        const results = articles.filter(article => {
+            let match = false;
+            
+            if (searchInTitle && article.title.toLowerCase().includes(query)) {
+                match = true;
+            }
+            
+            if (searchInContent && article.excerpt.toLowerCase().includes(query)) {
+                match = true;
+            }
+            
+            if (searchInTags && article.tags.some(tag => tag.toLowerCase().includes(query))) {
+                match = true;
+            }
+            
+            return match;
+        });
+        
+        displayResults(results, query);
+    }
+    
+    // 显示搜索结果
+    function displayResults(results, query) {
+        if (results.length === 0) {
+            resultsContainer.innerHTML = `
+                <div class="no-results">
+                    <p>🔍 没有找到包含 "${query}" 的文章</p>
+                    <p>试试其他关键词或调整搜索范围</p>
+                </div>
+            `;
+            searchStats.style.display = 'none';
+            return;
+        }
+        
+        resultsContainer.innerHTML = results.map(article => `
+            <div class="result-item">
+                <div class="result-title">
+                    <a href="${article.url}">${highlightText(article.title, query)}</a>
+                </div>
+                <div class="result-excerpt">
+                    ${highlightText(article.excerpt, query)}
+                </div>
+                <div class="result-meta">
+                    <span class="result-date">${article.date}</span>
+                    <div class="result-tags">
+                        ${article.tags.map(tag => `<a href="/tags/${tag}/" class="result-tag">#${tag}</a>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        resultsCount.textContent = results.length;
+        searchStats.style.display = 'block';
+    }
+    
+    // 高亮匹配的文本
+    function highlightText(text, query) {
+        if (!query) return text;
+        
+        const regex = new RegExp(`(${query})`, 'gi');
+        return text.replace(regex, '<mark>$1</mark>');
+    }
+    
+    // 显示占位符
+    function showPlaceholder() {
+        resultsContainer.innerHTML = `
+            <div class="search-placeholder">
+                <p>💡 输入关键词开始搜索</p>
+                <p>您可以搜索文章标题、内容和标签</p>
+            </div>
+        `;
+        searchStats.style.display = 'none';
+    }
+    
+    // 清除搜索
+    function clearSearch() {
+        searchInput.value = '';
+        searchTitle.checked = true;
+        searchContent.checked = true;
+        searchTags.checked = true;
+        showPlaceholder();
+    }
+    
+    // 事件监听
+    searchButton.addEventListener('click', performSearch);
+    clearButton.addEventListener('click', clearSearch);
+    
+    // 回车键搜索
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+    
+    // 实时搜索（可选）
+    let searchTimeout;
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            if (searchInput.value.trim()) {
+                performSearch();
+            }
+        }, 300);
+    });
+    
+    // 搜索选项改变时重新搜索
+    [searchTitle, searchContent, searchTags].forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (searchInput.value.trim()) {
+                performSearch();
+            }
+        });
+    });
+}
+
+// 标签筛选功能
+function initTagFilter() {
+    const tagFilterBtns = document.querySelectorAll('.tag-filter-btn');
+    const postCards = document.querySelectorAll('.post-card');
+    
+    if (tagFilterBtns.length === 0 || postCards.length === 0) {
+        return; // 如果没有找到元素，不执行
+    }
+    
+    tagFilterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const selectedTag = this.getAttribute('data-tag');
+            
+            // 更新按钮状态
+            tagFilterBtns.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            
+            // 筛选文章
+            postCards.forEach(card => {
+                if (selectedTag === 'all') {
+                    // 显示所有文章
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeIn 0.5s ease';
+                } else {
+                    // 检查文章是否包含选中的标签
+                    const tags = card.querySelectorAll('.tag');
+                    let hasTag = false;
+                    
+                    tags.forEach(tag => {
+                        const tagText = tag.textContent.replace('#', '').trim();
+                        if (tagText === selectedTag) {
+                            hasTag = true;
+                        }
+                    });
+                    
+                    if (hasTag) {
+                        card.style.display = 'block';
+                        card.style.animation = 'fadeIn 0.5s ease';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+            
+            // 更新URL参数
+            const url = new URL(window.location);
+            if (selectedTag === 'all') {
+                url.searchParams.delete('tag');
+            } else {
+                url.searchParams.set('tag', selectedTag);
+            }
+            window.history.pushState({}, '', url);
+        });
+    });
+    
+    // 检查URL参数，如果有标签参数则自动筛选
+    const urlParams = new URLSearchParams(window.location.search);
+    const tagParam = urlParams.get('tag');
+    
+    if (tagParam) {
+        const targetBtn = document.querySelector(`.tag-filter-btn[data-tag="${tagParam}"]`);
+        if (targetBtn) {
+            targetBtn.click();
+        }
+    }
 }
 
