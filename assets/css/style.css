@@ -282,6 +282,30 @@ body {
     font-size: 1.5rem;
 }
 
+.all-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    max-width: 600px;
+}
+
+.tag-filter {
+    background: var(--gradient);
+    color: white;
+    padding: 0.2rem 0.6rem;
+    border-radius: 15px;
+    font-size: 0.75rem;
+    text-decoration: none;
+    transition: all 0.3s;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.tag-filter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
 .header-actions {
     display: flex;
     gap: 1rem;
