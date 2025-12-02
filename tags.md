@@ -10,14 +10,13 @@ title: 标签
     </header>
 
     <div class="tags-cloud">
-        {% assign tags_by_count = site.tags | sort: "size" | reverse %}
-        {% for tag in tags_by_count %}
-        {% assign tag_name = tag[0] %}
-        {% assign posts_count = tag[1].size %}
-        <a href="/tags/{{ tag_name | slugify }}/" class="tag-cloud-item" data-count="{{ posts_count }}">
-            #{{ tag_name }}
-            <span class="tag-count">({{ posts_count }})</span>
-        </a>
+        {% for tag in site.tags %}
+            {% assign tag_name = tag[0] %}
+            {% assign posts_count = tag[1] | size %}
+            <a href="/tags/{{ tag_name | slugify }}/" class="tag-cloud-item" data-count="{{ posts_count }}">
+                #{{ tag_name }}
+                <span class="tag-count">({{ posts_count }})</span>
+            </a>
         {% endfor %}
     </div>
 
