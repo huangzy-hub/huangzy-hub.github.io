@@ -505,41 +505,6 @@ body {
     margin-bottom: 1rem;
 }
 
-/* 归档页面 */
-.archive-list {
-    list-style: none;
-}
-
-.archive-item {
-    display: flex;
-    align-items: center;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--border-color);
-    gap: 1rem;
-}
-
-.archive-item time {
-    color: var(--text-light);
-    font-size: 0.9rem;
-    min-width: 60px;
-}
-
-.archive-item a {
-    color: var(--text-color);
-    text-decoration: none;
-    flex: 1;
-    transition: color 0.3s;
-}
-
-.archive-item a:hover {
-    color: var(--secondary-color);
-}
-
-.archive-tags {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
 
 /* 响应式设计 */
 @media (max-width: 1024px) {
