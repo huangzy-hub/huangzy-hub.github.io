@@ -25,3 +25,10 @@ theme: null
 # 自定义设置
 header_pages:
   - about.md
+
+# 默认主页设置
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "welcome"
