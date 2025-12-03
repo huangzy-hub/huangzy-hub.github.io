@@ -23,11 +23,30 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
     line-height: 1.7;
     color: var(--text-color);
-    background: linear-gradient(rgba(255,255,255,0.7), rgba(255,255,255,0.7)),
+    background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)),
                 url('../images/backgrounds/main-bg.png') no-repeat center center fixed;
     background-size: cover;
     background-attachment: fixed;
     min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* 首页容器样式 */
+.site-main {
+    min-height: calc(100vh - 200px);
+    position: relative;
+    z-index: 1;
+}
+
+.home-layout {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 2rem auto;
+    max-width: 1400px;
 }
 
 .container {
@@ -125,14 +144,47 @@ body {
     display: grid;
     grid-template-columns: 300px 1fr;
     gap: 2rem;
-    padding: 2rem 0;
+    padding: 2rem;
     align-items: start;
+    min-height: calc(100vh - 200px);
 }
 
 /* 侧边栏样式 */
 .sidebar {
     position: sticky;
-    top: 100px;
+    top: 120px;
+    height: calc(100vh - 140px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--secondary-color) var(--border-color);
+    transition: all 0.3s ease;
+}
+
+/* 侧边栏固定样式 */
+.sidebar.sidebar-fixed {
+    position: fixed;
+    top: 120px;
+    height: calc(100vh - 140px);
+    z-index: 100;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--secondary-color);
+    border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
 }
 
 .sidebar-section {
@@ -241,7 +293,36 @@ body {
 
 /* 主内容区 */
 .main-content {
-    min-height: 80vh;
+    min-height: calc(100vh - 200px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--secondary-color) var(--border-color);
+    padding-right: 1rem;
+}
+
+.main-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.main-content::-webkit-scrollbar-track {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+    background: var(--secondary-color);
+    border-radius: 3px;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* 主内容区滚动时的固定效果 */
+.main-content.scrolling {
+    position: sticky;
+    top: 120px;
+    height: calc(100vh - 200px);
 }
 
 /* 英雄区域 */
@@ -268,6 +349,7 @@ body {
 /* 文章网格 */
 .posts-section {
     margin-top: 2rem;
+    padding-bottom: 2rem;
 }
 
 .section-header {
@@ -978,10 +1060,14 @@ body {
     .sidebar {
         position: static;
         order: 2;
+        height: auto;
+        overflow-y: visible;
     }
     
     .main-content {
         order: 1;
+        height: auto;
+        overflow-y: visible;
     }
     
     .header-content {

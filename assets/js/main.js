@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 标签筛选功能
     initTagFilter();
+    
+    // 初始化滚动行为
+    initScrollBehavior();
 });
 
 // 背景图片切换功能
@@ -366,12 +369,7 @@ function initTagFilter() {
     const tagFilterBtns = document.querySelectorAll('.tag-filter-btn');
     const postCards = document.querySelectorAll('.post-card');
     
-    console.log('标签筛选功能初始化');
-    console.log('找到标签按钮数量:', tagFilterBtns.length);
-    console.log('找到文章卡片数量:', postCards.length);
-    
     if (tagFilterBtns.length === 0 || postCards.length === 0) {
-        console.log('标签筛选功能：未找到按钮或文章卡片');
         return; // 如果没有找到元素，不执行
     }
     
@@ -381,7 +379,6 @@ function initTagFilter() {
             e.preventDefault();
             const selectedTag = this.getAttribute('data-tag');
             
-            console.log('点击了标签按钮：', selectedTag);
             
             // 更新按钮状态
             tagFilterBtns.forEach(b => b.classList.remove('active'));
@@ -400,11 +397,8 @@ function initTagFilter() {
                     const tags = card.querySelectorAll('.tag');
                     let hasTag = false;
                     
-                    console.log('检查文章标签：', card.querySelector('.post-title a').textContent);
-                    
                     tags.forEach(tag => {
                         const tagText = tag.textContent.replace('#', '').trim();
-                        console.log('检查标签：', tagText, 'vs', selectedTag);
                         if (tagText === selectedTag) {
                             hasTag = true;
                         }
@@ -414,11 +408,50 @@ function initTagFilter() {
                         card.style.display = 'block';
                         card.style.animation = 'fadeIn 0.5s ease';
                         visibleCount++;
-                        console.log('显示文章：', card.querySelector('.post-title a').textContent);
                     } else {
                         card.style.display = 'none';
-                        console.log('隐藏文章：', card.querySelector('.post-title a').textContent);
                     }
+                }
+                
+                // 滚动行为初始化
+                function initScrollBehavior() {
+                    const mainContent = document.querySelector('.main-content');
+                    const sidebar = document.querySelector('.sidebar');
+                    
+                    if (!mainContent || !sidebar) return;
+                    
+                    let isScrolling = false;
+                    let scrollTimeout;
+                    
+                    // 监听主内容区的滚动
+                    mainContent.addEventListener('scroll', function() {
+                        if (!isScrolling) {
+                            sidebar.classList.add('sidebar-fixed');
+                            mainContent.classList.add('scrolling');
+                            isScrolling = true;
+                        }
+                        
+                        // 清除之前的定时器
+                        clearTimeout(scrollTimeout);
+                        
+                        // 设置新的定时器，滚动停止后移除固定效果
+                        scrollTimeout = setTimeout(() => {
+                            sidebar.classList.remove('sidebar-fixed');
+                            mainContent.classList.remove('scrolling');
+                            isScrolling = false;
+                        }, 150);
+                    });
+                    
+                    // 监听窗口滚动
+                    window.addEventListener('scroll', function() {
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        
+                        if (scrollTop > 200) {
+                            document.body.style.backgroundAttachment = 'scroll';
+                        } else {
+                            document.body.style.backgroundAttachment = 'fixed';
+                        }
+                    });
                 }
             });
             
@@ -440,12 +473,9 @@ function initTagFilter() {
     const tagParam = urlParams.get('tag');
     
     if (tagParam) {
-        console.log('从URL参数获取标签：', tagParam);
         const targetBtn = document.querySelector(`.tag-filter-btn[data-tag="${tagParam}"]`);
         if (targetBtn) {
             targetBtn.click();
-        } else {
-            console.log('未找到对应的标签按钮');
         }
     }
 }
