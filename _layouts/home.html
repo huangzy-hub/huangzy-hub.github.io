@@ -6,7 +6,7 @@ layout: default
     <!-- 左侧边栏 -->
     <aside class="sidebar">
         <div class="sidebar-section">
-            <h3>📅 文章时间轴</h3>
+            <h3>文章时间轴</h3>
             <div class="timeline">
                 {% assign posts_by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
                 {% for year_group in posts_by_year %}
