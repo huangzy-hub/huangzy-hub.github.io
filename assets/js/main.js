@@ -364,14 +364,35 @@ function initSearch() {
     });
 }
 
-// 标签筛选功能
+// 标签筛选功能 - 增强版本
 function initTagFilter() {
     const tagFilterBtns = document.querySelectorAll('.tag-filter-btn');
     const postCards = document.querySelectorAll('.post-card');
+    const postsSection = document.querySelector('.posts-section');
+    const sectionHeader = document.querySelector('.section-header h3');
     
     if (tagFilterBtns.length === 0 || postCards.length === 0) {
         return; // 如果没有找到元素，不执行
     }
+    
+    // 创建筛选结果提示
+    const filterResultInfo = document.createElement('div');
+    filterResultInfo.className = 'filter-result-info';
+    filterResultInfo.style.cssText = `
+        margin: 1rem 0;
+        padding: 0.8rem 1.2rem;
+        background: rgba(102, 126, 234, 0.1);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 8px;
+        color: var(--secondary-color);
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-align: center;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+    `;
+    postsSection.insertBefore(filterResultInfo, postsSection.querySelector('.posts-grid'));
     
     // 为每个按钮添加点击事件
     tagFilterBtns.forEach(btn => {
@@ -379,13 +400,14 @@ function initTagFilter() {
             e.preventDefault();
             const selectedTag = this.getAttribute('data-tag');
             
-            
             // 更新按钮状态
             tagFilterBtns.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             
             // 筛选文章
             let visibleCount = 0;
+            let filteredTags = [];
+            
             postCards.forEach(card => {
                 if (selectedTag === 'all') {
                     // 显示所有文章
@@ -396,9 +418,11 @@ function initTagFilter() {
                     // 检查文章是否包含选中的标签
                     const tags = card.querySelectorAll('.tag');
                     let hasTag = false;
+                    let currentTags = [];
                     
                     tags.forEach(tag => {
                         const tagText = tag.textContent.replace('#', '').trim();
+                        currentTags.push(tagText);
                         if (tagText === selectedTag) {
                             hasTag = true;
                         }
@@ -408,14 +432,16 @@ function initTagFilter() {
                         card.style.display = 'block';
                         card.style.animation = 'fadeIn 0.5s ease';
                         visibleCount++;
+                        filteredTags = filteredTags.concat(currentTags);
                     } else {
                         card.style.display = 'none';
+                        card.style.animation = 'fadeOut 0.3s ease';
                     }
                 }
-                
             });
             
-            console.log('显示的文章数量：', visibleCount);
+            // 更新筛选结果提示
+            updateFilterResult(selectedTag, visibleCount, filteredTags);
             
             // 更新URL参数
             const url = new URL(window.location);
@@ -425,8 +451,39 @@ function initTagFilter() {
                 url.searchParams.set('tag', selectedTag);
             }
             window.history.pushState({}, '', url);
+            
+            // 如果筛选后有文章，滚动到文章区域
+            if (visibleCount > 0) {
+                setTimeout(() => {
+                    postsSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }, 300);
+            }
         });
     });
+    
+    // 更新筛选结果提示
+    function updateFilterResult(selectedTag, visibleCount, filteredTags) {
+        if (selectedTag === 'all') {
+            filterResultInfo.innerHTML = `📚 显示全部 ${visibleCount} 篇文章`;
+            sectionHeader.innerHTML = '📝 最新文章';
+        } else {
+            filterResultInfo.innerHTML = `🏷️ 标签 <strong>#${selectedTag}</strong> - 共 ${visibleCount} 篇文章`;
+            sectionHeader.innerHTML = `🏷️ 标签 <strong>#${selectedTag}</strong>`;
+        }
+        
+        // 显示提示信息
+        filterResultInfo.style.opacity = '1';
+        filterResultInfo.style.transform = 'translateY(0)';
+        
+        // 3秒后淡出提示信息
+        setTimeout(() => {
+            filterResultInfo.style.opacity = '0';
+            filterResultInfo.style.transform = 'translateY(-10px)';
+        }, 3000);
+    }
     
     // 检查URL参数，如果有标签参数则自动筛选
     const urlParams = new URLSearchParams(window.location.search);
@@ -438,6 +495,22 @@ function initTagFilter() {
             targetBtn.click();
         }
     }
+    
+    // 添加淡出动画
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+    `;
+    document.head.appendChild(style);
     
     // 滚动行为初始化
     function initScrollBehavior() {
