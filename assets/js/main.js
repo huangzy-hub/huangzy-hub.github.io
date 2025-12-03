@@ -512,46 +512,45 @@ function initTagFilter() {
     `;
     document.head.appendChild(style);
     
-}
-
-// 滚动行为初始化 - 全局函数
-function initScrollBehavior() {
-    const mainContent = document.querySelector('.main-content');
-    const sidebar = document.querySelector('.sidebar');
-    
-    if (!mainContent || !sidebar) return;
-    
-    let isScrolling = false;
-    let scrollTimeout;
-    
-    // 监听主内容区的滚动
-    mainContent.addEventListener('scroll', function() {
-        if (!isScrolling) {
-            sidebar.classList.add('sidebar-fixed');
-            mainContent.classList.add('scrolling');
-            isScrolling = true;
-        }
+    // 滚动行为初始化
+    function initScrollBehavior() {
+        const mainContent = document.querySelector('.main-content');
+        const sidebar = document.querySelector('.sidebar');
         
-        // 清除之前的定时器
-        clearTimeout(scrollTimeout);
+        if (!mainContent || !sidebar) return;
         
-        // 设置新的定时器，滚动停止后移除固定效果
-        scrollTimeout = setTimeout(() => {
-            sidebar.classList.remove('sidebar-fixed');
-            mainContent.classList.remove('scrolling');
-            isScrolling = false;
-        }, 150);
-    });
-    
-    // 监听窗口滚动
-    window.addEventListener('scroll', function() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        let isScrolling = false;
+        let scrollTimeout;
         
-        if (scrollTop > 200) {
-            document.body.style.backgroundAttachment = 'scroll';
-        } else {
-            document.body.style.backgroundAttachment = 'fixed';
-        }
-    });
+        // 监听主内容区的滚动
+        mainContent.addEventListener('scroll', function() {
+            if (!isScrolling) {
+                sidebar.classList.add('sidebar-fixed');
+                mainContent.classList.add('scrolling');
+                isScrolling = true;
+            }
+            
+            // 清除之前的定时器
+            clearTimeout(scrollTimeout);
+            
+            // 设置新的定时器，滚动停止后移除固定效果
+            scrollTimeout = setTimeout(() => {
+                sidebar.classList.remove('sidebar-fixed');
+                mainContent.classList.remove('scrolling');
+                isScrolling = false;
+            }, 150);
+        });
+        
+        // 监听窗口滚动
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            if (scrollTop > 200) {
+                document.body.style.backgroundAttachment = 'scroll';
+            } else {
+                document.body.style.backgroundAttachment = 'fixed';
+            }
+        });
+    }
 }
 

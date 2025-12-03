@@ -97,6 +97,7 @@
     <div class="welcome-screen" id="welcomeScreen">
         <div class="welcome-content">
             <h1 class="welcome-text">Welcome！</h1>
+            <p class="welcome-subtitle">按任意键进入博客</p>
             <div class="loading-dots">
                 <div class="dot"></div>
                 <div class="dot"></div>
@@ -194,7 +195,9 @@
             initTagFilter();
             
             // 重新初始化滚动行为
-            initScrollBehavior();
+            if (typeof initScrollBehavior === 'function') {
+                initScrollBehavior();
+            }
             
             // 恢复页面滚动
             document.body.style.overflow = 'auto';
