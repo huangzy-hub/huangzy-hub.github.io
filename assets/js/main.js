@@ -413,46 +413,6 @@ function initTagFilter() {
                     }
                 }
                 
-                // 滚动行为初始化
-                function initScrollBehavior() {
-                    const mainContent = document.querySelector('.main-content');
-                    const sidebar = document.querySelector('.sidebar');
-                    
-                    if (!mainContent || !sidebar) return;
-                    
-                    let isScrolling = false;
-                    let scrollTimeout;
-                    
-                    // 监听主内容区的滚动
-                    mainContent.addEventListener('scroll', function() {
-                        if (!isScrolling) {
-                            sidebar.classList.add('sidebar-fixed');
-                            mainContent.classList.add('scrolling');
-                            isScrolling = true;
-                        }
-                        
-                        // 清除之前的定时器
-                        clearTimeout(scrollTimeout);
-                        
-                        // 设置新的定时器，滚动停止后移除固定效果
-                        scrollTimeout = setTimeout(() => {
-                            sidebar.classList.remove('sidebar-fixed');
-                            mainContent.classList.remove('scrolling');
-                            isScrolling = false;
-                        }, 150);
-                    });
-                    
-                    // 监听窗口滚动
-                    window.addEventListener('scroll', function() {
-                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                        
-                        if (scrollTop > 200) {
-                            document.body.style.backgroundAttachment = 'scroll';
-                        } else {
-                            document.body.style.backgroundAttachment = 'fixed';
-                        }
-                    });
-                }
             });
             
             console.log('显示的文章数量：', visibleCount);
@@ -463,6 +423,47 @@ function initTagFilter() {
                 url.searchParams.delete('tag');
             } else {
                 url.searchParams.set('tag', selectedTag);
+            }
+            
+            // 滚动行为初始化
+            function initScrollBehavior() {
+                const mainContent = document.querySelector('.main-content');
+                const sidebar = document.querySelector('.sidebar');
+                
+                if (!mainContent || !sidebar) return;
+                
+                let isScrolling = false;
+                let scrollTimeout;
+                
+                // 监听主内容区的滚动
+                mainContent.addEventListener('scroll', function() {
+                    if (!isScrolling) {
+                        sidebar.classList.add('sidebar-fixed');
+                        mainContent.classList.add('scrolling');
+                        isScrolling = true;
+                    }
+                    
+                    // 清除之前的定时器
+                    clearTimeout(scrollTimeout);
+                    
+                    // 设置新的定时器，滚动停止后移除固定效果
+                    scrollTimeout = setTimeout(() => {
+                        sidebar.classList.remove('sidebar-fixed');
+                        mainContent.classList.remove('scrolling');
+                        isScrolling = false;
+                    }, 150);
+                });
+                
+                // 监听窗口滚动
+                window.addEventListener('scroll', function() {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    
+                    if (scrollTop > 200) {
+                        document.body.style.backgroundAttachment = 'scroll';
+                    } else {
+                        document.body.style.backgroundAttachment = 'fixed';
+                    }
+                });
             }
             window.history.pushState({}, '', url);
         });
