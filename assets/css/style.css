@@ -281,15 +281,11 @@ a:hover {
     font-weight: 800;
     margin: 0;
     letter-spacing: -0.5px;
-    background: linear-gradient(135deg, var(--accent-color) 0%, #667eea 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
+    color: #000000;
 }
 
 .site-title a {
-    color: transparent;
+    color: #000000;
     text-decoration: none;
     position: relative;
     transition: all var(--transition-normal);
