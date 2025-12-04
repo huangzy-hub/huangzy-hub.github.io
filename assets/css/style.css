@@ -285,6 +285,7 @@ a:hover {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    color: transparent;
 }
 
 .site-title a {
@@ -292,6 +293,7 @@ a:hover {
     text-decoration: none;
     position: relative;
     transition: all var(--transition-normal);
+    display: inline-block;
 }
 
 .site-title a::after {
