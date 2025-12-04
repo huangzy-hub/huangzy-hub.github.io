@@ -246,7 +246,7 @@ a:hover {
     height: 50px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid var(--secondary-color);
+    border: 3px solid rgba(255, 255, 255, 0.3);
     box-shadow: var(--shadow);
     transition: all var(--transition-normal);
     position: relative;
@@ -269,7 +269,7 @@ a:hover {
 .site-avatar:hover {
     transform: scale(1.1) rotate(5deg);
     box-shadow: var(--shadow-lg);
-    border-color: var(--accent-color);
+    border-color: rgba(255, 255, 255, 0.6);
 }
 
 .site-avatar:hover::before {
