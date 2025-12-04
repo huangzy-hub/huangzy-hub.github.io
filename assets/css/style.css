@@ -70,7 +70,7 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
     line-height: 1.6;
     color: var(--text-color);
-    background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+    background: linear-gradient(135deg, rgba(253, 251, 251, 0.3) 0%, rgba(235, 237, 238, 0.3) 100%);
     background-size: cover;
     background-attachment: fixed;
     min-height: 100vh;
