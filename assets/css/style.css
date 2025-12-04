@@ -63,7 +63,7 @@
 
 /* 基础样式 */
 html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
 }
 
 body {
@@ -212,20 +212,20 @@ a:hover {
 
 /* 头部样式 */
 .site-header {
-    background: rgba(255, 255, 255, 0.95);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     box-shadow: var(--shadow-md);
     position: sticky;
     top: 0;
     z-index: 1000;
-    border-bottom: 1px solid rgba(74, 85, 104, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     transition: all var(--transition-normal);
 }
 
 .site-header.scrolled {
     box-shadow: var(--shadow-lg);
-    background: rgba(255, 255, 255, 0.98);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.98) 0%, rgba(118, 75, 162, 0.98) 100%);
 }
 
 .header-content {
@@ -317,7 +317,7 @@ a:hover {
 }
 
 .nav-link {
-    color: var(--text-color);
+    color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
     font-weight: 600;
     font-size: 1rem;
@@ -338,13 +338,13 @@ a:hover {
     transform: translateX(-50%);
     width: 0;
     height: 2px;
-    background: var(--gradient);
+    background: rgba(255, 255, 255, 0.8);
     transition: width var(--transition-normal);
     border-radius: 1px;
 }
 
 .nav-link:hover {
-    color: var(--accent-color);
+    color: white;
     transform: translateY(-2px);
 }
 
@@ -353,7 +353,7 @@ a:hover {
 }
 
 .nav-link.active {
-    color: var(--accent-color);
+    color: white;
 }
 
 .nav-link.active::before {
