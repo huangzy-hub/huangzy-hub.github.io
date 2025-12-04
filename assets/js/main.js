@@ -41,7 +41,7 @@ function initBackgroundSwitcher() {
     } while (backgrounds.length > 1 && newBgIndex === lastBgIndex);
     
     // 设置新的背景
-    document.body.style.background = `linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.7)),
+    document.body.style.background = `linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.6)),
                                      url('${backgrounds[newBgIndex]}') no-repeat center center fixed`;
     document.body.style.backgroundSize = 'cover';
     document.body.style.backgroundAttachment = 'fixed';
@@ -367,11 +367,12 @@ function initSearch() {
 // 标签筛选功能 - 增强版本
 function initTagFilter() {
     const tagFilterBtns = document.querySelectorAll('.tag-filter-btn');
+    const tagCloudItems = document.querySelectorAll('.tag-cloud-item');
     const postCards = document.querySelectorAll('.post-card');
     const postsSection = document.querySelector('.posts-section');
     const sectionHeader = document.querySelector('.section-header h3');
     
-    if (tagFilterBtns.length === 0 || postCards.length === 0) {
+    if ((tagFilterBtns.length === 0 && tagCloudItems.length === 0) || postCards.length === 0) {
         return; // 如果没有找到元素，不执行
     }
     
@@ -394,7 +395,7 @@ function initTagFilter() {
     `;
     postsSection.insertBefore(filterResultInfo, postsSection.querySelector('.posts-grid'));
     
-    // 为每个按钮添加点击事件
+    // 为每个筛选按钮添加点击事件
     tagFilterBtns.forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -463,6 +464,87 @@ function initTagFilter() {
             }
         });
     });
+    
+    // 为标签云中的标签添加点击事件
+    tagCloudItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const selectedTag = this.textContent.trim().replace('#', '').replace(/\(\d+\)/, '').trim();
+            
+            // 找到对应的筛选按钮并触发点击
+            const targetFilterBtn = document.querySelector(`.tag-filter-btn[data-tag="${selectedTag}"]`);
+            if (targetFilterBtn) {
+                targetFilterBtn.click();
+            } else {
+                // 如果没有对应的筛选按钮，直接执行筛选
+                performTagFilter(selectedTag);
+            }
+        });
+    });
+    
+    // 执行标签筛选的通用函数
+    function performTagFilter(selectedTag) {
+        // 更新所有筛选按钮状态
+        tagFilterBtns.forEach(btn => btn.classList.remove('active'));
+        
+        // 筛选文章
+        let visibleCount = 0;
+        let filteredTags = [];
+        
+        postCards.forEach(card => {
+            if (selectedTag === 'all') {
+                // 显示所有文章
+                card.style.display = 'block';
+                card.style.animation = 'fadeIn 0.5s ease';
+                visibleCount++;
+            } else {
+                // 检查文章是否包含选中的标签
+                const tags = card.querySelectorAll('.tag');
+                let hasTag = false;
+                let currentTags = [];
+                
+                tags.forEach(tag => {
+                    const tagText = tag.textContent.replace('#', '').trim();
+                    currentTags.push(tagText);
+                    if (tagText === selectedTag) {
+                        hasTag = true;
+                    }
+                });
+                
+                if (hasTag) {
+                    card.style.display = 'block';
+                    card.style.animation = 'fadeIn 0.5s ease';
+                    visibleCount++;
+                    filteredTags = filteredTags.concat(currentTags);
+                } else {
+                    card.style.display = 'none';
+                    card.style.animation = 'fadeOut 0.3s ease';
+                }
+            }
+        });
+        
+        // 更新筛选结果提示
+        updateFilterResult(selectedTag, visibleCount, filteredTags);
+        
+        // 更新URL参数
+        const url = new URL(window.location);
+        if (selectedTag === 'all') {
+            url.searchParams.delete('tag');
+        } else {
+            url.searchParams.set('tag', selectedTag);
+        }
+        window.history.pushState({}, '', url);
+        
+        // 如果筛选后有文章，滚动到文章区域
+        if (visibleCount > 0) {
+            setTimeout(() => {
+                postsSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 300);
+        }
+    }
     
     // 更新筛选结果提示
     function updateFilterResult(selectedTag, visibleCount, filteredTags) {
