@@ -58,16 +58,20 @@ function initTimeline() {
     console.log('初始化时间轴 - 时间轴文章数量:', timelinePosts.length);
     console.log('初始化时间轴 - 文章卡片数量:', blogPosts.length);
     
+    // 创建日期到文章卡片的映射表
+    const dateToPostMap = new Map();
+    blogPosts.forEach((post, index) => {
+        const date = post.getAttribute('data-date').trim();
+        dateToPostMap.set(date, post);
+        console.log(`文章卡片映射 #${index + 1}:`, date);
+    });
+    
     // 打印所有时间轴文章的日期
     console.log('所有时间轴文章的日期:');
     timelinePosts.forEach((post, index) => {
-        console.log(`时间轴文章 #${index + 1}:`, post.getAttribute('data-date'), post.getAttribute('href'));
-    });
-    
-    // 打印所有文章卡片的日期
-    console.log('所有文章卡片的日期:');
-    blogPosts.forEach((post, index) => {
-        console.log(`文章卡片 #${index + 1}:`, post.getAttribute('data-date'));
+        const date = post.getAttribute('data-date').trim();
+        const href = post.getAttribute('href');
+        console.log(`时间轴文章 #${index + 1}:`, date, href);
     });
     
     timelinePosts.forEach((timelinePost, index) => {
@@ -75,7 +79,9 @@ function initTimeline() {
             e.preventDefault();
             
             console.log('=== 点击时间轴文章 ===');
-            console.log(`点击的时间轴文章 #${index + 1}:`, this.getAttribute('data-date'), this.getAttribute('href'));
+            const clickedDate = this.getAttribute('data-date').trim();
+            const clickedHref = this.getAttribute('href');
+            console.log(`点击的时间轴文章 #${index + 1}:`, clickedDate, clickedHref);
             
             // 移除所有高亮
             timelinePosts.forEach(post => post.classList.remove('active'));
@@ -84,43 +90,29 @@ function initTimeline() {
             // 添加高亮
             this.classList.add('active');
             
-            // 找到对应的文章并高亮 - 使用更精确的选择器
-            const postDate = this.getAttribute('data-date').trim();
-            console.log('要查找的文章日期:', postDate);
+            // 使用映射表直接查找目标文章
+            let targetPost = dateToPostMap.get(clickedDate);
+            console.log('从映射表中找到的文章:', targetPost);
             
-            // 方法1: 精确匹配
-            let targetPost = document.querySelector(`.post-card[data-date="${postDate}"]`);
-            console.log('方法1 - 精确匹配结果:', targetPost);
-            
-            // 方法2: 如果找不到，尝试去除可能的空格或特殊字符
+            // 如果映射表中找不到，尝试遍历匹配
             if (!targetPost) {
-                const normalizedDate = postDate.replace(/\s+/g, '');
-                targetPost = document.querySelector(`.post-card[data-date*="${normalizedDate}"]`);
-                console.log('方法2 - 模糊匹配结果:', targetPost);
-            }
-            
-            // 方法3: 遍历所有文章卡片进行精确匹配
-            if (!targetPost) {
-                console.log('方法3 - 开始遍历匹配...');
-                for (let post of blogPosts) {
-                    const cardDate = post.getAttribute('data-date').trim();
-                    console.log(`检查文章卡片 - 日期: ${cardDate}, 是否匹配: ${cardDate === postDate}`);
-                    if (cardDate === postDate) {
+                console.log('映射表中未找到，开始遍历匹配...');
+                for (let [date, post] of dateToPostMap) {
+                    console.log(`检查映射表项 - 日期: ${date}, 是否匹配: ${date === clickedDate}`);
+                    if (date === clickedDate) {
                         targetPost = post;
                         break;
                     }
                 }
-                console.log('方法3 - 遍历匹配结果:', targetPost);
             }
             
-            // 方法4: 最后尝试部分匹配（以防日期格式有微小差异）
+            // 如果还是找不到，尝试部分匹配
             if (!targetPost) {
-                console.log('方法4 - 开始部分匹配...');
-                for (let post of blogPosts) {
-                    const cardDate = post.getAttribute('data-date').trim();
-                    if (cardDate.includes(postDate) || postDate.includes(cardDate)) {
+                console.log('遍历匹配失败，开始部分匹配...');
+                for (let [date, post] of dateToPostMap) {
+                    if (date.includes(clickedDate) || clickedDate.includes(date)) {
                         targetPost = post;
-                        console.log('方法4 - 部分匹配成功:', targetPost);
+                        console.log('部分匹配成功:', targetPost);
                         break;
                     }
                 }
@@ -128,15 +120,16 @@ function initTimeline() {
             
             console.log('最终找到的目标文章:', targetPost);
             if (targetPost) {
+                const postIndex = Array.from(blogPosts).indexOf(targetPost) + 1;
                 console.log('目标文章详细信息:', {
                     id: targetPost.id,
                     class: targetPost.className,
                     dataDate: targetPost.getAttribute('data-date'),
-                    index: Array.from(blogPosts).indexOf(targetPost) + 1
+                    index: postIndex
                 });
             } else {
-                console.error('无法找到对应日期的文章:', postDate);
-                console.log('所有文章卡片的日期:', Array.from(blogPosts).map(p => p.getAttribute('data-date')));
+                console.error('无法找到对应日期的文章:', clickedDate);
+                console.log('映射表中的所有日期:', Array.from(dateToPostMap.keys()));
             }
             
             if (targetPost) {
@@ -205,16 +198,20 @@ function initTimeline() {
                 
                 // 找到对应的文章并高亮
                 const postDate = targetTimeline.getAttribute('data-date').trim();
-                let targetPost = document.querySelector(`.post-card[data-date="${postDate}"]`);
+                let targetPost = dateToPostMap.get(postDate);
                 
                 if (!targetPost) {
-                    const normalizedDate = postDate.replace(/\s+/g, '');
-                    targetPost = document.querySelector(`.post-card[data-date*="${normalizedDate}"]`);
+                    for (let [date, post] of dateToPostMap) {
+                        if (date === postDate) {
+                            targetPost = post;
+                            break;
+                        }
+                    }
                 }
                 
                 if (!targetPost) {
-                    for (let post of blogPosts) {
-                        if (post.getAttribute('data-date') === postDate) {
+                    for (let [date, post] of dateToPostMap) {
+                        if (date.includes(postDate) || postDate.includes(date)) {
                             targetPost = post;
                             break;
                         }
