@@ -58,13 +58,28 @@ function initTimeline() {
     console.log('初始化时间轴 - 时间轴文章数量:', timelinePosts.length);
     console.log('初始化时间轴 - 文章卡片数量:', blogPosts.length);
     
-    // 创建日期到文章卡片的映射表
-    const dateToPostMap = new Map();
+    // 创建文章数组，包含所有信息
+    const postsArray = [];
     blogPosts.forEach((post, index) => {
         const date = post.getAttribute('data-date').trim();
-        dateToPostMap.set(date, post);
-        console.log(`文章卡片映射 #${index + 1}:`, date);
+        postsArray.push({
+            element: post,
+            date: date,
+            index: index
+        });
+        console.log(`文章卡片 #${index + 1}:`, date);
     });
+    
+    // 检查是否有重复日期
+    const dateCount = {};
+    postsArray.forEach(post => {
+        dateCount[post.date] = (dateCount[post.date] || 0) + 1;
+    });
+    
+    const duplicateDates = Object.keys(dateCount).filter(date => dateCount[date] > 1);
+    if (duplicateDates.length > 0) {
+        console.warn('发现重复日期:', duplicateDates);
+    }
     
     // 打印所有时间轴文章的日期
     console.log('所有时间轴文章的日期:');
@@ -90,46 +105,55 @@ function initTimeline() {
             // 添加高亮
             this.classList.add('active');
             
-            // 使用映射表直接查找目标文章
-            let targetPost = dateToPostMap.get(clickedDate);
-            console.log('从映射表中找到的文章:', targetPost);
+            // 查找所有匹配日期的文章
+            const matchingPosts = postsArray.filter(post => post.date === clickedDate);
+            console.log(`找到 ${matchingPosts.length} 个匹配日期的文章:`, clickedDate);
             
-            // 如果映射表中找不到，尝试遍历匹配
-            if (!targetPost) {
-                console.log('映射表中未找到，开始遍历匹配...');
-                for (let [date, post] of dateToPostMap) {
-                    console.log(`检查映射表项 - 日期: ${date}, 是否匹配: ${date === clickedDate}`);
-                    if (date === clickedDate) {
-                        targetPost = post;
-                        break;
-                    }
+            let targetPost = null;
+            if (matchingPosts.length > 0) {
+                // 如果有多个匹配，选择第一个
+                targetPost = matchingPosts[0].element;
+                console.log('选择第一个匹配的文章:', {
+                    id: targetPost.id,
+                    class: targetPost.className,
+                    dataDate: targetPost.getAttribute('data-date'),
+                    index: matchingPosts[0].index + 1
+                });
+                
+                // 如果有多个匹配，打印所有匹配项
+                if (matchingPosts.length > 1) {
+                    console.log('所有匹配的文章:');
+                    matchingPosts.forEach((post, i) => {
+                        console.log(`匹配项 ${i + 1}:`, {
+                            date: post.date,
+                            index: post.index + 1,
+                            dataDate: post.element.getAttribute('data-date')
+                        });
+                    });
                 }
-            }
-            
-            // 如果还是找不到，尝试部分匹配
-            if (!targetPost) {
-                console.log('遍历匹配失败，开始部分匹配...');
-                for (let [date, post] of dateToPostMap) {
-                    if (date.includes(clickedDate) || clickedDate.includes(date)) {
-                        targetPost = post;
-                        console.log('部分匹配成功:', targetPost);
-                        break;
-                    }
+            } else {
+                // 如果没有精确匹配，尝试部分匹配
+                console.log('没有精确匹配，开始部分匹配...');
+                const partialMatches = postsArray.filter(post =>
+                    post.date.includes(clickedDate) || clickedDate.includes(post.date)
+                );
+                
+                if (partialMatches.length > 0) {
+                    targetPost = partialMatches[0].element;
+                    console.log('部分匹配成功:', {
+                        id: targetPost.id,
+                        class: targetPost.className,
+                        dataDate: targetPost.getAttribute('data-date'),
+                        index: partialMatches[0].index + 1
+                    });
                 }
             }
             
             console.log('最终找到的目标文章:', targetPost);
-            if (targetPost) {
-                const postIndex = Array.from(blogPosts).indexOf(targetPost) + 1;
-                console.log('目标文章详细信息:', {
-                    id: targetPost.id,
-                    class: targetPost.className,
-                    dataDate: targetPost.getAttribute('data-date'),
-                    index: postIndex
-                });
-            } else {
+            
+            if (!targetPost) {
                 console.error('无法找到对应日期的文章:', clickedDate);
-                console.log('映射表中的所有日期:', Array.from(dateToPostMap.keys()));
+                console.log('所有文章的日期:', postsArray.map(p => p.date));
             }
             
             if (targetPost) {
@@ -198,23 +222,18 @@ function initTimeline() {
                 
                 // 找到对应的文章并高亮
                 const postDate = targetTimeline.getAttribute('data-date').trim();
-                let targetPost = dateToPostMap.get(postDate);
+                const matchingPosts = postsArray.filter(post => post.date === postDate);
                 
-                if (!targetPost) {
-                    for (let [date, post] of dateToPostMap) {
-                        if (date === postDate) {
-                            targetPost = post;
-                            break;
-                        }
-                    }
-                }
-                
-                if (!targetPost) {
-                    for (let [date, post] of dateToPostMap) {
-                        if (date.includes(postDate) || postDate.includes(date)) {
-                            targetPost = post;
-                            break;
-                        }
+                let targetPost = null;
+                if (matchingPosts.length > 0) {
+                    targetPost = matchingPosts[0].element;
+                } else {
+                    // 尝试部分匹配
+                    const partialMatches = postsArray.filter(post =>
+                        post.date.includes(postDate) || postDate.includes(post.date)
+                    );
+                    if (partialMatches.length > 0) {
+                        targetPost = partialMatches[0].element;
                     }
                 }
                 
