@@ -67,16 +67,16 @@ function initTimeline() {
             this.classList.add('active');
             
             // 找到对应的文章并高亮
-            const postDate = this.getAttribute('data-date');
-            const targetPost = document.querySelector(`.post-card[data-date="${postDate}"]`);
+            const postId = this.getAttribute('href').replace('#', '');
+            const targetPost = document.getElementById(postId);
             
             if (targetPost) {
                 targetPost.classList.add('highlight');
                 
                 // 平滑滚动到目标文章
                 setTimeout(() => {
-                    targetPost.scrollIntoView({ 
-                        behavior: 'smooth', 
+                    targetPost.scrollIntoView({
+                        behavior: 'smooth',
                         block: 'center'
                     });
                 }, 300);
@@ -96,16 +96,16 @@ function initTimeline() {
     // 文章悬浮效果
     blogPosts.forEach(post => {
         post.addEventListener('mouseenter', function() {
-            const postDate = this.getAttribute('data-date');
-            const timelinePost = document.querySelector(`.timeline-post[data-date="${postDate}"]`);
+            const postId = this.id;
+            const timelinePost = document.querySelector(`.timeline-post[href="#${postId}"]`);
             if (timelinePost) {
                 timelinePost.style.backgroundColor = '#f0f7ff';
             }
         });
         
         post.addEventListener('mouseleave', function() {
-            const postDate = this.getAttribute('data-date');
-            const timelinePost = document.querySelector(`.timeline-post[data-date="${postDate}"]`);
+            const postId = this.id;
+            const timelinePost = document.querySelector(`.timeline-post[href="#${postId}"]`);
             if (timelinePost && !timelinePost.classList.contains('active')) {
                 timelinePost.style.backgroundColor = '';
             }
@@ -124,7 +124,8 @@ function highlightPost(dateString) {
     
     // 添加高亮
     const targetTimeline = document.querySelector(`.timeline-post[data-date="${dateString}"]`);
-    const targetPost = document.querySelector(`.post-card[data-date="${dateString}"]`);
+    const postId = `post-${dateString}`;
+    const targetPost = document.getElementById(postId);
     
     if (targetTimeline) targetTimeline.classList.add('active');
     if (targetPost) {
