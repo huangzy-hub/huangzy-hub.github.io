@@ -58,9 +58,24 @@ function initTimeline() {
     console.log('初始化时间轴 - 时间轴文章数量:', timelinePosts.length);
     console.log('初始化时间轴 - 文章卡片数量:', blogPosts.length);
     
+    // 打印所有时间轴文章的日期
+    console.log('所有时间轴文章的日期:');
+    timelinePosts.forEach((post, index) => {
+        console.log(`时间轴文章 #${index + 1}:`, post.getAttribute('data-date'), post.getAttribute('href'));
+    });
+    
+    // 打印所有文章卡片的日期
+    console.log('所有文章卡片的日期:');
+    blogPosts.forEach((post, index) => {
+        console.log(`文章卡片 #${index + 1}:`, post.getAttribute('data-date'));
+    });
+    
     timelinePosts.forEach((timelinePost, index) => {
         timelinePost.addEventListener('click', function(e) {
             e.preventDefault();
+            
+            console.log('=== 点击时间轴文章 ===');
+            console.log(`点击的时间轴文章 #${index + 1}:`, this.getAttribute('data-date'), this.getAttribute('href'));
             
             // 移除所有高亮
             timelinePosts.forEach(post => post.classList.remove('active'));
@@ -71,8 +86,7 @@ function initTimeline() {
             
             // 找到对应的文章并高亮 - 使用更精确的选择器
             const postDate = this.getAttribute('data-date').trim();
-            console.log(`点击的时间轴文章 #${index + 1} 日期:`, postDate);
-            console.log('时间轴文章完整HTML:', this.outerHTML);
+            console.log('要查找的文章日期:', postDate);
             
             // 方法1: 精确匹配
             let targetPost = document.querySelector(`.post-card[data-date="${postDate}"]`);
@@ -118,8 +132,11 @@ function initTimeline() {
                     id: targetPost.id,
                     class: targetPost.className,
                     dataDate: targetPost.getAttribute('data-date'),
-                    outerHTML: targetPost.outerHTML.substring(0, 200)
+                    index: Array.from(blogPosts).indexOf(targetPost) + 1
                 });
+            } else {
+                console.error('无法找到对应日期的文章:', postDate);
+                console.log('所有文章卡片的日期:', Array.from(blogPosts).map(p => p.getAttribute('data-date')));
             }
             
             if (targetPost) {
@@ -138,15 +155,16 @@ function initTimeline() {
                 setTimeout(() => {
                     targetPost.classList.remove('highlight');
                 }, 5000);
-            } else {
-                console.error('无法找到对应日期的文章:', postDate);
-                console.log('所有文章卡片的日期:', Array.from(blogPosts).map(p => p.getAttribute('data-date')));
             }
             
-            // 更新URL（不刷新页面）- 使用hash而不是pushState来避免刷新问题
-            const postUrl = this.getAttribute('href');
-            const baseUrl = window.location.href.split('#')[0];
-            window.location.hash = postUrl.replace(baseUrl, '');
+            // 不立即改变URL，而是延迟改变，避免刷新时直接进入文章
+            // 只在用户完成交互后才改变URL
+            setTimeout(() => {
+                const postUrl = this.getAttribute('href');
+                const baseUrl = window.location.href.split('#')[0];
+                window.location.hash = postUrl.replace(baseUrl, '');
+                console.log('延迟更新URL:', window.location.hash);
+            }, 500);
         });
     });
     
@@ -220,9 +238,16 @@ function initTimeline() {
     // 页面加载时检查hash
     window.addEventListener('load', function() {
         if (window.location.hash) {
-            // 触发popstate事件来处理hash
+            console.log('页面加载时检测到hash:', window.location.hash);
+            // 延迟处理，确保页面完全加载
+            setTimeout(() => {
+                // 触发popstate事件来处理hash
+                window.history.replaceState({}, '', window.location.pathname);
+                window.dispatchEvent(new PopStateEvent('popstate'));
+            }, 100);
+        } else {
+            // 如果没有hash，确保URL是干净的
             window.history.replaceState({}, '', window.location.pathname);
-            window.dispatchEvent(new PopStateEvent('popstate'));
         }
     });
 }
