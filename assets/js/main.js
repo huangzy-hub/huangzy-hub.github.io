@@ -293,68 +293,136 @@ function initTimeline() {
     });
 }
 
-// 全局高亮函数
-function highlightPost(dateString) {
+// 全局高亮函数 - 处理时间轴文章点击
+function highlightPost(element) {
     const timelinePosts = document.querySelectorAll('.timeline-post');
     const blogPosts = document.querySelectorAll('.post-card');
     
-    console.log('highlightPost 函数被调用，日期:', dateString);
+    // 获取点击的时间轴文章属性
+    const clickedDate = element.getAttribute('data-date').trim();
+    const clickedTitle = element.getAttribute('data-title');
+    const clickedIndex = parseInt(element.getAttribute('data-index'));
+    const clickedHref = element.getAttribute('href');
+    
+    console.log('highlightPost 函数被调用:', clickedDate, clickedTitle, clickedIndex, clickedHref);
     
     // 移除所有高亮
     timelinePosts.forEach(post => post.classList.remove('active'));
     blogPosts.forEach(post => post.classList.remove('highlight'));
     
     // 添加高亮
-    const targetTimeline = document.querySelector(`.timeline-post[data-date="${dateString}"]`);
+    element.classList.add('active');
     
-    // 使用更精确的方式查找目标文章
-    let targetPost = document.querySelector(`.post-card[data-date="${dateString}"]`);
-    
-    // 如果第一种方式找不到，尝试其他可能的格式
-    if (!targetPost) {
-        // 尝试去除可能的空格或特殊字符
-        const normalizedDate = dateString.replace(/\s+/g, '');
-        targetPost = document.querySelector(`.post-card[data-date*="${normalizedDate}"]`);
-    }
-    
-    if (!targetPost) {
-        // 最后尝试遍历所有文章卡片
-        for (let post of blogPosts) {
-            if (post.getAttribute('data-date') === dateString) {
-                targetPost = post;
-                break;
-            }
-        }
-    }
-    
-    // 方法4: 最后尝试部分匹配
-    if (!targetPost) {
-        for (let post of blogPosts) {
-            const cardDate = post.getAttribute('data-date').trim();
-            if (cardDate.includes(dateString) || dateString.includes(cardDate)) {
-                targetPost = post;
-                break;
-            }
-        }
-    }
-    
-    console.log('高亮函数 - 目标时间轴:', targetTimeline);
-    console.log('高亮函数 - 目标文章:', targetPost);
-    if (targetPost) {
-        console.log('目标文章详细信息:', {
-            id: targetPost.id,
-            class: targetPost.className,
-            dataDate: targetPost.getAttribute('data-date')
+    // 创建文章数组（如果还没有创建的话）
+    const postsArray = [];
+    blogPosts.forEach((post, index) => {
+        const date = post.getAttribute('data-date').trim();
+        postsArray.push({
+            element: post,
+            date: date,
+            index: index
         });
+    });
+    
+    // 创建一个标志变量，确保只执行一次定位
+    let postFound = false;
+    let targetPost = null;
+    
+    // 首先尝试通过日期和标题精确匹配
+    if (!postFound) {
+        const exactMatches = postsArray.filter(post => {
+            const postTitle = post.element.querySelector('.post-title a').textContent;
+            return post.date === clickedDate && postTitle === clickedTitle;
+        });
+        
+        console.log(`找到 ${exactMatches.length} 个精确匹配的文章（日期+标题）:`, clickedDate, clickedTitle);
+        
+        if (exactMatches.length > 0) {
+            // 如果有精确匹配，选择第一个（理论上应该只有一个）
+            targetPost = exactMatches[0].element;
+            postFound = true;
+            console.log('通过精确匹配（日期+标题）找到文章:', {
+                id: targetPost.id,
+                class: targetPost.className,
+                dataDate: targetPost.getAttribute('data-date'),
+                title: targetPost.querySelector('.post-title a').textContent,
+                index: exactMatches[0].index + 1
+            });
+        }
     }
     
-    if (targetTimeline) targetTimeline.classList.add('active');
+    // 如果没有精确匹配或没有找到，尝试仅通过日期匹配
+    if (!postFound) {
+        const dateMatches = postsArray.filter(post => post.date === clickedDate);
+        console.log(`通过日期找到 ${dateMatches.length} 个匹配的文章:`, clickedDate);
+        
+        if (dateMatches.length > 0) {
+            // 如果有多个匹配，使用时间轴文章的索引来选择正确的文章
+            // 确保索引在有效范围内
+            const targetIndex = Math.min(clickedIndex, dateMatches.length - 1);
+            targetPost = dateMatches[targetIndex].element;
+            postFound = true;
+            console.log('通过日期和索引匹配找到文章:', {
+                id: targetPost.id,
+                class: targetPost.className,
+                dataDate: targetPost.getAttribute('data-date'),
+                title: targetPost.querySelector('.post-title a').textContent,
+                index: dateMatches[targetIndex].index + 1
+            });
+        }
+    }
+    
+    // 如果仍然没有找到，尝试部分匹配
+    if (!postFound) {
+        console.log('没有精确匹配，开始部分匹配...');
+        const partialMatches = postsArray.filter(post =>
+            post.date.includes(clickedDate) || clickedDate.includes(post.date)
+        );
+        
+        if (partialMatches.length > 0) {
+            targetPost = partialMatches[0].element;
+            postFound = true;
+            console.log('部分匹配成功:', {
+                id: targetPost.id,
+                class: targetPost.className,
+                dataDate: targetPost.getAttribute('data-date'),
+                title: targetPost.querySelector('.post-title a').textContent,
+                index: partialMatches[0].index + 1
+            });
+        }
+    }
+    
+    console.log('最终找到的目标文章:', targetPost);
+    
+    if (!targetPost) {
+        console.error('无法找到对应日期的文章:', clickedDate);
+        console.log('所有文章的日期:', postsArray.map(p => p.date));
+    }
+    
     if (targetPost) {
         targetPost.classList.add('highlight');
+        
+        // 立即滚动到目标文章，不使用延迟
+        console.log('开始滚动到目标文章...');
+        targetPost.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        });
+        
+        // 5秒后取消高亮
         setTimeout(() => {
-            targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
+            targetPost.classList.remove('highlight');
+        }, 5000);
     }
+    
+    // 不立即改变URL，而是延迟改变，避免刷新时直接进入文章
+    // 只在用户完成交互后才改变URL
+    setTimeout(() => {
+        const postUrl = element.getAttribute('href');
+        const baseUrl = window.location.href.split('#')[0];
+        window.location.hash = postUrl.replace(baseUrl, '');
+        console.log('延迟更新URL:', window.location.hash);
+    }, 500);
 }
 
 // 平滑滚动
