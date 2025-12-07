@@ -35,10 +35,10 @@ layout: default
                             <h5>{{ month_name }}</h5>
                             <div class="timeline-posts">
                                 {% for post in month_group.items %}
-                                <a href="#post-{{ post.date | date: '%Y-%m-%d' }}"
+                                <a href="{{ post.url | relative_url }}"
                                    class="timeline-post"
                                    data-date="{{ post.date | date: '%Y-%m-%d' }}"
-                                   onclick='highlightPost("{{ post.date | date: \"%Y-%m-%d\" }"); scrollToPost("post-{{ post.date | date: \"%Y-%m-%d\" }}")'>
+                                   onclick='highlightPost("{{ post.date | date: \"%Y-%m-%d\" }}")'>
                                     <time>{{ post.date | date: "%m-%d" }}</time>
                                     <span>{{ post.title | truncate: 15 }}</span>
                                 </a>
@@ -73,7 +73,7 @@ layout: default
 
             <div class="posts-grid">
                 {% for post in site.posts %}
-                <article id="post-{{ post.date | date: '%Y-%m-%d' }}" class="post-card" data-date="{{ post.date | date: '%Y-%m-%d' }}">
+                <article class="post-card" data-date="{{ post.date | date: '%Y-%m-%d' }}">
                     <div class="post-header">
                         <h4 class="post-title">
                             <a href="{{ post.url | relative_url }}">{{ post.title }}</a>

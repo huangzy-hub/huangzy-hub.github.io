@@ -66,9 +66,31 @@ function initTimeline() {
             // 添加高亮
             this.classList.add('active');
             
-            // 找到对应的文章并高亮
-            const postId = this.getAttribute('href').replace('#', '');
-            const targetPost = document.getElementById(postId);
+            // 找到对应的文章并高亮 - 使用更精确的选择器
+            const postDate = this.getAttribute('data-date').trim();
+            console.log('点击的时间轴文章日期:', postDate);
+            
+            // 尝试多种匹配方式
+            let targetPost = document.querySelector(`.post-card[data-date="${postDate}"]`);
+            
+            // 如果第一种方式找不到，尝试其他可能的格式
+            if (!targetPost) {
+                // 尝试去除可能的空格或特殊字符
+                const normalizedDate = postDate.replace(/\s+/g, '');
+                targetPost = document.querySelector(`.post-card[data-date*="${normalizedDate}"]`);
+            }
+            
+            if (!targetPost) {
+                // 最后尝试遍历所有文章卡片
+                for (let post of blogPosts) {
+                    if (post.getAttribute('data-date') === postDate) {
+                        targetPost = post;
+                        break;
+                    }
+                }
+            }
+            
+            console.log('找到的目标文章:', targetPost);
             
             if (targetPost) {
                 targetPost.classList.add('highlight');
@@ -96,16 +118,16 @@ function initTimeline() {
     // 文章悬浮效果
     blogPosts.forEach(post => {
         post.addEventListener('mouseenter', function() {
-            const postId = this.id;
-            const timelinePost = document.querySelector(`.timeline-post[href="#${postId}"]`);
+            const postDate = this.getAttribute('data-date').trim();
+            const timelinePost = document.querySelector(`.timeline-post[data-date="${postDate}"]`);
             if (timelinePost) {
                 timelinePost.style.backgroundColor = '#f0f7ff';
             }
         });
         
         post.addEventListener('mouseleave', function() {
-            const postId = this.id;
-            const timelinePost = document.querySelector(`.timeline-post[href="#${postId}"]`);
+            const postDate = this.getAttribute('data-date').trim();
+            const timelinePost = document.querySelector(`.timeline-post[data-date="${postDate}"]`);
             if (timelinePost && !timelinePost.classList.contains('active')) {
                 timelinePost.style.backgroundColor = '';
             }
@@ -124,8 +146,29 @@ function highlightPost(dateString) {
     
     // 添加高亮
     const targetTimeline = document.querySelector(`.timeline-post[data-date="${dateString}"]`);
-    const postId = `post-${dateString}`;
-    const targetPost = document.getElementById(postId);
+    
+    // 使用更精确的方式查找目标文章
+    let targetPost = document.querySelector(`.post-card[data-date="${dateString}"]`);
+    
+    // 如果第一种方式找不到，尝试其他可能的格式
+    if (!targetPost) {
+        // 尝试去除可能的空格或特殊字符
+        const normalizedDate = dateString.replace(/\s+/g, '');
+        targetPost = document.querySelector(`.post-card[data-date*="${normalizedDate}"]`);
+    }
+    
+    if (!targetPost) {
+        // 最后尝试遍历所有文章卡片
+        for (let post of blogPosts) {
+            if (post.getAttribute('data-date') === dateString) {
+                targetPost = post;
+                break;
+            }
+        }
+    }
+    
+    console.log('高亮函数 - 目标时间轴:', targetTimeline);
+    console.log('高亮函数 - 目标文章:', targetPost);
     
     if (targetTimeline) targetTimeline.classList.add('active');
     if (targetPost) {
