@@ -143,9 +143,10 @@ function initTimeline() {
                 console.log('所有文章卡片的日期:', Array.from(blogPosts).map(p => p.getAttribute('data-date')));
             }
             
-            // 更新URL（不刷新页面）
+            // 更新URL（不刷新页面）- 使用hash而不是pushState来避免刷新问题
             const postUrl = this.getAttribute('href');
-            history.pushState(null, '', postUrl);
+            const baseUrl = window.location.href.split('#')[0];
+            window.location.hash = postUrl.replace(baseUrl, '');
         });
     });
     
@@ -166,6 +167,63 @@ function initTimeline() {
                 timelinePost.style.backgroundColor = '';
             }
         });
+    });
+    
+    // 处理浏览器前进/后退和刷新
+    window.addEventListener('popstate', function(e) {
+        // 如果有hash，说明是从时间轴点击过来的
+        if (window.location.hash) {
+            const hash = window.location.hash.substring(1);
+            console.log('popstate事件检测到hash:', hash);
+            
+            // 移除所有高亮
+            timelinePosts.forEach(post => post.classList.remove('active'));
+            blogPosts.forEach(post => post.classList.remove('highlight'));
+            
+            // 找到对应的时间轴文章并高亮
+            const targetTimeline = document.querySelector(`.timeline-post[href="${hash}"]`);
+            if (targetTimeline) {
+                targetTimeline.classList.add('active');
+                
+                // 找到对应的文章并高亮
+                const postDate = targetTimeline.getAttribute('data-date').trim();
+                let targetPost = document.querySelector(`.post-card[data-date="${postDate}"]`);
+                
+                if (!targetPost) {
+                    const normalizedDate = postDate.replace(/\s+/g, '');
+                    targetPost = document.querySelector(`.post-card[data-date*="${normalizedDate}"]`);
+                }
+                
+                if (!targetPost) {
+                    for (let post of blogPosts) {
+                        if (post.getAttribute('data-date') === postDate) {
+                            targetPost = post;
+                            break;
+                        }
+                    }
+                }
+                
+                if (targetPost) {
+                    targetPost.classList.add('highlight');
+                    setTimeout(() => {
+                        targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                    
+                    setTimeout(() => {
+                        targetPost.classList.remove('highlight');
+                    }, 5000);
+                }
+            }
+        }
+    });
+    
+    // 页面加载时检查hash
+    window.addEventListener('load', function() {
+        if (window.location.hash) {
+            // 触发popstate事件来处理hash
+            window.history.replaceState({}, '', window.location.pathname);
+            window.dispatchEvent(new PopStateEvent('popstate'));
+        }
     });
 }
 
