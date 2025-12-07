@@ -1044,7 +1044,7 @@ a:hover {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    padding: var(--space-lg);
+    padding: var(--space-md);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
     transition: all var(--transition-normal);
@@ -1147,14 +1147,14 @@ a:hover {
 
 .post-excerpt {
     color: var(--text-color);
-    margin-bottom: var(--space-md);
-    line-height: 1.6;
-    font-size: 0.95rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
+    margin-bottom: var(--space-sm);
+    line-height: 1.4;
+    font-size: 0.9rem;
+    display: none;
+    -webkit-line-clamp: 0;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    flex: 1;
+    flex: 0;
 }
 
 /* 标签样式 - 紧凑版本 */
