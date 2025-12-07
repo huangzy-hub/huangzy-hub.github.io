@@ -38,7 +38,9 @@ layout: default
                                 <a href="{{ post.url | relative_url }}"
                                    class="timeline-post"
                                    data-date="{{ post.date | date: '%Y-%m-%d' }}"
-                                   onclick='highlightPost("{{ post.date | date: \"%Y-%m-%d\" }}")'>
+                                   data-title="{{ post.title | escape }}"
+                                   data-index="{{ forloop.index0 }}"
+                                   onclick="highlightPost(this)">
                                     <time>{{ post.date | date: "%m-%d" }}</time>
                                     <span>{{ post.title | truncate: 15 }}</span>
                                 </a>
@@ -73,7 +75,7 @@ layout: default
 
             <div class="posts-grid">
                 {% for post in site.posts %}
-                <article class="post-card" data-date="{{ post.date | date: '%Y-%m-%d' }}">
+                <article class="post-card" data-date="{{ post.date | date: '%Y-%m-%d' }}" data-title="{{ post.title | escape }}">
                     <div class="post-header">
                         <h4 class="post-title">
                             <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
