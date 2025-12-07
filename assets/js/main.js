@@ -98,6 +98,20 @@ function initTimeline() {
             const clickedHref = this.getAttribute('href');
             console.log(`点击的时间轴文章 #${timelineIndex + 1}:`, clickedTitle, clickedHref);
             
+            // 打印所有时间轴文章的标题用于调试
+            console.log('所有时间轴文章的标题:');
+            timelinePosts.forEach((post, index) => {
+                const title = post.getAttribute('data-title');
+                console.log(`时间轴文章 #${index + 1}: "${title}"`);
+            });
+            
+            // 打印所有主页文章的标题用于调试
+            console.log('所有主页文章的标题:');
+            blogPosts.forEach((post, index) => {
+                const title = post.querySelector('.post-title a').textContent;
+                console.log(`主页文章 #${index + 1}: "${title}"`);
+            });
+            
             // 移除所有高亮
             timelinePosts.forEach(post => post.classList.remove('active'));
             blogPosts.forEach(post => post.classList.remove('highlight'));
@@ -111,6 +125,7 @@ function initTimeline() {
             // 通过标题精确匹配
             const titleMatches = Array.from(blogPosts).filter(post => {
                 const postTitle = post.querySelector('.post-title a').textContent;
+                console.log(`比较标题: "${clickedTitle}" === "${postTitle}" ? ${clickedTitle === postTitle}`);
                 return postTitle === clickedTitle;
             });
             
@@ -122,14 +137,17 @@ function initTimeline() {
                 console.log('通过标题匹配找到文章:', {
                     id: targetPost.id,
                     class: targetPost.className,
-                    title: targetPost.querySelector('.post-title a').textContent
+                    title: targetPost.querySelector('.post-title a').textContent,
+                    href: targetPost.querySelector('a').getAttribute('href')
                 });
             } else {
                 // 如果没有标题匹配，尝试部分匹配
                 console.log('没有精确匹配，开始部分匹配...');
                 const partialMatches = Array.from(blogPosts).filter(post => {
                     const postTitle = post.querySelector('.post-title a').textContent;
-                    return postTitle.includes(clickedTitle) || clickedTitle.includes(postTitle);
+                    const includes = postTitle.includes(clickedTitle) || clickedTitle.includes(postTitle);
+                    console.log(`部分匹配检查: "${postTitle}".includes("${clickedTitle}") = ${postTitle.includes(clickedTitle)}, "${clickedTitle}".includes("${postTitle}") = ${clickedTitle.includes(postTitle)}, 结果: ${includes}`);
+                    return includes;
                 });
                 
                 if (partialMatches.length > 0) {
@@ -137,7 +155,8 @@ function initTimeline() {
                     console.log('部分匹配成功:', {
                         id: targetPost.id,
                         class: targetPost.className,
-                        title: targetPost.querySelector('.post-title a').textContent
+                        title: targetPost.querySelector('.post-title a').textContent,
+                        href: targetPost.querySelector('a').getAttribute('href')
                     });
                 }
             }
@@ -271,6 +290,20 @@ function highlightPost(element) {
     
     console.log('highlightPost 函数被调用:', clickedTitle, clickedHref);
     
+    // 打印所有时间轴文章的标题用于调试
+    console.log('所有时间轴文章的标题:');
+    timelinePosts.forEach((post, index) => {
+        const title = post.getAttribute('data-title');
+        console.log(`时间轴文章 #${index + 1}: "${title}"`);
+    });
+    
+    // 打印所有主页文章的标题用于调试
+    console.log('所有主页文章的标题:');
+    blogPosts.forEach((post, index) => {
+        const title = post.querySelector('.post-title a').textContent;
+        console.log(`主页文章 #${index + 1}: "${title}"`);
+    });
+    
     // 移除所有高亮
     timelinePosts.forEach(post => post.classList.remove('active'));
     blogPosts.forEach(post => post.classList.remove('highlight'));
@@ -284,6 +317,7 @@ function highlightPost(element) {
     // 通过标题精确匹配
     const titleMatches = Array.from(blogPosts).filter(post => {
         const postTitle = post.querySelector('.post-title a').textContent;
+        console.log(`比较标题: "${clickedTitle}" === "${postTitle}" ? ${clickedTitle === postTitle}`);
         return postTitle === clickedTitle;
     });
     
@@ -295,14 +329,17 @@ function highlightPost(element) {
         console.log('通过标题匹配找到文章:', {
             id: targetPost.id,
             class: targetPost.className,
-            title: targetPost.querySelector('.post-title a').textContent
+            title: targetPost.querySelector('.post-title a').textContent,
+            href: targetPost.querySelector('a').getAttribute('href')
         });
     } else {
         // 如果没有标题匹配，尝试部分匹配
         console.log('没有精确匹配，开始部分匹配...');
         const partialMatches = Array.from(blogPosts).filter(post => {
             const postTitle = post.querySelector('.post-title a').textContent;
-            return postTitle.includes(clickedTitle) || clickedTitle.includes(postTitle);
+            const includes = postTitle.includes(clickedTitle) || clickedTitle.includes(postTitle);
+            console.log(`部分匹配检查: "${postTitle}".includes("${clickedTitle}") = ${postTitle.includes(clickedTitle)}, "${clickedTitle}".includes("${postTitle}") = ${clickedTitle.includes(postTitle)}, 结果: ${includes}`);
+            return includes;
         });
         
         if (partialMatches.length > 0) {
@@ -310,7 +347,8 @@ function highlightPost(element) {
             console.log('部分匹配成功:', {
                 id: targetPost.id,
                 class: targetPost.className,
-                title: targetPost.querySelector('.post-title a').textContent
+                title: targetPost.querySelector('.post-title a').textContent,
+                href: targetPost.querySelector('a').getAttribute('href')
             });
         }
     }
