@@ -111,84 +111,104 @@ function initTimeline() {
             // 直接使用时间轴文章的属性来查找对应的主页文章
             let targetPost = null;
             
-            // 首先尝试通过日期、时间和标题精确匹配
-            const exactMatches = Array.from(blogPosts).filter(post => {
-                const postDate = post.getAttribute('data-date').trim();
-                const postTime = post.getAttribute('data-time').trim();
+            // 首先尝试通过标题精确匹配（主要匹配方式）
+            const titleMatches = Array.from(blogPosts).filter(post => {
                 const postTitle = post.querySelector('.post-title a').textContent;
-                return postDate === clickedDate && postTime === clickedTime && postTitle === clickedTitle;
+                return postTitle === clickedTitle;
             });
             
-            console.log(`找到 ${exactMatches.length} 个精确匹配的文章（日期+时间+标题）:`, clickedDate, clickedTime, clickedTitle);
+            console.log(`找到 ${titleMatches.length} 个标题匹配的文章:`, clickedTitle);
             
-            if (exactMatches.length > 0) {
-                // 如果有精确匹配，选择第一个（理论上应该只有一个）
-                targetPost = exactMatches[0];
-                console.log('通过精确匹配（日期+时间+标题）找到文章:', {
+            if (titleMatches.length > 0) {
+                // 如果有标题匹配，选择第一个（理论上应该只有一个）
+                targetPost = titleMatches[0];
+                console.log('通过标题匹配找到文章:', {
                     id: targetPost.id,
                     class: targetPost.className,
                     dataDate: targetPost.getAttribute('data-date'),
-                    dataTime: targetPost.getAttribute('data-time'),
                     title: targetPost.querySelector('.post-title a').textContent
                 });
             } else {
-                // 如果没有精确匹配，尝试通过日期和时间匹配
-                const dateTimeMatches = Array.from(blogPosts).filter(post => {
+                // 如果没有标题匹配，尝试通过日期和标题匹配
+                const dateTitleMatches = Array.from(blogPosts).filter(post => {
                     const postDate = post.getAttribute('data-date').trim();
-                    const postTime = post.getAttribute('data-time').trim();
-                    return postDate === clickedDate && postTime === clickedTime;
+                    const postTitle = post.querySelector('.post-title a').textContent;
+                    return postDate === clickedDate && postTitle === clickedTitle;
                 });
                 
-                console.log(`通过日期和时间找到 ${dateTimeMatches.length} 个匹配的文章:`, clickedDate, clickedTime);
+                console.log(`通过日期和标题找到 ${dateTitleMatches.length} 个匹配的文章:`, clickedDate, clickedTitle);
                 
-                if (dateTimeMatches.length > 0) {
+                if (dateTitleMatches.length > 0) {
                     // 如果有多个匹配，使用时间轴文章的索引来选择正确的文章
                     // 确保索引在有效范围内
-                    const targetIndex = Math.min(clickedIndex, dateTimeMatches.length - 1);
-                    targetPost = dateTimeMatches[targetIndex];
-                    console.log('通过日期和时间匹配找到文章:', {
+                    const targetIndex = Math.min(clickedIndex, dateTitleMatches.length - 1);
+                    targetPost = dateTitleMatches[targetIndex];
+                    console.log('通过日期和标题匹配找到文章:', {
                         id: targetPost.id,
                         class: targetPost.className,
                         dataDate: targetPost.getAttribute('data-date'),
-                        dataTime: targetPost.getAttribute('data-time'),
                         title: targetPost.querySelector('.post-title a').textContent
                     });
                 } else {
-                    // 如果没有日期时间匹配，尝试仅通过日期匹配
-                    const dateMatches = Array.from(blogPosts).filter(post => {
+                    // 如果没有日期标题匹配，尝试通过日期、时间和标题匹配
+                    const dateTimeTitleMatches = Array.from(blogPosts).filter(post => {
                         const postDate = post.getAttribute('data-date').trim();
-                        return postDate === clickedDate;
+                        const postTime = post.getAttribute('data-time').trim();
+                        const postTitle = post.querySelector('.post-title a').textContent;
+                        return postDate === clickedDate && postTime === clickedTime && postTitle === clickedTitle;
                     });
                     
-                    console.log(`通过日期找到 ${dateMatches.length} 个匹配的文章:`, clickedDate);
+                    console.log(`通过日期、时间和标题找到 ${dateTimeTitleMatches.length} 个匹配的文章:`, clickedDate, clickedTime, clickedTitle);
                     
-                    if (dateMatches.length > 0) {
+                    if (dateTimeTitleMatches.length > 0) {
                         // 如果有多个匹配，使用时间轴文章的索引来选择正确的文章
                         // 确保索引在有效范围内
-                        const targetIndex = Math.min(clickedIndex, dateMatches.length - 1);
-                        targetPost = dateMatches[targetIndex];
-                        console.log('通过日期和索引匹配找到文章:', {
+                        const targetIndex = Math.min(clickedIndex, dateTimeTitleMatches.length - 1);
+                        targetPost = dateTimeTitleMatches[targetIndex];
+                        console.log('通过日期、时间和标题匹配找到文章:', {
                             id: targetPost.id,
                             class: targetPost.className,
                             dataDate: targetPost.getAttribute('data-date'),
+                            dataTime: targetPost.getAttribute('data-time'),
                             title: targetPost.querySelector('.post-title a').textContent
                         });
                     } else {
-                        // 如果没有日期匹配，尝试部分匹配
-                        console.log('没有精确匹配，开始部分匹配...');
-                        const partialMatches = Array.from(blogPosts).filter(post => {
+                        // 如果没有日期时间标题匹配，尝试仅通过日期匹配
+                        const dateMatches = Array.from(blogPosts).filter(post => {
                             const postDate = post.getAttribute('data-date').trim();
-                            return postDate.includes(clickedDate) || clickedDate.includes(postDate);
+                            return postDate === clickedDate;
                         });
                         
-                        if (partialMatches.length > 0) {
-                            targetPost = partialMatches[0];
-                            console.log('部分匹配成功:', {
+                        console.log(`通过日期找到 ${dateMatches.length} 个匹配的文章:`, clickedDate);
+                        
+                        if (dateMatches.length > 0) {
+                            // 如果有多个匹配，使用时间轴文章的索引来选择正确的文章
+                            // 确保索引在有效范围内
+                            const targetIndex = Math.min(clickedIndex, dateMatches.length - 1);
+                            targetPost = dateMatches[targetIndex];
+                            console.log('通过日期和索引匹配找到文章:', {
                                 id: targetPost.id,
                                 class: targetPost.className,
                                 dataDate: targetPost.getAttribute('data-date'),
                                 title: targetPost.querySelector('.post-title a').textContent
                             });
+                        } else {
+                            // 如果没有日期匹配，尝试部分匹配
+                            console.log('没有精确匹配，开始部分匹配...');
+                            const partialMatches = Array.from(blogPosts).filter(post => {
+                                const postDate = post.getAttribute('data-date').trim();
+                                return postDate.includes(clickedDate) || clickedDate.includes(postDate);
+                            });
+                            
+                            if (partialMatches.length > 0) {
+                                targetPost = partialMatches[0];
+                                console.log('部分匹配成功:', {
+                                    id: targetPost.id,
+                                    class: targetPost.className,
+                                    dataDate: targetPost.getAttribute('data-date'),
+                                    title: targetPost.querySelector('.post-title a').textContent
+                                });
+                            }
                         }
                     }
                 }
@@ -197,8 +217,8 @@ function initTimeline() {
             console.log('最终找到的目标文章:', targetPost);
             
             if (!targetPost) {
-                console.error('无法找到对应日期的文章:', clickedDate);
-                console.log('所有文章的日期:', Array.from(blogPosts).map(post => post.getAttribute('data-date')));
+                console.error('无法找到对应标题的文章:', clickedTitle);
+                console.log('所有文章的标题:', Array.from(blogPosts).map(post => post.querySelector('.post-title a').textContent));
             }
             
             if (targetPost) {
@@ -336,84 +356,104 @@ function highlightPost(element) {
     // 直接使用时间轴文章的属性来查找对应的主页文章
     let targetPost = null;
     
-    // 首先尝试通过日期、时间和标题精确匹配
-    const exactMatches = Array.from(blogPosts).filter(post => {
-        const postDate = post.getAttribute('data-date').trim();
-        const postTime = post.getAttribute('data-time').trim();
+    // 首先尝试通过标题精确匹配（主要匹配方式）
+    const titleMatches = Array.from(blogPosts).filter(post => {
         const postTitle = post.querySelector('.post-title a').textContent;
-        return postDate === clickedDate && postTime === clickedTime && postTitle === clickedTitle;
+        return postTitle === clickedTitle;
     });
     
-    console.log(`找到 ${exactMatches.length} 个精确匹配的文章（日期+时间+标题）:`, clickedDate, clickedTime, clickedTitle);
+    console.log(`找到 ${titleMatches.length} 个标题匹配的文章:`, clickedTitle);
     
-    if (exactMatches.length > 0) {
-        // 如果有精确匹配，选择第一个（理论上应该只有一个）
-        targetPost = exactMatches[0];
-        console.log('通过精确匹配（日期+时间+标题）找到文章:', {
+    if (titleMatches.length > 0) {
+        // 如果有标题匹配，选择第一个（理论上应该只有一个）
+        targetPost = titleMatches[0];
+        console.log('通过标题匹配找到文章:', {
             id: targetPost.id,
             class: targetPost.className,
             dataDate: targetPost.getAttribute('data-date'),
-            dataTime: targetPost.getAttribute('data-time'),
             title: targetPost.querySelector('.post-title a').textContent
         });
     } else {
-        // 如果没有精确匹配，尝试通过日期和时间匹配
-        const dateTimeMatches = Array.from(blogPosts).filter(post => {
+        // 如果没有标题匹配，尝试通过日期和标题匹配
+        const dateTitleMatches = Array.from(blogPosts).filter(post => {
             const postDate = post.getAttribute('data-date').trim();
-            const postTime = post.getAttribute('data-time').trim();
-            return postDate === clickedDate && postTime === clickedTime;
+            const postTitle = post.querySelector('.post-title a').textContent;
+            return postDate === clickedDate && postTitle === clickedTitle;
         });
         
-        console.log(`通过日期和时间找到 ${dateTimeMatches.length} 个匹配的文章:`, clickedDate, clickedTime);
+        console.log(`通过日期和标题找到 ${dateTitleMatches.length} 个匹配的文章:`, clickedDate, clickedTitle);
         
-        if (dateTimeMatches.length > 0) {
+        if (dateTitleMatches.length > 0) {
             // 如果有多个匹配，使用时间轴文章的索引来选择正确的文章
             // 确保索引在有效范围内
-            const targetIndex = Math.min(clickedIndex, dateTimeMatches.length - 1);
-            targetPost = dateTimeMatches[targetIndex];
-            console.log('通过日期和时间匹配找到文章:', {
+            const targetIndex = Math.min(clickedIndex, dateTitleMatches.length - 1);
+            targetPost = dateTitleMatches[targetIndex];
+            console.log('通过日期和标题匹配找到文章:', {
                 id: targetPost.id,
                 class: targetPost.className,
                 dataDate: targetPost.getAttribute('data-date'),
-                dataTime: targetPost.getAttribute('data-time'),
                 title: targetPost.querySelector('.post-title a').textContent
             });
         } else {
-            // 如果没有日期时间匹配，尝试仅通过日期匹配
-            const dateMatches = Array.from(blogPosts).filter(post => {
+            // 如果没有日期标题匹配，尝试通过日期、时间和标题匹配
+            const dateTimeTitleMatches = Array.from(blogPosts).filter(post => {
                 const postDate = post.getAttribute('data-date').trim();
-                return postDate === clickedDate;
+                const postTime = post.getAttribute('data-time').trim();
+                const postTitle = post.querySelector('.post-title a').textContent;
+                return postDate === clickedDate && postTime === clickedTime && postTitle === clickedTitle;
             });
             
-            console.log(`通过日期找到 ${dateMatches.length} 个匹配的文章:`, clickedDate);
+            console.log(`通过日期、时间和标题找到 ${dateTimeTitleMatches.length} 个匹配的文章:`, clickedDate, clickedTime, clickedTitle);
             
-            if (dateMatches.length > 0) {
+            if (dateTimeTitleMatches.length > 0) {
                 // 如果有多个匹配，使用时间轴文章的索引来选择正确的文章
                 // 确保索引在有效范围内
-                const targetIndex = Math.min(clickedIndex, dateMatches.length - 1);
-                targetPost = dateMatches[targetIndex];
-                console.log('通过日期和索引匹配找到文章:', {
+                const targetIndex = Math.min(clickedIndex, dateTimeTitleMatches.length - 1);
+                targetPost = dateTimeTitleMatches[targetIndex];
+                console.log('通过日期、时间和标题匹配找到文章:', {
                     id: targetPost.id,
                     class: targetPost.className,
                     dataDate: targetPost.getAttribute('data-date'),
+                    dataTime: targetPost.getAttribute('data-time'),
                     title: targetPost.querySelector('.post-title a').textContent
                 });
             } else {
-                // 如果没有日期匹配，尝试部分匹配
-                console.log('没有精确匹配，开始部分匹配...');
-                const partialMatches = Array.from(blogPosts).filter(post => {
+                // 如果没有日期时间标题匹配，尝试仅通过日期匹配
+                const dateMatches = Array.from(blogPosts).filter(post => {
                     const postDate = post.getAttribute('data-date').trim();
-                    return postDate.includes(clickedDate) || clickedDate.includes(postDate);
+                    return postDate === clickedDate;
                 });
                 
-                if (partialMatches.length > 0) {
-                    targetPost = partialMatches[0];
-                    console.log('部分匹配成功:', {
+                console.log(`通过日期找到 ${dateMatches.length} 个匹配的文章:`, clickedDate);
+                
+                if (dateMatches.length > 0) {
+                    // 如果有多个匹配，使用时间轴文章的索引来选择正确的文章
+                    // 确保索引在有效范围内
+                    const targetIndex = Math.min(clickedIndex, dateMatches.length - 1);
+                    targetPost = dateMatches[targetIndex];
+                    console.log('通过日期和索引匹配找到文章:', {
                         id: targetPost.id,
                         class: targetPost.className,
                         dataDate: targetPost.getAttribute('data-date'),
                         title: targetPost.querySelector('.post-title a').textContent
                     });
+                } else {
+                    // 如果没有日期匹配，尝试部分匹配
+                    console.log('没有精确匹配，开始部分匹配...');
+                    const partialMatches = Array.from(blogPosts).filter(post => {
+                        const postDate = post.getAttribute('data-date').trim();
+                        return postDate.includes(clickedDate) || clickedDate.includes(postDate);
+                    });
+                    
+                    if (partialMatches.length > 0) {
+                        targetPost = partialMatches[0];
+                        console.log('部分匹配成功:', {
+                            id: targetPost.id,
+                            class: targetPost.className,
+                            dataDate: targetPost.getAttribute('data-date'),
+                            title: targetPost.querySelector('.post-title a').textContent
+                        });
+                    }
                 }
             }
         }
@@ -422,8 +462,8 @@ function highlightPost(element) {
     console.log('最终找到的目标文章:', targetPost);
     
     if (!targetPost) {
-        console.error('无法找到对应日期的文章:', clickedDate);
-        console.log('所有文章的日期:', Array.from(blogPosts).map(post => post.getAttribute('data-date')));
+        console.error('无法找到对应标题的文章:', clickedTitle);
+        console.log('所有文章的标题:', Array.from(blogPosts).map(post => post.querySelector('.post-title a').textContent));
     }
     
     if (targetPost) {
