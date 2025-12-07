@@ -89,14 +89,14 @@ function initTimeline() {
         console.log(`时间轴文章 #${index + 1}:`, date, href);
     });
     
-    timelinePosts.forEach((timelinePost, index) => {
+    timelinePosts.forEach((timelinePost, timelineIndex) => {
         timelinePost.addEventListener('click', function(e) {
             e.preventDefault();
             
             console.log('=== 点击时间轴文章 ===');
             const clickedDate = this.getAttribute('data-date').trim();
             const clickedHref = this.getAttribute('href');
-            console.log(`点击的时间轴文章 #${index + 1}:`, clickedDate, clickedHref);
+            console.log(`点击的时间轴文章 #${timelineIndex + 1}:`, clickedDate, clickedHref);
             
             // 移除所有高亮
             timelinePosts.forEach(post => post.classList.remove('active'));
@@ -111,14 +111,29 @@ function initTimeline() {
             
             let targetPost = null;
             if (matchingPosts.length > 0) {
-                // 如果有多个匹配，选择第一个
-                targetPost = matchingPosts[0].element;
-                console.log('选择第一个匹配的文章:', {
-                    id: targetPost.id,
-                    class: targetPost.className,
-                    dataDate: targetPost.getAttribute('data-date'),
-                    index: matchingPosts[0].index + 1
-                });
+                // 如果有多个匹配，我们需要找到最接近的文章
+                // 这里我们使用时间轴文章的索引来帮助选择正确的文章
+                // 由于时间轴和主页的文章顺序可能不同，我们需要找到最佳匹配
+                
+                // 方法1: 尝试找到相同索引的文章（如果顺序一致）
+                if (matchingPosts[timelineIndex]) {
+                    targetPost = matchingPosts[timelineIndex].element;
+                    console.log('通过索引匹配找到文章:', {
+                        id: targetPost.id,
+                        class: targetPost.className,
+                        dataDate: targetPost.getAttribute('data-date'),
+                        index: matchingPosts[timelineIndex].index + 1
+                    });
+                } else {
+                    // 方法2: 选择第一个匹配的文章
+                    targetPost = matchingPosts[0].element;
+                    console.log('选择第一个匹配的文章（索引匹配失败）:', {
+                        id: targetPost.id,
+                        class: targetPost.className,
+                        dataDate: targetPost.getAttribute('data-date'),
+                        index: matchingPosts[0].index + 1
+                    });
+                }
                 
                 // 如果有多个匹配，打印所有匹配项
                 if (matchingPosts.length > 1) {
@@ -226,6 +241,7 @@ function initTimeline() {
                 
                 let targetPost = null;
                 if (matchingPosts.length > 0) {
+                    // 对于popstate事件，我们选择第一个匹配的文章
                     targetPost = matchingPosts[0].element;
                 } else {
                     // 尝试部分匹配
