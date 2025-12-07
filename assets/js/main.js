@@ -55,7 +55,10 @@ function initTimeline() {
     const timelinePosts = document.querySelectorAll('.timeline-post');
     const blogPosts = document.querySelectorAll('.post-card');
     
-    timelinePosts.forEach(timelinePost => {
+    console.log('初始化时间轴 - 时间轴文章数量:', timelinePosts.length);
+    console.log('初始化时间轴 - 文章卡片数量:', blogPosts.length);
+    
+    timelinePosts.forEach((timelinePost, index) => {
         timelinePost.addEventListener('click', function(e) {
             e.preventDefault();
             
@@ -68,35 +71,63 @@ function initTimeline() {
             
             // 找到对应的文章并高亮 - 使用更精确的选择器
             const postDate = this.getAttribute('data-date').trim();
-            console.log('点击的时间轴文章日期:', postDate);
+            console.log(`点击的时间轴文章 #${index + 1} 日期:`, postDate);
+            console.log('时间轴文章完整HTML:', this.outerHTML);
             
-            // 尝试多种匹配方式
+            // 方法1: 精确匹配
             let targetPost = document.querySelector(`.post-card[data-date="${postDate}"]`);
+            console.log('方法1 - 精确匹配结果:', targetPost);
             
-            // 如果第一种方式找不到，尝试其他可能的格式
+            // 方法2: 如果找不到，尝试去除可能的空格或特殊字符
             if (!targetPost) {
-                // 尝试去除可能的空格或特殊字符
                 const normalizedDate = postDate.replace(/\s+/g, '');
                 targetPost = document.querySelector(`.post-card[data-date*="${normalizedDate}"]`);
+                console.log('方法2 - 模糊匹配结果:', targetPost);
             }
             
+            // 方法3: 遍历所有文章卡片进行精确匹配
             if (!targetPost) {
-                // 最后尝试遍历所有文章卡片
+                console.log('方法3 - 开始遍历匹配...');
                 for (let post of blogPosts) {
-                    if (post.getAttribute('data-date') === postDate) {
+                    const cardDate = post.getAttribute('data-date').trim();
+                    console.log(`检查文章卡片 - 日期: ${cardDate}, 是否匹配: ${cardDate === postDate}`);
+                    if (cardDate === postDate) {
                         targetPost = post;
+                        break;
+                    }
+                }
+                console.log('方法3 - 遍历匹配结果:', targetPost);
+            }
+            
+            // 方法4: 最后尝试部分匹配（以防日期格式有微小差异）
+            if (!targetPost) {
+                console.log('方法4 - 开始部分匹配...');
+                for (let post of blogPosts) {
+                    const cardDate = post.getAttribute('data-date').trim();
+                    if (cardDate.includes(postDate) || postDate.includes(cardDate)) {
+                        targetPost = post;
+                        console.log('方法4 - 部分匹配成功:', targetPost);
                         break;
                     }
                 }
             }
             
-            console.log('找到的目标文章:', targetPost);
+            console.log('最终找到的目标文章:', targetPost);
+            if (targetPost) {
+                console.log('目标文章详细信息:', {
+                    id: targetPost.id,
+                    class: targetPost.className,
+                    dataDate: targetPost.getAttribute('data-date'),
+                    outerHTML: targetPost.outerHTML.substring(0, 200)
+                });
+            }
             
             if (targetPost) {
                 targetPost.classList.add('highlight');
                 
                 // 平滑滚动到目标文章
                 setTimeout(() => {
+                    console.log('开始滚动到目标文章...');
                     targetPost.scrollIntoView({
                         behavior: 'smooth',
                         block: 'center'
@@ -107,6 +138,9 @@ function initTimeline() {
                 setTimeout(() => {
                     targetPost.classList.remove('highlight');
                 }, 5000);
+            } else {
+                console.error('无法找到对应日期的文章:', postDate);
+                console.log('所有文章卡片的日期:', Array.from(blogPosts).map(p => p.getAttribute('data-date')));
             }
             
             // 更新URL（不刷新页面）
@@ -140,6 +174,8 @@ function highlightPost(dateString) {
     const timelinePosts = document.querySelectorAll('.timeline-post');
     const blogPosts = document.querySelectorAll('.post-card');
     
+    console.log('highlightPost 函数被调用，日期:', dateString);
+    
     // 移除所有高亮
     timelinePosts.forEach(post => post.classList.remove('active'));
     blogPosts.forEach(post => post.classList.remove('highlight'));
@@ -167,13 +203,33 @@ function highlightPost(dateString) {
         }
     }
     
+    // 方法4: 最后尝试部分匹配
+    if (!targetPost) {
+        for (let post of blogPosts) {
+            const cardDate = post.getAttribute('data-date').trim();
+            if (cardDate.includes(dateString) || dateString.includes(cardDate)) {
+                targetPost = post;
+                break;
+            }
+        }
+    }
+    
     console.log('高亮函数 - 目标时间轴:', targetTimeline);
     console.log('高亮函数 - 目标文章:', targetPost);
+    if (targetPost) {
+        console.log('目标文章详细信息:', {
+            id: targetPost.id,
+            class: targetPost.className,
+            dataDate: targetPost.getAttribute('data-date')
+        });
+    }
     
     if (targetTimeline) targetTimeline.classList.add('active');
     if (targetPost) {
         targetPost.classList.add('highlight');
-        targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => {
+            targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
     }
 }
 
