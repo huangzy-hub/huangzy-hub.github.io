@@ -765,8 +765,6 @@ a:hover {
     padding: 1rem 1.5rem;
     margin-left: -1rem;
     transform: translateX(8px) scale(1.02);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--secondary-color);
 }
 
 .timeline-post.active::before {
