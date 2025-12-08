@@ -2482,6 +2482,10 @@ a:hover {
         border-color: var(--border-color);
     }
     
+    .post-card.highlight {
+        background: var(--white) !important;
+    }
+    
     .card {
         background: rgba(45, 55, 72, 0.95);
         border-color: var(--border-color);
