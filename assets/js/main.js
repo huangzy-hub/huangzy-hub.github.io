@@ -178,10 +178,10 @@ function initTimeline() {
                     block: 'center'
                 });
                 
-                // 2秒后取消高亮
+                // 0.5秒后取消高亮
                 setTimeout(() => {
                     targetPost.classList.remove('highlight');
-                }, 2000);
+                }, 500);
             }
             
             // 不立即改变URL，而是延迟改变，避免刷新时直接进入文章
@@ -256,7 +256,7 @@ function initTimeline() {
                     
                     setTimeout(() => {
                         targetPost.classList.remove('highlight');
-                    }, 2000);
+                    }, 500);
                 }
             }
         }
