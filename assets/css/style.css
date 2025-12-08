@@ -765,7 +765,7 @@ a:hover {
     padding: 1rem 1.5rem;
     margin-left: -1rem;
     transform: translateX(8px) scale(1.02);
-    transition: all 0.15s ease !important;
+    transition: all 0.5s ease !important;
 }
 
 .timeline-post.active::before {
@@ -1083,7 +1083,7 @@ a:hover {
 .post-card.highlight {
     border: 3px solid var(--gradient);
     box-shadow: 0 0 0 3px rgba(128, 90, 213, 0.2);
-    transition: all 0.15s ease !important;
+    transition: all 0.5s ease !important;
 }
 
 .post-header {
