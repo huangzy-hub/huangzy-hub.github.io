@@ -201,7 +201,10 @@ function initTimeline() {
             const postDate = this.getAttribute('data-date').trim();
             const timelinePost = document.querySelector(`.timeline-post[data-date="${postDate}"]`);
             if (timelinePost) {
-                timelinePost.style.backgroundColor = '#f0f7ff';
+                // 只在没有激活状态时改变背景色
+                if (!timelinePost.classList.contains('active')) {
+                    timelinePost.style.backgroundColor = '#f0f7ff';
+                }
             }
         });
         
