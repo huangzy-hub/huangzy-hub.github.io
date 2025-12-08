@@ -1084,6 +1084,7 @@ a:hover {
     border: 3px solid var(--gradient);
     box-shadow: 0 0 0 3px rgba(128, 90, 213, 0.2);
     transition: all 0.5s ease !important;
+    background: var(--white) !important;
 }
 
 .post-header {
