@@ -758,8 +758,9 @@ a:hover {
 }
 
 .timeline-post.active {
-    background: var(--gradient);
-    color: white;
+    border: 3px solid var(--gradient);
+    box-shadow: 0 0 0 3px rgba(128, 90, 213, 0.2);
+    color: var(--primary-color);
     border-radius: var(--radius-md);
     padding: 1rem 1.5rem;
     margin-left: -1rem;
@@ -769,15 +770,15 @@ a:hover {
 }
 
 .timeline-post.active::before {
-    border-color: white;
-    background: var(--gradient);
+    border-color: var(--gradient);
+    background: white;
     transform: translateY(-50%) scale(1.4);
 }
 
 .timeline-post.active::after {
-    background: white;
+    background: var(--gradient);
     transform: translateY(-50%) scale(1.8);
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(128, 90, 213, 0.8);
 }
 
 .timeline-post time {
@@ -843,6 +844,8 @@ a:hover {
     .timeline-post.active {
         margin-left: -0.5rem;
         transform: translateX(5px) scale(1.01);
+        border: 3px solid var(--gradient);
+        box-shadow: 0 0 0 3px rgba(128, 90, 213, 0.2);
     }
 }
 
