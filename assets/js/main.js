@@ -178,10 +178,10 @@ function initTimeline() {
                     block: 'center'
                 });
                 
-                // 5秒后取消高亮
+                // 2秒后取消高亮
                 setTimeout(() => {
                     targetPost.classList.remove('highlight');
-                }, 5000);
+                }, 2000);
             }
             
             // 不立即改变URL，而是延迟改变，避免刷新时直接进入文章
@@ -256,7 +256,7 @@ function initTimeline() {
                     
                     setTimeout(() => {
                         targetPost.classList.remove('highlight');
-                    }, 5000);
+                    }, 2000);
                 }
             }
         }
@@ -279,112 +279,6 @@ function initTimeline() {
     });
 }
 
-// 全局高亮函数 - 处理时间轴文章点击
-function highlightPost(element) {
-    const timelinePosts = document.querySelectorAll('.timeline-post');
-    const blogPosts = document.querySelectorAll('.post-card');
-    
-    // 获取点击的时间轴文章属性
-    const clickedTitle = element.getAttribute('data-title');
-    const clickedHref = element.getAttribute('href');
-    
-    console.log('highlightPost 函数被调用:', clickedTitle, clickedHref);
-    
-    // 打印所有时间轴文章的标题用于调试
-    console.log('所有时间轴文章的标题:');
-    timelinePosts.forEach((post, index) => {
-        const title = post.getAttribute('data-title');
-        console.log(`时间轴文章 #${index + 1}: "${title}"`);
-    });
-    
-    // 打印所有主页文章的标题用于调试
-    console.log('所有主页文章的标题:');
-    blogPosts.forEach((post, index) => {
-        const title = post.querySelector('.post-title a').textContent;
-        console.log(`主页文章 #${index + 1}: "${title}"`);
-    });
-    
-    // 移除所有高亮
-    timelinePosts.forEach(post => post.classList.remove('active'));
-    blogPosts.forEach(post => post.classList.remove('highlight'));
-    
-    // 添加高亮
-    element.classList.add('active');
-    
-    // 直接使用时间轴文章的标题来查找对应的主页文章
-    let targetPost = null;
-    
-    // 通过标题精确匹配
-    const titleMatches = Array.from(blogPosts).filter(post => {
-        const postTitle = post.querySelector('.post-title a').textContent;
-        console.log(`比较标题: "${clickedTitle}" === "${postTitle}" ? ${clickedTitle === postTitle}`);
-        return postTitle === clickedTitle;
-    });
-    
-    console.log(`找到 ${titleMatches.length} 个标题匹配的文章:`, clickedTitle);
-    
-    if (titleMatches.length > 0) {
-        // 如果有标题匹配，选择第一个（理论上应该只有一个）
-        targetPost = titleMatches[0];
-        console.log('通过标题匹配找到文章:', {
-            id: targetPost.id,
-            class: targetPost.className,
-            title: targetPost.querySelector('.post-title a').textContent,
-            href: targetPost.querySelector('a').getAttribute('href')
-        });
-    } else {
-        // 如果没有标题匹配，尝试部分匹配
-        console.log('没有精确匹配，开始部分匹配...');
-        const partialMatches = Array.from(blogPosts).filter(post => {
-            const postTitle = post.querySelector('.post-title a').textContent;
-            const includes = postTitle.includes(clickedTitle) || clickedTitle.includes(postTitle);
-            console.log(`部分匹配检查: "${postTitle}".includes("${clickedTitle}") = ${postTitle.includes(clickedTitle)}, "${clickedTitle}".includes("${postTitle}") = ${clickedTitle.includes(postTitle)}, 结果: ${includes}`);
-            return includes;
-        });
-        
-        if (partialMatches.length > 0) {
-            targetPost = partialMatches[0];
-            console.log('部分匹配成功:', {
-                id: targetPost.id,
-                class: targetPost.className,
-                title: targetPost.querySelector('.post-title a').textContent,
-                href: targetPost.querySelector('a').getAttribute('href')
-            });
-        }
-    }
-    
-    console.log('最终找到的目标文章:', targetPost);
-    
-    if (!targetPost) {
-        console.error('无法找到对应标题的文章:', clickedTitle);
-        console.log('所有文章的标题:', Array.from(blogPosts).map(post => post.querySelector('.post-title a').textContent));
-    }
-    
-    if (targetPost) {
-        targetPost.classList.add('highlight');
-        
-        // 立即滚动到目标文章，不使用延迟
-        console.log('开始滚动到目标文章...');
-        targetPost.scrollIntoView({
-            behavior: 'smooth',
-            block: 'center'
-        });
-        
-        // 5秒后取消高亮
-        setTimeout(() => {
-            targetPost.classList.remove('highlight');
-        }, 5000);
-    }
-    
-    // 不立即改变URL，而是延迟改变，避免刷新时直接进入文章
-    // 只在用户完成交互后才改变URL
-    setTimeout(() => {
-        const postUrl = element.getAttribute('href');
-        const baseUrl = window.location.href.split('#')[0];
-        window.location.hash = postUrl.replace(baseUrl, '');
-        console.log('延迟更新URL:', window.location.hash);
-    }, 500);
-}
 
 // 平滑滚动
 function initSmoothScroll() {
