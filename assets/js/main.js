@@ -89,8 +89,17 @@ function initTimeline() {
         console.log(`时间轴文章 #${index + 1}:`, date, href);
     });
     
+    let isProcessingClick = false; // 防止重复点击
+    
     timelinePosts.forEach((timelinePost, timelineIndex) => {
         timelinePost.addEventListener('click', function(e) {
+            // 如果正在处理点击，则忽略新的点击
+            if (isProcessingClick) {
+                e.preventDefault();
+                return;
+            }
+            
+            isProcessingClick = true;
             e.preventDefault();
             
             console.log('=== 点击时间轴文章 ===');
@@ -166,6 +175,8 @@ function initTimeline() {
             if (!targetPost) {
                 console.error('无法找到对应标题的文章:', clickedTitle);
                 console.log('所有文章的标题:', Array.from(blogPosts).map(post => post.querySelector('.post-title a').textContent));
+                isProcessingClick = false; // 重置状态
+                return;
             }
             
             if (targetPost) {
@@ -194,6 +205,8 @@ function initTimeline() {
                             targetPost.classList.remove('highlight');
                             console.log('0.5秒后取消高亮');
                         }
+                        // 重置处理状态
+                        isProcessingClick = false;
                     }, 500);
                 });
             }
