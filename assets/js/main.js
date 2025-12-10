@@ -169,7 +169,14 @@ function initTimeline() {
             }
             
             if (targetPost) {
+                // 先移除可能存在的其他高亮
+                document.querySelectorAll('.post-card.highlight').forEach(post => {
+                    post.classList.remove('highlight');
+                });
+                
+                // 添加高亮
                 targetPost.classList.add('highlight');
+                console.log('添加高亮到文章:', targetPost.querySelector('.post-title a').textContent);
                 
                 // 立即滚动到目标文章，不使用延迟
                 console.log('开始滚动到目标文章...');
@@ -255,7 +262,15 @@ function initTimeline() {
                 }
                 
                 if (targetPost) {
+                    // 先移除可能存在的其他高亮
+                    document.querySelectorAll('.post-card.highlight').forEach(post => {
+                        post.classList.remove('highlight');
+                    });
+                    
+                    // 添加高亮
                     targetPost.classList.add('highlight');
+                    console.log('popstate事件中添加高亮到文章:', targetPost.querySelector('.post-title a').textContent);
+                    
                     setTimeout(() => {
                         targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }, 300);
