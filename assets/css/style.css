@@ -1058,11 +1058,6 @@ a:hover {
     flex-direction: column;
 }
 
-.post-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-    border-color: rgba(128, 90, 213, 0.3);
-}
 
 
 .post-header {
@@ -2460,9 +2455,6 @@ a:hover {
         border-color: var(--border-color);
     }
     
-    .post-card.highlight {
-        background: var(--white) !important;
-    }
     
     .card {
         background: rgba(45, 55, 72, 0.95);
