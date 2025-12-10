@@ -1102,7 +1102,7 @@ a:hover {
     pointer-events: none;
 }
 
-/* 确保高亮动画持续0.5秒 */
+/* 确保高亮动画持续0.1秒 */
 @keyframes pulseHighlight {
     0% {
         transform: scale(1);

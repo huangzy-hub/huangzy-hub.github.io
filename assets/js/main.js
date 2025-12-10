@@ -199,15 +199,15 @@ function initTimeline() {
                         block: 'center'
                     });
                     
-                    // 确保0.5秒后取消高亮
+                    // 确保0.1秒后取消高亮
                     setTimeout(() => {
                         if (targetPost && targetPost.classList.contains('highlight')) {
                             targetPost.classList.remove('highlight');
-                            console.log('0.5秒后取消高亮');
+                            console.log('0.1秒后取消高亮');
                         }
                         // 重置处理状态
                         isProcessingClick = false;
-                    }, 500);
+                    }, 100);
                 });
             }
             
