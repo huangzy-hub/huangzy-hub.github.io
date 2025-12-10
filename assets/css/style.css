@@ -1081,14 +1081,41 @@ a:hover {
 }
 
 .post-card.highlight {
-    border: 4px solid var(--gradient) !important;
-    box-shadow: 0 0 0 4px rgba(128, 90, 213, 0.3) !important;
-    background: var(--white) !important;
     position: relative !important;
     z-index: 1000 !important;
-    margin: 0 !important;
 }
 
+/* 添加脉冲动画效果 */
+.post-card.highlight::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    right: -6px;
+    bottom: -6px;
+    background: var(--gradient);
+    border-radius: inherit;
+    opacity: 0.7;
+    z-index: -1;
+    animation: pulseHighlight 0.5s ease-out;
+    pointer-events: none;
+}
+
+/* 确保高亮动画持续0.5秒 */
+@keyframes pulseHighlight {
+    0% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.3;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0;
+    }
+}
 @keyframes pulseHighlight {
     0% {
         transform: scale(1);
