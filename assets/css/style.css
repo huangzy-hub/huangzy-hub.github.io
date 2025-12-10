@@ -1058,16 +1058,20 @@ a:hover {
     flex-direction: column;
 }
 
-.post-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--gradient);
-    transform: scaleX(0);
-    transition: transform var(--transition-normal);
+.post-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+    border: 1px solid rgba(74, 85, 104, 0.1);
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .post-card:hover {
@@ -1076,18 +1080,15 @@ a:hover {
     border-color: rgba(128, 90, 213, 0.3);
 }
 
-.post-card:hover::before {
-    transform: scaleX(1);
-}
-
 .post-card.highlight {
     border: 4px solid var(--gradient) !important;
-    box-shadow: 0 0 0 4px rgba(128, 90, 213, 0.4) !important;
+    box-shadow: 0 0 0 4px rgba(128, 90, 213, 0.5) !important;
     background: var(--white) !important;
-    transform: scale(1.02) !important;
+    transform: scale(1.03) !important;
     position: relative !important;
-    z-index: 100 !important;
-    transition: all 0.2s ease !important;
+    z-index: 1000 !important;
+    transition: all 0.3s ease !important;
+    margin: 0 !important;
 }
 
 /* 添加脉冲动画效果 */
@@ -1100,7 +1101,7 @@ a:hover {
     bottom: -4px;
     background: var(--gradient);
     border-radius: inherit;
-    opacity: 0.9;
+    opacity: 0.8;
     z-index: -1;
     animation: pulseHighlight 0.5s ease-out;
     pointer-events: none;
@@ -1110,11 +1111,11 @@ a:hover {
 @keyframes pulseHighlight {
     0% {
         transform: scale(1);
-        opacity: 0.9;
+        opacity: 0.8;
     }
     50% {
-        transform: scale(1.03);
-        opacity: 0.5;
+        transform: scale(1.05);
+        opacity: 0.4;
     }
     100% {
         transform: scale(1);

@@ -177,6 +177,8 @@ function initTimeline() {
                 // 添加高亮
                 targetPost.classList.add('highlight');
                 console.log('添加高亮到文章:', targetPost.querySelector('.post-title a').textContent);
+                console.log('文章卡片类名:', targetPost.className);
+                console.log('是否有highlight类:', targetPost.classList.contains('highlight'));
                 
                 // 立即滚动到目标文章，不使用延迟
                 console.log('开始滚动到目标文章...');
@@ -270,6 +272,8 @@ function initTimeline() {
                     // 添加高亮
                     targetPost.classList.add('highlight');
                     console.log('popstate事件中添加高亮到文章:', targetPost.querySelector('.post-title a').textContent);
+                    console.log('popstate - 文章卡片类名:', targetPost.className);
+                    console.log('popstate - 是否有highlight类:', targetPost.classList.contains('highlight'));
                     
                     setTimeout(() => {
                         targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
