@@ -1087,7 +1087,6 @@ a:hover {
     transform: scale(1.03) !important;
     position: relative !important;
     z-index: 1000 !important;
-    transition: all 0.3s ease !important;
     margin: 0 !important;
 }
 

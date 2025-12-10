@@ -174,26 +174,28 @@ function initTimeline() {
                     post.classList.remove('highlight');
                 });
                 
-                // 添加高亮
-                targetPost.classList.add('highlight');
-                console.log('添加高亮到文章:', targetPost.querySelector('.post-title a').textContent);
-                console.log('文章卡片类名:', targetPost.className);
-                console.log('是否有highlight类:', targetPost.classList.contains('highlight'));
-                
-                // 立即滚动到目标文章，不使用延迟
-                console.log('开始滚动到目标文章...');
-                targetPost.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
+                // 使用requestAnimationFrame确保在下一次重绘时添加高亮
+                requestAnimationFrame(() => {
+                    targetPost.classList.add('highlight');
+                    console.log('添加高亮到文章:', targetPost.querySelector('.post-title a').textContent);
+                    console.log('文章卡片类名:', targetPost.className);
+                    console.log('是否有highlight类:', targetPost.classList.contains('highlight'));
+                    
+                    // 立即滚动到目标文章，不使用延迟
+                    console.log('开始滚动到目标文章...');
+                    targetPost.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    
+                    // 确保0.5秒后取消高亮
+                    setTimeout(() => {
+                        if (targetPost && targetPost.classList.contains('highlight')) {
+                            targetPost.classList.remove('highlight');
+                            console.log('0.5秒后取消高亮');
+                        }
+                    }, 500);
                 });
-                
-                // 确保0.5秒后取消高亮
-                setTimeout(() => {
-                    if (targetPost && targetPost.classList.contains('highlight')) {
-                        targetPost.classList.remove('highlight');
-                        console.log('0.5秒后取消高亮');
-                    }
-                }, 500);
             }
             
             // 不立即改变URL，而是延迟改变，避免刷新时直接进入文章
@@ -269,23 +271,25 @@ function initTimeline() {
                         post.classList.remove('highlight');
                     });
                     
-                    // 添加高亮
-                    targetPost.classList.add('highlight');
-                    console.log('popstate事件中添加高亮到文章:', targetPost.querySelector('.post-title a').textContent);
-                    console.log('popstate - 文章卡片类名:', targetPost.className);
-                    console.log('popstate - 是否有highlight类:', targetPost.classList.contains('highlight'));
-                    
-                    setTimeout(() => {
-                        targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 300);
-                    
-                    // 确保0.5秒后取消高亮
-                    setTimeout(() => {
-                        if (targetPost && targetPost.classList.contains('highlight')) {
-                            targetPost.classList.remove('highlight');
-                            console.log('popstate事件中0.5秒后取消高亮');
-                        }
-                    }, 500);
+                    // 使用requestAnimationFrame确保在下一次重绘时添加高亮
+                    requestAnimationFrame(() => {
+                        targetPost.classList.add('highlight');
+                        console.log('popstate事件中添加高亮到文章:', targetPost.querySelector('.post-title a').textContent);
+                        console.log('popstate - 文章卡片类名:', targetPost.className);
+                        console.log('popstate - 是否有highlight类:', targetPost.classList.contains('highlight'));
+                        
+                        setTimeout(() => {
+                            targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }, 300);
+                        
+                        // 确保0.5秒后取消高亮
+                        setTimeout(() => {
+                            if (targetPost && targetPost.classList.contains('highlight')) {
+                                targetPost.classList.remove('highlight');
+                                console.log('popstate事件中0.5秒后取消高亮');
+                            }
+                        }, 500);
+                    });
                 }
             }
         }
