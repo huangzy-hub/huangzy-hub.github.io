@@ -1097,23 +1097,20 @@ a:hover {
     border-radius: inherit;
     opacity: 0.8;
     z-index: -1;
-    animation: pulseHighlight 0.5s ease-out;
-    will-change: transform, opacity;
+    animation: pulseHighlight 0.1s ease-out;
+    will-change: opacity;
     pointer-events: none;
 }
 
 /* 确保高亮动画持续0.1秒 */
 @keyframes pulseHighlight {
     0% {
-        transform: scale(1);
         opacity: 0.8;
     }
     50% {
-        transform: scale(1.04);
         opacity: 0.4;
     }
     100% {
-        transform: scale(1);
         opacity: 0;
     }
 }
