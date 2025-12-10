@@ -178,9 +178,12 @@ function initTimeline() {
                     block: 'center'
                 });
                 
-                // 0.5秒后取消高亮
+                // 确保0.5秒后取消高亮
                 setTimeout(() => {
-                    targetPost.classList.remove('highlight');
+                    if (targetPost && targetPost.classList.contains('highlight')) {
+                        targetPost.classList.remove('highlight');
+                        console.log('0.5秒后取消高亮');
+                    }
                 }, 500);
             }
             
@@ -257,8 +260,12 @@ function initTimeline() {
                         targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }, 300);
                     
+                    // 确保0.5秒后取消高亮
                     setTimeout(() => {
-                        targetPost.classList.remove('highlight');
+                        if (targetPost && targetPost.classList.contains('highlight')) {
+                            targetPost.classList.remove('highlight');
+                            console.log('popstate事件中0.5秒后取消高亮');
+                        }
                     }, 500);
                 }
             }

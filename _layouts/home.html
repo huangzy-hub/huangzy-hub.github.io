@@ -40,8 +40,7 @@ layout: default
                                    data-date="{{ post.date | date: '%Y-%m-%d' }}"
                                    data-time="{{ post.date | date: '%H' }}"
                                    data-title="{{ post.title | escape }}"
-                                   data-index="{{ forloop.index0 }}"
-                                   onclick="highlightPost(this)">
+                                   data-index="{{ forloop.index0 }}">
                                     <time>{{ post.date | date: "%m-%d" }}</time>
                                     <span>{{ post.title | truncate: 15 }}</span>
                                 </a>
