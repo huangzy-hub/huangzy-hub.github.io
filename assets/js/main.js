@@ -121,12 +121,8 @@ function initTimeline() {
                 console.log(`主页文章 #${index + 1}: "${title}"`);
             });
             
-            // 移除所有高亮
+            // 移除所有激活状态
             timelinePosts.forEach(post => post.classList.remove('active'));
-            blogPosts.forEach(post => post.classList.remove('highlight'));
-            
-            // 添加高亮
-            this.classList.add('active');
             
             // 直接使用时间轴文章的标题来查找对应的主页文章
             let targetPost = null;
@@ -180,35 +176,15 @@ function initTimeline() {
             }
             
             if (targetPost) {
-                // 先移除可能存在的其他高亮
-                document.querySelectorAll('.post-card.highlight').forEach(post => {
-                    post.classList.remove('highlight');
+                // 直接滚动到目标文章
+                console.log('开始滚动到目标文章...');
+                targetPost.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
                 });
                 
-                // 使用requestAnimationFrame确保在下一次重绘时添加高亮
-                requestAnimationFrame(() => {
-                    targetPost.classList.add('highlight');
-                    console.log('添加高亮到文章:', targetPost.querySelector('.post-title a').textContent);
-                    console.log('文章卡片类名:', targetPost.className);
-                    console.log('是否有highlight类:', targetPost.classList.contains('highlight'));
-                    
-                    // 立即滚动到目标文章，不使用延迟
-                    console.log('开始滚动到目标文章...');
-                    targetPost.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
-                    
-                    // 确保0.1秒后取消高亮
-                    setTimeout(() => {
-                        if (targetPost && targetPost.classList.contains('highlight')) {
-                            targetPost.classList.remove('highlight');
-                            console.log('0.1秒后取消高亮');
-                        }
-                        // 重置处理状态
-                        isProcessingClick = false;
-                    }, 100);
-                });
+                // 重置处理状态
+                isProcessingClick = false;
             }
             
             // 不立即改变URL，而是延迟改变，避免刷新时直接进入文章
@@ -251,16 +227,15 @@ function initTimeline() {
             const hash = window.location.hash.substring(1);
             console.log('popstate事件检测到hash:', hash);
             
-            // 移除所有高亮
+            // 移除所有激活状态
             timelinePosts.forEach(post => post.classList.remove('active'));
-            blogPosts.forEach(post => post.classList.remove('highlight'));
             
-            // 找到对应的时间轴文章并高亮
+            // 找到对应的时间轴文章并激活
             const targetTimeline = document.querySelector(`.timeline-post[href="${hash}"]`);
             if (targetTimeline) {
                 targetTimeline.classList.add('active');
                 
-                // 找到对应的文章并高亮
+                // 找到对应的文章
                 const postDate = targetTimeline.getAttribute('data-date').trim();
                 const matchingPosts = postsArray.filter(post => post.date === postDate);
                 
@@ -279,30 +254,10 @@ function initTimeline() {
                 }
                 
                 if (targetPost) {
-                    // 先移除可能存在的其他高亮
-                    document.querySelectorAll('.post-card.highlight').forEach(post => {
-                        post.classList.remove('highlight');
-                    });
-                    
-                    // 使用requestAnimationFrame确保在下一次重绘时添加高亮
-                    requestAnimationFrame(() => {
-                        targetPost.classList.add('highlight');
-                        console.log('popstate事件中添加高亮到文章:', targetPost.querySelector('.post-title a').textContent);
-                        console.log('popstate - 文章卡片类名:', targetPost.className);
-                        console.log('popstate - 是否有highlight类:', targetPost.classList.contains('highlight'));
-                        
-                        setTimeout(() => {
-                            targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }, 300);
-                        
-                        // 确保0.5秒后取消高亮
-                        setTimeout(() => {
-                            if (targetPost && targetPost.classList.contains('highlight')) {
-                                targetPost.classList.remove('highlight');
-                                console.log('popstate事件中0.5秒后取消高亮');
-                            }
-                        }, 500);
-                    });
+                    // 直接滚动到目标文章
+                    setTimeout(() => {
+                        targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
                 }
             }
         }

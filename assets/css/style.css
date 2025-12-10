@@ -1064,40 +1064,6 @@ a:hover {
     border-color: rgba(128, 90, 213, 0.3);
 }
 
-.post-card.highlight {
-    position: relative !important;
-    z-index: 1000 !important;
-}
-
-/* 添加脉冲动画效果 - 仅使用透明度变化，无放大效果 */
-.post-card.highlight::before {
-    content: '';
-    position: absolute;
-    top: -6px;
-    left: -6px;
-    right: -6px;
-    bottom: -6px;
-    background: var(--gradient);
-    border-radius: inherit;
-    opacity: 0.8;
-    z-index: -1;
-    animation: pulseHighlight 0.1s ease-out;
-    will-change: opacity;
-    pointer-events: none;
-}
-
-/* 确保高亮动画持续0.1秒 - 仅透明度变化，无transform */
-@keyframes pulseHighlight {
-    0% {
-        opacity: 0.8;
-    }
-    50% {
-        opacity: 0.4;
-    }
-    100% {
-        opacity: 0;
-    }
-}
 
 .post-header {
     margin-bottom: var(--space-sm);
