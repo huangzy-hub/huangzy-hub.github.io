@@ -1089,13 +1089,13 @@ a:hover {
 .post-card.highlight::before {
     content: '';
     position: absolute;
-    top: -6px;
-    left: -6px;
-    right: -6px;
-    bottom: -6px;
-    background: var(--gradient);
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
     border-radius: inherit;
-    opacity: 0.7;
+    opacity: 0.9;
     z-index: -1;
     animation: pulseHighlight 0.5s ease-out;
     pointer-events: none;
@@ -1105,11 +1105,11 @@ a:hover {
 @keyframes pulseHighlight {
     0% {
         transform: scale(1);
-        opacity: 0.7;
+        opacity: 0.9;
     }
     50% {
-        transform: scale(1.05);
-        opacity: 0.3;
+        transform: scale(1.08);
+        opacity: 0.5;
     }
     100% {
         transform: scale(1);
