@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 初始化滚动行为
     initScrollBehavior();
+    
+    // 双击封面进入文章功能
+    initDoubleClickToPost();
 });
 
 // 背景图片切换功能
@@ -781,6 +784,62 @@ function initTagFilter() {
                 document.body.style.backgroundAttachment = 'fixed';
             }
         });
+        
     }
+}
+
+// 双击封面进入文章功能
+function initDoubleClickToPost() {
+    const postCards = document.querySelectorAll('.post-card');
+    
+    postCards.forEach(card => {
+        let clickCount = 0;
+        let clickTimer = null;
+        
+        card.addEventListener('click', function(e) {
+            clickCount++;
+            
+            if (clickCount === 1) {
+                // 第一次点击，设置定时器
+                clickTimer = setTimeout(() => {
+                    clickCount = 0;
+                }, 400); // 400ms内没有第二次点击，则重置计数
+            } else if (clickCount === 2) {
+                // 第二次点击，执行双击操作
+                e.preventDefault();
+                clearTimeout(clickTimer);
+                clickCount = 0;
+                
+                // 获取文章链接
+                const postLink = card.querySelector('.post-title a');
+                if (postLink) {
+                    const href = postLink.getAttribute('href');
+                    if (href && href !== '#') {
+                        // 添加视觉反馈
+                        card.style.transform = 'scale(0.98)';
+                        setTimeout(() => {
+                            card.style.transform = '';
+                            window.location.href = href;
+                        }, 150);
+                    }
+                }
+            }
+        });
+        
+        // 添加提示样式
+        card.addEventListener('mouseenter', function() {
+            if (clickCount === 1) {
+                card.style.boxShadow = '0 0 0 3px rgba(128, 90, 213, 0.3)';
+            }
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            if (clickCount === 1) {
+                card.style.boxShadow = '';
+                clickCount = 0;
+                clearTimeout(clickTimer);
+            }
+        });
+    });
 }
 
