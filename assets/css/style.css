@@ -1049,7 +1049,7 @@ a:hover {
     padding: var(--space-md);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
-    transition: box-shadow var(--transition-normal), border-color var(--transition-normal), background var(--transition-normal);
+    transition: all var(--transition-normal);
     border: 2px solid rgba(74, 85, 104, 0.1);
     position: relative;
     overflow: hidden;
@@ -1061,8 +1061,37 @@ a:hover {
 
 .post-card:hover {
     border-color: var(--accent-color);
-    box-shadow: 0 0 0 3px rgba(128, 90, 213, 0.2);
+    box-shadow: 0 0 0 3px rgba(128, 90, 213, 0.2), var(--shadow-lg);
     transform: translateY(-2px);
+}
+
+/* 双击提示样式 */
+.post-card::after {
+    content: '双击进入';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(128, 90, 213, 0.9);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.post-card:hover::after {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.post-card.double-click-hint::after {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 
@@ -1079,17 +1108,34 @@ a:hover {
 .post-title a,
 .post-meta,
 .post-tags,
-.tag {
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    cursor: default;
+.tag,
+.post-date,
+.post-categories,
+.post-excerpt {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    cursor: default !important;
 }
 
 /* 保持链接的可点击状态 */
 .post-title a,
 .tag {
+    cursor: pointer !important;
+}
+
+/* 确保文章卡片区域的所有文字都不能编辑 */
+.post-card * {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    cursor: default !important;
+}
+
+/* 但链接保持可点击 */
+.post-card a {
     cursor: pointer !important;
 }
 

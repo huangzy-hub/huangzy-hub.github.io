@@ -792,7 +792,9 @@ function initTagFilter() {
 function initDoubleClickToPost() {
     const postCards = document.querySelectorAll('.post-card');
     
-    postCards.forEach(card => {
+    console.log('初始化双击功能，找到文章卡片数量:', postCards.length);
+    
+    postCards.forEach((card, index) => {
         let clickCount = 0;
         let clickTimer = null;
         
@@ -803,6 +805,7 @@ function initDoubleClickToPost() {
                 // 第一次点击，设置定时器
                 clickTimer = setTimeout(() => {
                     clickCount = 0;
+                    console.log(`文章卡片 #${index + 1}: 单击完成`);
                 }, 400); // 400ms内没有第二次点击，则重置计数
             } else if (clickCount === 2) {
                 // 第二次点击，执行双击操作
@@ -811,6 +814,8 @@ function initDoubleClickToPost() {
                 clearTimeout(clickTimer);
                 clickCount = 0;
                 
+                console.log(`文章卡片 #${index + 1}: 双击触发`);
+                
                 // 获取文章链接 - 尝试多种方式
                 let href = null;
                 
@@ -818,11 +823,13 @@ function initDoubleClickToPost() {
                 const postLink = card.querySelector('.post-title a');
                 if (postLink) {
                     href = postLink.getAttribute('href');
+                    console.log(`文章卡片 #${index + 1}: 从标题链接获取到:`, href);
                 }
                 
                 // 方法2：从卡片本身的链接获取
                 if (!href && card.href) {
                     href = card.href;
+                    console.log(`文章卡片 #${index + 1}: 从卡片链接获取到:`, href);
                 }
                 
                 // 方法3：从卡片中的第一个链接获取
@@ -830,20 +837,45 @@ function initDoubleClickToPost() {
                     const firstLink = card.querySelector('a');
                     if (firstLink && firstLink.getAttribute('href') && firstLink.getAttribute('href') !== '#') {
                         href = firstLink.getAttribute('href');
+                        console.log(`文章卡片 #${index + 1}: 从第一个链接获取到:`, href);
                     }
                 }
                 
-                console.log('双击检测到，目标链接:', href); // 调试日志
+                // 方法4：从data属性获取URL
+                if (!href) {
+                    // 尝试从data-title找到对应的文章
+                    const title = card.getAttribute('data-title');
+                    if (title) {
+                        // 查找所有链接，找到匹配标题的
+                        const allLinks = document.querySelectorAll('a');
+                        for (let link of allLinks) {
+                            const linkText = link.textContent.trim();
+                            if (linkText === title && link.getAttribute('href') && link.getAttribute('href').startsWith('/')) {
+                                href = link.getAttribute('href');
+                                console.log(`文章卡片 #${index + 1}: 从标题匹配获取到:`, href);
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                console.log(`文章卡片 #${index + 1}: 最终目标链接:`, href);
                 
                 if (href && href !== '#' && href !== 'javascript:;' && href !== 'void(0)') {
                     // 添加视觉反馈
                     card.style.transform = 'scale(0.98)';
+                    card.style.boxShadow = '0 0 0 3px rgba(128, 90, 213, 0.5)';
+                    
                     setTimeout(() => {
                         card.style.transform = '';
+                        card.style.boxShadow = '';
+                        console.log(`文章卡片 #${index + 1}: 跳转到:`, href);
                         window.location.href = href;
                     }, 150);
                 } else {
-                    console.warn('无法获取有效的文章链接:', href);
+                    console.warn(`文章卡片 #${index + 1}: 无法获取有效的文章链接:`, href);
+                    // 重置状态
+                    clickCount = 0;
                 }
             }
         });
@@ -852,16 +884,21 @@ function initDoubleClickToPost() {
         card.addEventListener('mouseenter', function() {
             if (clickCount === 1) {
                 card.style.boxShadow = '0 0 0 3px rgba(128, 90, 213, 0.3)';
+                card.classList.add('double-click-hint');
             }
         });
         
         card.addEventListener('mouseleave', function() {
             if (clickCount === 1) {
                 card.style.boxShadow = '';
+                card.classList.remove('double-click-hint');
                 clickCount = 0;
                 clearTimeout(clickTimer);
             }
         });
+        
+        // 添加键盘提示
+        card.setAttribute('title', '双击封面进入文章');
     });
 }
 
