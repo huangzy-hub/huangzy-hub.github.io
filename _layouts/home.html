@@ -101,7 +101,7 @@ layout: default
                     {% endif %}
 
                     <div class="post-footer">
-                        <!-- 双击封面进入文章 -->
+                        <a href="{{ post.url | relative_url }}" class="enter-btn">进入</a>
                     </div>
                 </article>
                 {% endfor %}
