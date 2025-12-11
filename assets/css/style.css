@@ -1072,6 +1072,27 @@ a:hover {
     flex: 1;
 }
 
+/* 防止文字被编辑 */
+.post-card,
+.post-card *,
+.post-title,
+.post-title a,
+.post-meta,
+.post-tags,
+.tag {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    cursor: default;
+}
+
+/* 保持链接的可点击状态 */
+.post-title a,
+.tag {
+    cursor: pointer !important;
+}
+
 .post-title {
     font-size: 1.4rem;
     margin-bottom: var(--space-sm);

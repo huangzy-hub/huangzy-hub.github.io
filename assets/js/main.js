@@ -807,21 +807,43 @@ function initDoubleClickToPost() {
             } else if (clickCount === 2) {
                 // 第二次点击，执行双击操作
                 e.preventDefault();
+                e.stopPropagation();
                 clearTimeout(clickTimer);
                 clickCount = 0;
                 
-                // 获取文章链接
+                // 获取文章链接 - 尝试多种方式
+                let href = null;
+                
+                // 方法1：从标题链接获取
                 const postLink = card.querySelector('.post-title a');
                 if (postLink) {
-                    const href = postLink.getAttribute('href');
-                    if (href && href !== '#') {
-                        // 添加视觉反馈
-                        card.style.transform = 'scale(0.98)';
-                        setTimeout(() => {
-                            card.style.transform = '';
-                            window.location.href = href;
-                        }, 150);
+                    href = postLink.getAttribute('href');
+                }
+                
+                // 方法2：从卡片本身的链接获取
+                if (!href && card.href) {
+                    href = card.href;
+                }
+                
+                // 方法3：从卡片中的第一个链接获取
+                if (!href) {
+                    const firstLink = card.querySelector('a');
+                    if (firstLink && firstLink.getAttribute('href') && firstLink.getAttribute('href') !== '#') {
+                        href = firstLink.getAttribute('href');
                     }
+                }
+                
+                console.log('双击检测到，目标链接:', href); // 调试日志
+                
+                if (href && href !== '#' && href !== 'javascript:;' && href !== 'void(0)') {
+                    // 添加视觉反馈
+                    card.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        card.style.transform = '';
+                        window.location.href = href;
+                    }, 150);
+                } else {
+                    console.warn('无法获取有效的文章链接:', href);
                 }
             }
         });
