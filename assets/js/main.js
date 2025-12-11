@@ -788,7 +788,7 @@ function initTagFilter() {
     }
 }
 
-// 双击封面进入文章功能 - 简化版本
+// 双击封面进入文章功能 - 支持整个卡片区域
 function initDoubleClickToPost() {
     const postCards = document.querySelectorAll('.post-card');
     
@@ -816,17 +816,68 @@ function initDoubleClickToPost() {
                 
                 console.log(`文章卡片 #${index + 1}: 双击触发`);
                 
-                // 简化逻辑：直接尝试从标题链接获取URL
-                const postLink = card.querySelector('.post-title a');
+                // 获取文章URL - 尝试多种方法
                 let href = null;
                 
+                // 方法1：从标题链接获取
+                const postLink = card.querySelector('.post-title a');
                 if (postLink && postLink.getAttribute('href')) {
                     href = postLink.getAttribute('href');
-                } else if (card.href) {
-                    href = card.href;
+                    console.log(`文章卡片 #${index + 1}: 从标题链接获取到:`, href);
                 }
                 
-                console.log(`文章卡片 #${index + 1}: 目标链接:`, href);
+                // 方法2：从卡片本身的链接获取
+                if (!href && card.href) {
+                    href = card.href;
+                    console.log(`文章卡片 #${index + 1}: 从卡片链接获取到:`, href);
+                }
+                
+                // 方法3：从data-title推断URL
+                if (!href) {
+                    const title = card.getAttribute('data-title');
+                    if (title) {
+                        // 尝试从页面中找到匹配的链接
+                        const allLinks = document.querySelectorAll('a');
+                        for (let link of allLinks) {
+                            const linkText = link.textContent.trim();
+                            if (linkText === title && link.getAttribute('href') && link.getAttribute('href').startsWith('/')) {
+                                href = link.getAttribute('href');
+                                console.log(`文章卡片 #${index + 1}: 从页面链接匹配获取到:`, href);
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                // 方法4：构建URL（基于Jekyll的URL结构）
+                if (!href) {
+                    const title = card.getAttribute('data-title');
+                    if (title) {
+                        // 清理标题，转换为URL友好的格式
+                        const urlTitle = title.toLowerCase()
+                            .replace(/[^a-z0-9\u4e00-\u9fa5\s-]/g, '') // 保留中文、字母、数字、空格和连字符
+                            .replace(/\s+/g, '-') // 空格替换为连字符
+                            .replace(/-+/g, '-'); // 多个连字符合并为一个
+                        
+                        // 尝试构建常见的Jekyll URL格式
+                        const possibleUrls = [
+                            `/${urlTitle}/`, // 简单格式：/标题/
+                            `/${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}-${urlTitle}/`, // 日期格式
+                        ];
+                        
+                        // 检查哪个URL存在
+                        for (let possibleUrl of possibleUrls) {
+                            const matchingLink = document.querySelector(`a[href="${possibleUrl}"]`);
+                            if (matchingLink) {
+                                href = possibleUrl;
+                                console.log(`文章卡片 #${index + 1}: 从构建URL获取到:`, href);
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                console.log(`文章卡片 #${index + 1}: 最终目标链接:`, href);
                 
                 if (href && href !== '#' && href !== 'javascript:;' && href !== 'void(0)') {
                     // 添加视觉反馈
