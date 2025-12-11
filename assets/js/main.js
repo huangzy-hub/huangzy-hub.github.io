@@ -788,7 +788,7 @@ function initTagFilter() {
     }
 }
 
-// 双击封面进入文章功能
+// 双击封面进入文章功能 - 简化版本
 function initDoubleClickToPost() {
     const postCards = document.querySelectorAll('.post-card');
     
@@ -799,13 +799,6 @@ function initDoubleClickToPost() {
         let clickTimer = null;
         
         card.addEventListener('click', function(e) {
-            // 防止在链接上触发双击（避免与单击链接冲突）
-            if (e.target.tagName === 'A') {
-                clickCount = 0;
-                clearTimeout(clickTimer);
-                return;
-            }
-            
             clickCount++;
             
             if (clickCount === 1) {
@@ -823,67 +816,17 @@ function initDoubleClickToPost() {
                 
                 console.log(`文章卡片 #${index + 1}: 双击触发`);
                 
-                // 获取文章链接 - 尝试多种方式
+                // 简化逻辑：直接尝试从标题链接获取URL
+                const postLink = card.querySelector('.post-title a');
                 let href = null;
                 
-                // 方法1：从标题链接获取
-                const postLink = card.querySelector('.post-title a');
-                if (postLink) {
+                if (postLink && postLink.getAttribute('href')) {
                     href = postLink.getAttribute('href');
-                    console.log(`文章卡片 #${index + 1}: 从标题链接获取到:`, href);
-                }
-                
-                // 方法2：从卡片本身的链接获取
-                if (!href && card.href) {
+                } else if (card.href) {
                     href = card.href;
-                    console.log(`文章卡片 #${index + 1}: 从卡片链接获取到:`, href);
                 }
                 
-                // 方法3：从卡片中的第一个链接获取
-                if (!href) {
-                    const firstLink = card.querySelector('a');
-                    if (firstLink && firstLink.getAttribute('href') && firstLink.getAttribute('href') !== '#') {
-                        href = firstLink.getAttribute('href');
-                        console.log(`文章卡片 #${index + 1}: 从第一个链接获取到:`, href);
-                    }
-                }
-                
-                // 方法4：从data属性获取URL
-                if (!href) {
-                    // 尝试从data-title找到对应的文章
-                    const title = card.getAttribute('data-title');
-                    if (title) {
-                        // 查找所有链接，找到匹配标题的
-                        const allLinks = document.querySelectorAll('a');
-                        for (let link of allLinks) {
-                            const linkText = link.textContent.trim();
-                            if (linkText === title && link.getAttribute('href') && link.getAttribute('href').startsWith('/')) {
-                                href = link.getAttribute('href');
-                                console.log(`文章卡片 #${index + 1}: 从标题匹配获取到:`, href);
-                                break;
-                            }
-                        }
-                    }
-                }
-                
-                // 方法5：从URL模式推断（假设文章URL格式为 /年-月-日-标题/）
-                if (!href) {
-                    const title = card.getAttribute('data-title');
-                    if (title) {
-                        // 清理标题，转换为URL友好的格式
-                        const urlTitle = title.toLowerCase()
-                            .replace(/[^a-z0-9\u4e00-\u9fa5\s-]/g, '') // 保留中文、字母、数字、空格和连字符
-                            .replace(/\s+/g, '-') // 空格替换为连字符
-                            .replace(/-+/g, '-'); // 多个连字符合并为一个
-                        
-                        // 尝试构建URL
-                        const currentYear = new Date().getFullYear();
-                        href = `/${currentYear}-12-${String(index + 1).padStart(2, '0')}-${urlTitle}/`;
-                        console.log(`文章卡片 #${index + 1}: 从标题推断URL:`, href);
-                    }
-                }
-                
-                console.log(`文章卡片 #${index + 1}: 最终目标链接:`, href);
+                console.log(`文章卡片 #${index + 1}: 目标链接:`, href);
                 
                 if (href && href !== '#' && href !== 'javascript:;' && href !== 'void(0)') {
                     // 添加视觉反馈
