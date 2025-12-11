@@ -799,6 +799,13 @@ function initDoubleClickToPost() {
         let clickTimer = null;
         
         card.addEventListener('click', function(e) {
+            // 防止在链接上触发双击（避免与单击链接冲突）
+            if (e.target.tagName === 'A') {
+                clickCount = 0;
+                clearTimeout(clickTimer);
+                return;
+            }
+            
             clickCount++;
             
             if (clickCount === 1) {
@@ -856,6 +863,23 @@ function initDoubleClickToPost() {
                                 break;
                             }
                         }
+                    }
+                }
+                
+                // 方法5：从URL模式推断（假设文章URL格式为 /年-月-日-标题/）
+                if (!href) {
+                    const title = card.getAttribute('data-title');
+                    if (title) {
+                        // 清理标题，转换为URL友好的格式
+                        const urlTitle = title.toLowerCase()
+                            .replace(/[^a-z0-9\u4e00-\u9fa5\s-]/g, '') // 保留中文、字母、数字、空格和连字符
+                            .replace(/\s+/g, '-') // 空格替换为连字符
+                            .replace(/-+/g, '-'); // 多个连字符合并为一个
+                        
+                        // 尝试构建URL
+                        const currentYear = new Date().getFullYear();
+                        href = `/${currentYear}-12-${String(index + 1).padStart(2, '0')}-${urlTitle}/`;
+                        console.log(`文章卡片 #${index + 1}: 从标题推断URL:`, href);
                     }
                 }
                 
