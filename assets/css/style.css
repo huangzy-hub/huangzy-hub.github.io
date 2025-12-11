@@ -1123,34 +1123,6 @@ a:hover {
     overflow: hidden;
 }
 
-.post-title a {
-    color: var(--primary-color);
-    text-decoration: none;
-    transition: all var(--transition-normal);
-    position: relative;
-    display: inline-block;
-}
-
-.post-title a::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--gradient);
-    transition: width var(--transition-normal);
-    border-radius: 2px;
-}
-
-.post-title a:hover {
-    color: var(--accent-color);
-}
-
-.post-title a:hover::after {
-    width: 100%;
-}
-
 .post-meta {
     font-size: 0.85rem;
     color: var(--text-light);
@@ -1171,69 +1143,34 @@ a:hover {
     display: none;
 }
 
-/* 标签样式 - 紧凑版本 */
-.post-tags {
-    margin: var(--space-md) 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-}
-
-.tag {
-    display: inline-flex;
-    align-items: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: var(--space-xs) var(--space-md);
-    border-radius: 20px;
-    font-size: 0.8rem;
-    text-decoration: none;
-    transition: all var(--transition-normal);
-    font-weight: 600;
-    cursor: default;
-    position: relative;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    gap: var(--space-xs);
-}
-
-.tag::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transition: left 0.5s ease;
-}
-
-.tag:hover::before {
-    left: 100%;
-}
-
-.tag:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: var(--shadow-md);
-}
 
 .post-footer {
     margin-top: auto;
     padding-top: var(--space-xs);
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+}
+
+.post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    flex: 1;
 }
 
 .enter-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.8rem;
     background: var(--gradient);
     color: white;
     border: none;
     border-radius: 20px;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
     transition: all var(--transition-normal);
@@ -1241,6 +1178,8 @@ a:hover {
     box-shadow: var(--shadow);
     position: relative;
     overflow: hidden;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .enter-btn::before {
