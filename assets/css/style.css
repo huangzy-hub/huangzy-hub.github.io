@@ -402,42 +402,28 @@ a:hover {
 }
 
 
-/* 侧边栏样式 - 固定在左侧 */
+/* 侧边栏样式 */
 .sidebar {
-    position: fixed;
+    position: sticky;
     top: 120px;
-    left: 0;
-    width: 300px;
     height: calc(100vh - 140px);
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--secondary-color) var(--border-color);
+    transition: all var(--transition-normal);
+    width: 320px;
+    flex-shrink: 0;
+}
+
+/* 侧边栏固定样式 */
+.sidebar.sidebar-fixed {
+    position: fixed;
+    top: 120px;
+    height: calc(100vh - 140px);
+    width: 320px;
     z-index: 100;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
     box-shadow: var(--shadow-lg);
-    border: 1px solid rgba(74, 85, 104, 0.1);
-    border-left: none;
-}
-
-.sidebar::-webkit-scrollbar {
-    width: 6px;
-}
-
-.sidebar::-webkit-scrollbar-track {
-    background: var(--border-color);
-    border-radius: var(--radius-sm);
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-    background: var(--secondary-color);
-    border-radius: var(--radius-sm);
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-color);
+    border-right: 1px solid var(--border-light);
 }
 
 /* 主内容区调整 */
@@ -447,11 +433,16 @@ a:hover {
     scrollbar-width: thin;
     scrollbar-color: var(--secondary-color) var(--border-color);
     padding-right: var(--space-md);
-    margin-left: 320px; /* 为固定的侧边栏留出空间 */
-    width: calc(100% - 320px); /* 减小文章宽度 */
-    max-width: 900px; /* 限制最大宽度 */
-    margin-right: auto;
-    margin-left: auto;
+    margin-left: 0;
+    flex: 1;
+}
+
+/* 主内容区滚动时的固定效果 */
+.main-content.scrolling {
+    position: sticky;
+    top: 120px;
+    height: calc(100vh - 200px);
+    margin-left: 320px;
 }
 
 /* 首页布局调整 */
@@ -460,28 +451,6 @@ a:hover {
     gap: 2rem;
     align-items: flex-start;
     min-height: calc(100vh - 200px);
-    position: relative;
-    z-index: 1;
-    padding-top: 120px; /* 为固定头部留出空间 */
-}
-
-/* 确保主内容区在正确的层级 */
-.main-content {
-    position: relative;
-    z-index: 5;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    border: 1px solid rgba(74, 85, 104, 0.1);
-    padding: var(--space-xl);
-}
-
-/* 文章区域不会遮挡时间轴 */
-.posts-section {
-    position: relative;
-    z-index: 5;
 }
 
 /* 响应式设计调整 */
