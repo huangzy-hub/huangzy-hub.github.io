@@ -451,6 +451,20 @@ a:hover {
     gap: 2rem;
     align-items: flex-start;
     min-height: calc(100vh - 200px);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    width: 100%;
+    flex: 1;
+}
+
+/* 确保主页内容在封面隐藏后能够正确显示 */
+.home-layout.visible {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
+    display: flex;
 }
 
 /* 响应式设计调整 */

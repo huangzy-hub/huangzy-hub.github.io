@@ -305,6 +305,8 @@ layout: default
     visibility: hidden;
     pointer-events: none;
     min-height: calc(100vh - 200px);
+    width: 100%;
+    flex: 1;
 }
 
 /* 主页内容在封面隐藏后显示 */
@@ -313,6 +315,7 @@ layout: default
     transform: translateY(0);
     visibility: visible;
     pointer-events: auto;
+    display: flex;
 }
 
 /* 响应式设计 */
@@ -455,13 +458,21 @@ document.addEventListener('DOMContentLoaded', function() {
                     homeContent.style.transform = 'translateY(0)';
                     homeContent.style.visibility = 'visible';
                     homeContent.style.pointerEvents = 'auto';
-                }
-                
-                // 确保主内容区可见
-                const mainContentArea = document.querySelector('.main-content');
-                if (mainContentArea) {
-                    mainContentArea.style.display = 'block';
-                    mainContentArea.style.opacity = '1';
+                    homeContent.style.display = 'flex';
+                    
+                    // 确保侧边栏可见
+                    const sidebar = homeContent.querySelector('.sidebar');
+                    if (sidebar) {
+                        sidebar.style.display = 'block';
+                        sidebar.style.opacity = '1';
+                    }
+                    
+                    // 确保主内容区可见
+                    const mainContentArea = homeContent.querySelector('.main-content');
+                    if (mainContentArea) {
+                        mainContentArea.style.display = 'block';
+                        mainContentArea.style.opacity = '1';
+                    }
                 }
                 
                 // 滚动到页面顶部
@@ -497,6 +508,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (typeof initSearch === 'function') {
             initSearch();
         }
+        
+        // 确保主页布局正确显示
+        const homeLayout = document.querySelector('.home-layout');
+        if (homeLayout) {
+            homeLayout.style.display = 'flex';
+            homeLayout.style.opacity = '1';
+            homeLayout.style.visibility = 'visible';
+        }
     }
     
     // 鼠标滚轮处理函数
@@ -522,6 +541,14 @@ document.addEventListener('DOMContentLoaded', function() {
             mainContent.style.opacity = '0';
             mainContent.style.transform = 'translateY(20px)';
             mainContent.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            // 确保主页内容在封面隐藏后能够正确显示
+            const homeContent = document.querySelector('.home-layout');
+            if (homeContent) {
+                homeContent.style.opacity = '0';
+                homeContent.style.transform = 'translateY(20px)';
+                homeContent.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            }
         }
     }, 100);
 });
