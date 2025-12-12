@@ -713,7 +713,7 @@ function initTagFilter() {
         setTimeout(() => {
             filterResultInfo.style.opacity = '0';
             filterResultInfo.style.transform = 'translateY(-10px)';
-        }, 3000);
+        }, 1000);
     }
     
     // 检查URL参数，如果有标签参数则自动筛选
