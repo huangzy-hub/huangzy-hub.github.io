@@ -1,4 +1,4 @@
 ---
-layout: home
+layout: cover
 title: 首页
 ---
