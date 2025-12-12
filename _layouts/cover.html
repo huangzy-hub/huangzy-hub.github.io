@@ -296,20 +296,19 @@ layout: default
     opacity: 1;
 }
 
-/* 主页内容在封面显示时隐藏 */
+/* 主页内容直接显示 */
 .home-layout {
     display: flex;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    visibility: hidden;
-    pointer-events: none;
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+    pointer-events: auto;
     min-height: calc(100vh - 200px);
     width: 100%;
     flex: 1;
 }
 
-/* 主页内容在封面隐藏后显示 */
+/* 主页内容保持显示状态 */
 .home-layout.visible {
     opacity: 1;
     transform: translateY(0);

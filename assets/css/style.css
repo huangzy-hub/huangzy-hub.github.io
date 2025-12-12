@@ -458,7 +458,7 @@ a:hover {
     flex: 1;
 }
 
-/* 确保主页内容在封面隐藏后能够正确显示 */
+/* 确保主页内容直接显示 */
 .home-layout.visible {
     opacity: 1;
     transform: translateY(0);

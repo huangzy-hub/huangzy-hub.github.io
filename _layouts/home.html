@@ -3,7 +3,7 @@ layout: default
 ---
 
 <!-- 主页内容 -->
-<div class="home-layout">
+<div class="home-layout visible">
     <!-- 左侧边栏 -->
     <aside class="sidebar">
         <div class="sidebar-section">
@@ -192,5 +192,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // 确保主页内容直接显示
+    const homeLayout = document.querySelector('.home-layout');
+    if (homeLayout) {
+        homeLayout.classList.add('visible');
+        homeLayout.style.opacity = '1';
+        homeLayout.style.visibility = 'visible';
+        homeLayout.style.pointerEvents = 'auto';
+    }
 });
 </script>
