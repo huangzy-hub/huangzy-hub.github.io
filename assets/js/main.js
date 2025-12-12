@@ -258,7 +258,7 @@ function initTimeline() {
                     // 直接滚动到目标文章
                     setTimeout(() => {
                         targetPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 300);
+                    }, 100);
                 }
             }
         }
@@ -609,7 +609,7 @@ function initTagFilter() {
                         behavior: 'smooth',
                         block: 'start'
                     });
-                }, 300);
+                }, 100);
             }
         });
     });
@@ -691,7 +691,7 @@ function initTagFilter() {
                     behavior: 'smooth',
                     block: 'start'
                 });
-            }, 300);
+            }, 100);
         }
     }
     
