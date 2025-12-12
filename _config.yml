@@ -25,3 +25,7 @@ theme: null
 # 自定义设置
 header_pages:
   - about.md
+  - welcome.md
+
+# 首页设置
+welcome_page: true
