@@ -301,6 +301,15 @@ layout: default
     opacity: 0;
     transform: translateY(20px);
     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    visibility: hidden;
+}
+
+/* 主页内容在封面隐藏后显示 */
+.home-layout.visible {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
 }
 
 /* 响应式设计 */
@@ -438,6 +447,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 显示主页内容并恢复原始样式
                 const homeContent = document.querySelector('.home-layout');
                 if (homeContent) {
+                    homeContent.classList.add('visible');
                     homeContent.style.display = 'flex';
                     homeContent.style.opacity = '1';
                     homeContent.style.transform = 'translateY(0)';
@@ -456,6 +466,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     top: 0,
                     behavior: 'smooth'
                 });
+                
+                // 强制重新计算布局
+                window.dispatchEvent(new Event('resize'));
             }
         }, 400);
         
