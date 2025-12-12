@@ -439,12 +439,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 mainContent.style.opacity = '1';
                 mainContent.style.transform = 'translateY(0)';
                 
-                // 显示主页内容
+                // 显示主页内容并恢复原始样式
                 const homeContent = document.querySelector('.home-layout');
                 if (homeContent) {
                     homeContent.style.display = 'block';
                     homeContent.style.opacity = '1';
                     homeContent.style.transform = 'translateY(0)';
+                    homeContent.style.transition = 'none'; // 移除过渡效果，直接显示
                 }
             }
         }, 400);

@@ -2,9 +2,114 @@
 layout: cover
 ---
 
-<!-- 主页内容将在封面隐藏后显示 -->
-<div style="display: none;">
-{{ content }}
+<!-- 主页内容 -->
+<div class="home-layout">
+    <!-- 左侧边栏 -->
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <h3>文章时间轴</h3>
+            <div class="timeline">
+                {% assign posts_by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
+                {% for year_group in posts_by_year %}
+                <div class="timeline-year">
+                    <h4>{{ year_group.name }}年</h4>
+                    <div class="timeline-months">
+                        {% assign posts_by_month = year_group.items | group_by_exp: "post", "post.date | date: '%m'" %}
+                        {% for month_group in posts_by_month %}
+                        {% assign month_number = month_group.name %}
+                        {% assign month_name = "Invalid" %}
+                        {% case month_number %}
+                            {% when '01' %}{% assign month_name = '一月' %}
+                            {% when '02' %}{% assign month_name = '二月' %}
+                            {% when '03' %}{% assign month_name = '三月' %}
+                            {% when '04' %}{% assign month_name = '四月' %}
+                            {% when '05' %}{% assign month_name = '五月' %}
+                            {% when '06' %}{% assign month_name = '六月' %}
+                            {% when '07' %}{% assign month_name = '七月' %}
+                            {% when '08' %}{% assign month_name = '八月' %}
+                            {% when '09' %}{% assign month_name = '九月' %}
+                            {% when '10' %}{% assign month_name = '十月' %}
+                            {% when '11' %}{% assign month_name = '十一月' %}
+                            {% when '12' %}{% assign month_name = '十二月' %}
+                        {% endcase %}
+                        <div class="timeline-month">
+                            <h5>{{ month_name }}</h5>
+                            <div class="timeline-posts">
+                                {% for post in month_group.items %}
+                                <a href="{{ post.url | relative_url }}"
+                                   class="timeline-post"
+                                   data-date="{{ post.date | date: '%Y-%m-%d' }}"
+                                   data-time="{{ post.date | date: '%H' }}"
+                                   data-title="{{ post.title | escape }}"
+                                   data-index="{{ forloop.index0 }}">
+                                    <time>{{ post.date | date: "%m-%d" }}</time>
+                                    <span>{{ post.title | truncate: 15 }}</span>
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </aside>
+
+    <!-- 右侧主内容 -->
+    <main class="main-content">
+        <!-- 文章列表 -->
+        <section class="posts-section">
+            <div class="section-header">
+                <h3>📝 最新文章</h3>
+                <div class="tag-filter">
+                    <div class="tag-filters">
+                        <button class="tag-filter-btn active" data-tag="all">全部</button>
+                        {% assign all_tags = site.tags | sort %}
+                        {% for tag in all_tags %}
+                        {% assign tag_name = tag[0] %}
+                        <button class="tag-filter-btn" data-tag="{{ tag_name }}">#{{ tag_name }}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="posts-grid">
+                {% for post in site.posts %}
+                <article class="post-card" data-date="{{ post.date | date: '%Y-%m-%d' }}" data-time="{{ post.date | date: '%H' }}" data-title="{{ post.title | escape }}">
+                    <div class="post-header">
+                        <h4 class="post-title">{{ post.title }}</h4>
+                        <div class="post-meta">
+                            <time class="post-date">{{ post.date | date: "%Y年%m月%d日" }}</time>
+                            {% if post.categories %}
+                            <span class="post-categories">· {{ post.categories | join: ", " }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="post-excerpt">
+                        {{ post.excerpt | strip_html | truncate: 200 }}
+                    </div>
+
+                    {% if post.tags %}
+                    <div class="post-footer">
+                        <div class="post-tags">
+                            {% for tag in post.tags %}
+                            <span class="tag">#{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                        <a href="{{ post.url | relative_url }}" class="enter-btn">进入</a>
+                    </div>
+                    {% else %}
+                    <div class="post-footer">
+                        <a href="{{ post.url | relative_url }}" class="enter-btn">进入</a>
+                    </div>
+                    {% endif %}
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
 </div>
 
 <div class="home-layout">
