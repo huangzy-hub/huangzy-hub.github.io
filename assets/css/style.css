@@ -447,24 +447,24 @@ a:hover {
 
 /* 首页布局调整 */
 .home-layout {
-    display: flex;
+    display: flex !important;
     gap: 2rem;
     align-items: flex-start;
     min-height: calc(100vh - 200px);
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
     width: 100%;
     flex: 1;
 }
 
 /* 确保主页内容直接显示 */
 .home-layout.visible {
-    opacity: 1;
+    opacity: 1 !important;
     transform: translateY(0);
-    visibility: visible;
-    pointer-events: auto;
-    display: flex;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    display: flex !important;
 }
 
 /* 响应式设计调整 */
