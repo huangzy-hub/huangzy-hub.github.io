@@ -1,0 +1,463 @@
+---
+layout: default
+---
+
+<!-- 封面页面 -->
+<div class="cover-page" id="cover-page">
+    <!-- 封面背景 -->
+    <div class="cover-background" id="cover-background">
+        <div class="cover-overlay"></div>
+    </div>
+    
+    <!-- 封面内容 -->
+    <div class="cover-content">
+        <div class="cover-avatar">
+            <img src="{{ '/assets/images/head/head.png' | relative_url }}" alt="头像" class="avatar-image">
+        </div>
+        
+        <h1 class="cover-title">{{ site.title }}</h1>
+        <p class="cover-subtitle">{{ site.description }}</p>
+        
+        <div class="cover-actions">
+            <a href="#main-content" class="cover-btn enter-btn">
+                <span>进入博客</span>
+                <svg class="arrow-icon" viewBox="0 0 24 24" width="20" height="20">
+                    <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                </svg>
+            </a>
+        </div>
+        
+        <div class="cover-scroll-hint">
+            <span class="scroll-text">上划进入</span>
+            <svg class="scroll-icon" viewBox="0 0 24 24" width="16" height="16">
+                <path fill="currentColor" d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+            </svg>
+        </div>
+    </div>
+    
+    <!-- 滚动指示器 -->
+    <div class="scroll-indicator">
+        <div class="scroll-dot"></div>
+    </div>
+</div>
+
+<!-- 主要内容区域 -->
+<div id="main-content" class="main-content-wrapper">
+    {{ content }}
+</div>
+
+<style>
+/* 封面页面样式 */
+.cover-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 9999;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cover-page.hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.cover-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('{{ "/assets/images/backgrounds/bg1.png" | relative_url }}') center/cover no-repeat;
+    filter: brightness(0.7);
+    transition: all 1s ease;
+}
+
+.cover-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, 
+        rgba(102, 126, 234, 0.8) 0%, 
+        rgba(118, 75, 162, 0.8) 50%,
+        rgba(245, 101, 101, 0.6) 100%);
+    animation: overlayShift 8s ease-in-out infinite;
+}
+
+@keyframes overlayShift {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 0.6; }
+}
+
+.cover-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    z-index: 2;
+    animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.cover-avatar {
+    margin-bottom: 2rem;
+    animation: avatarFloat 3s ease-in-out infinite;
+}
+
+@keyframes avatarFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.avatar-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.avatar-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.cover-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    letter-spacing: -1px;
+    animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+    from { text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); }
+    to { text-shadow: 0 4px 30px rgba(255, 255, 255, 0.2); }
+}
+
+.cover-subtitle {
+    font-size: 1.3rem;
+    font-weight: 400;
+    opacity: 0.95;
+    margin-bottom: 3rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    max-width: 600px;
+    line-height: 1.6;
+}
+
+.cover-actions {
+    margin-bottom: 4rem;
+}
+
+.cover-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem 2.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.cover-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.6s ease;
+}
+
+.cover-btn:hover::before {
+    left: 100%;
+}
+
+.cover-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.arrow-icon {
+    transition: transform 0.3s ease;
+}
+
+.cover-btn:hover .arrow-icon {
+    transform: translateY(2px);
+}
+
+.cover-scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40% { transform: translateX(-50%) translateY(-10px); }
+    60% { transform: translateX(-50%) translateY(-5px); }
+}
+
+.scroll-icon {
+    opacity: 0.8;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+}
+
+.scroll-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transition: all 0.3s ease;
+}
+
+.scroll-dot.active {
+    background: white;
+    transform: scale(1.2);
+}
+
+/* 主要内容区域样式 */
+.main-content-wrapper {
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.main-content-wrapper.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .cover-title {
+        font-size: 2.5rem;
+    }
+    
+    .cover-subtitle {
+        font-size: 1.1rem;
+        padding: 0 1rem;
+    }
+    
+    .cover-btn {
+        padding: 0.8rem 2rem;
+        font-size: 1rem;
+        gap: 0.5rem;
+    }
+    
+    .avatar-image {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .cover-scroll-hint {
+        bottom: 1.5rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .cover-title {
+        font-size: 2rem;
+    }
+    
+    .cover-subtitle {
+        font-size: 1rem;
+    }
+    
+    .cover-btn {
+        padding: 0.7rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* 暗色模式适配 */
+@media (prefers-color-scheme: dark) {
+    .cover-background {
+        filter: brightness(0.6);
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const coverPage = document.getElementById('cover-page');
+    const coverBackground = document.getElementById('cover-background');
+    const mainContent = document.querySelector('.main-content-wrapper');
+    const coverBtn = document.querySelector('.cover-btn');
+    let isCoverVisible = true;
+    
+    // 随机选择背景图片
+    function initRandomBackground() {
+        const backgrounds = [
+            '/assets/images/backgrounds/bg1.png',
+            '/assets/images/backgrounds/bg2.png',
+            '/assets/images/backgrounds/bg3.png'
+        ];
+        
+        // 从localStorage获取上次使用的背景索引，如果没有则随机选择
+        let lastBgIndex = parseInt(localStorage.getItem('lastBgIndex') || '-1');
+        
+        // 确保每次都是不同的背景
+        let newBgIndex;
+        do {
+            newBgIndex = Math.floor(Math.random() * backgrounds.length);
+        } while (backgrounds.length > 1 && newBgIndex === lastBgIndex);
+        
+        // 设置新的背景
+        coverBackground.style.backgroundImage = `url('${backgrounds[newBgIndex]}')`;
+        
+        // 保存当前背景索引
+        localStorage.setItem('lastBgIndex', newBgIndex.toString());
+        
+        // 添加背景加载动画
+        coverBackground.style.opacity = '0';
+        setTimeout(() => {
+            coverBackground.style.transition = 'opacity 1s ease';
+            coverBackground.style.opacity = '1';
+        }, 100);
+    }
+    
+    // 初始化随机背景
+    initRandomBackground();
+    
+    // 进入博客按钮点击事件
+    if (coverBtn) {
+        coverBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            hideCover();
+        });
+    }
+    
+    // 鼠标滚轮事件
+    let isScrolling = false;
+    window.addEventListener('wheel', function(e) {
+        if (isScrolling || !isCoverVisible) return;
+        
+        if (e.deltaY > 0) {
+            // 向下滚动，隐藏封面
+            hideCover();
+        }
+    }, { passive: true });
+    
+    // 触摸事件（移动端）
+    let touchStartY = 0;
+    let touchEndY = 0;
+    
+    coverPage.addEventListener('touchstart', function(e) {
+        touchStartY = e.changedTouches[0].screenY;
+    });
+    
+    coverPage.addEventListener('touchend', function(e) {
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipe();
+    });
+    
+    function handleSwipe() {
+        if (touchStartY - touchEndY > 50) {
+            // 向上滑动，隐藏封面
+            hideCover();
+        }
+    }
+    
+    // 隐藏封面函数
+    function hideCover() {
+        if (!isCoverVisible) return;
+        
+        isCoverVisible = false;
+        coverPage.classList.add('hidden');
+        
+        // 添加隐藏动画效果
+        coverBackground.style.filter = 'brightness(0.3)';
+        
+        // 延迟显示主要内容，确保过渡动画完成
+        setTimeout(() => {
+            if (mainContent) {
+                mainContent.style.opacity = '1';
+                mainContent.style.transform = 'translateY(0)';
+            }
+        }, 400);
+        
+        // 防止页面滚动
+        document.body.style.overflow = 'auto';
+        
+        // 移除事件监听器
+        window.removeEventListener('wheel', handleWheel);
+    }
+    
+    // 鼠标滚轮处理函数
+    function handleWheel(e) {
+        if (e.deltaY > 0) {
+            hideCover();
+        }
+    }
+    
+    // 键盘事件（空格键或向下箭头）
+    document.addEventListener('keydown', function(e) {
+        if (!isCoverVisible) return;
+        
+        if (e.code === 'Space' || e.code === 'ArrowDown') {
+            e.preventDefault();
+            hideCover();
+        }
+    });
+    
+    // 页面加载完成后的初始化
+    setTimeout(() => {
+        if (mainContent) {
+            mainContent.style.opacity = '0';
+            mainContent.style.transform = 'translateY(20px)';
+            mainContent.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+        }
+    }, 100);
+});
+</script>
