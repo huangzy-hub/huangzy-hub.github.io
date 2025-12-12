@@ -304,6 +304,7 @@ layout: default
     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     visibility: hidden;
     pointer-events: none;
+    min-height: calc(100vh - 200px);
 }
 
 /* 主页内容在封面隐藏后显示 */
@@ -452,6 +453,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     homeContent.classList.add('visible');
                     homeContent.style.opacity = '1';
                     homeContent.style.transform = 'translateY(0)';
+                    homeContent.style.visibility = 'visible';
                     homeContent.style.pointerEvents = 'auto';
                 }
                 
@@ -470,6 +472,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // 强制重新计算布局
                 window.dispatchEvent(new Event('resize'));
+                
+                // 初始化主页功能
+                initHomePageFeatures();
             }
         }, 400);
         
@@ -478,6 +483,20 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 移除事件监听器
         window.removeEventListener('wheel', handleWheel);
+    }
+    
+    // 初始化主页功能
+    function initHomePageFeatures() {
+        // 确保主页的JavaScript功能正常工作
+        if (typeof initTimeline === 'function') {
+            initTimeline();
+        }
+        if (typeof initTagFilter === 'function') {
+            initTagFilter();
+        }
+        if (typeof initSearch === 'function') {
+            initSearch();
+        }
     }
     
     // 鼠标滚轮处理函数
