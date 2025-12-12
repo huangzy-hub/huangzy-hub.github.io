@@ -438,10 +438,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 显示主页内容并恢复原始样式
                 const homeContent = document.querySelector('.home-layout');
                 if (homeContent) {
-                    homeContent.style.display = 'block';
+                    homeContent.style.display = 'flex';
                     homeContent.style.opacity = '1';
                     homeContent.style.transform = 'translateY(0)';
                     homeContent.style.transition = 'none'; // 移除过渡效果，直接显示
+                }
+                
+                // 确保主内容区可见
+                const mainContentArea = document.querySelector('.main-content');
+                if (mainContentArea) {
+                    mainContentArea.style.display = 'block';
+                    mainContentArea.style.opacity = '1';
                 }
             }
         }, 400);
