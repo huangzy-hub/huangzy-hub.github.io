@@ -451,12 +451,37 @@ a:hover {
     gap: 2rem;
     align-items: flex-start;
     min-height: calc(100vh - 200px);
+    position: relative;
+    z-index: 1;
+}
+
+/* 确保侧边栏在文章上方 */
+.sidebar {
+    position: relative;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(74, 85, 104, 0.1);
+}
+
+/* 确保主内容区在正确的层级 */
+.main-content {
+    position: relative;
+    z-index: 5;
+}
+
+/* 文章区域不会遮挡时间轴 */
+.posts-section {
+    position: relative;
+    z-index: 5;
 }
 
 /* 响应式设计调整 */
 @media (max-width: 1024px) {
     .home-layout {
-        grid-template-columns: 280px 1fr;
         gap: 1.5rem;
     }
     
