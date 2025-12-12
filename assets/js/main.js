@@ -195,7 +195,7 @@ function initTimeline() {
                 const baseUrl = window.location.href.split('#')[0];
                 window.location.hash = postUrl.replace(baseUrl, '');
                 console.log('延迟更新URL:', window.location.hash);
-            }, 500);
+            }, 100);
         });
     });
     
