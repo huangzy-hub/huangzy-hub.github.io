@@ -27,10 +27,6 @@ title: 搜索
                     <input type="checkbox" id="search-content" checked>
                     <span>内容</span>
                 </label>
-                <label>
-                    <input type="checkbox" id="search-tags" checked>
-                    <span>标签</span>
-                </label>
             </div>
         </div>
 
@@ -38,7 +34,7 @@ title: 搜索
             <div id="results-container">
                 <div class="search-placeholder">
                     <p>💡 输入关键词开始搜索</p>
-                    <p>您可以搜索文章标题、内容和标签</p>
+                    <p>您可以搜索文章标题和内容</p>
                 </div>
             </div>
         </div>

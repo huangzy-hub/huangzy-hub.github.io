@@ -540,7 +540,7 @@ a:hover {
         justify-content: center;
     }
     
-    .post-page, .tags-page, .tag-page {
+    .post-page {
         padding: 1.5rem;
         margin: 1rem 0;
     }
@@ -995,49 +995,6 @@ a:hover {
     font-size: 1.5rem;
 }
 
-.tag-filter {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.filter-label {
-    color: var(--text-light);
-    font-weight: 500;
-}
-
-.tag-filters {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.tag-filter-btn {
-    padding: 0.4rem 0.8rem;
-    border: 1px solid var(--border-color);
-    background: var(--white);
-    color: var(--text-color);
-    border-radius: 20px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.tag-filter-btn:hover {
-    border-color: var(--secondary-color);
-    color: var(--secondary-color);
-    transform: translateY(-1px);
-}
-
-.tag-filter-btn.active {
-    background: var(--gradient);
-    color: white;
-    border-color: var(--secondary-color);
-    box-shadow: 0 2px 10px rgba(52, 152, 219, 0.3);
-}
 
 .header-actions {
     display: flex;
@@ -1451,139 +1408,7 @@ a:hover {
     opacity: 1;
 }
 
-/* 标签云页面 */
-.tags-page, .tag-page {
-    background: var(--white);
-    padding: 4rem;
-    border-radius: 20px;
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
-    margin: 3rem 0;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    position: relative;
-    overflow: hidden;
-}
 
-.tags-page::before, .tag-page::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: var(--gradient);
-}
-
-.page-header {
-    text-align: center;
-    margin-bottom: 4rem;
-    position: relative;
-}
-
-.page-header h1 {
-    color: var(--primary-color);
-    margin-bottom: 1.5rem;
-    font-size: 3rem;
-    font-weight: 800;
-    letter-spacing: -1px;
-    position: relative;
-    display: inline-block;
-}
-
-.page-header h1::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 4px;
-    background: var(--gradient);
-    border-radius: 2px;
-}
-
-.page-header p {
-    color: var(--text-light);
-    font-size: 1.2rem;
-    font-weight: 400;
-    letter-spacing: 0.5px;
-}
-
-/* 标签云样式 */
-.tags-cloud {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin: 4rem 0;
-    justify-content: center;
-}
-
-.tag-cloud-item {
-    display: inline-block;
-    background: var(--gradient);
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: 700;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-    position: relative;
-    overflow: hidden;
-    font-size: 1.1rem;
-    letter-spacing: 0.5px;
-}
-
-.tag-cloud-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transition: left 0.6s ease;
-}
-
-.tag-cloud-item:hover::before {
-    left: 100%;
-}
-
-.tag-cloud-item:hover {
-    transform: translateY(-5px) scale(1.08);
-    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
-    background: var(--gradient-reverse);
-}
-
-.tag-count {
-    font-size: 0.9rem;
-    opacity: 0.9;
-    margin-left: 0.3rem;
-}
-
-/* 标签列表样式 */
-.tags-section {
-    margin-top: 4rem;
-}
-
-.tags-section h2 {
-    color: var(--primary-color);
-    font-size: 1.8rem;
-    margin-bottom: 2rem;
-    text-align: center;
-    position: relative;
-}
-
-.tags-section h2::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 3px;
-    background: var(--gradient);
-    border-radius: 2px;
-}
 
 /* 搜索页面样式 */
 .search-page {
@@ -1851,117 +1676,6 @@ a:hover {
     }
 }
 
-.tags-list {
-    display: grid;
-    gap: 2rem;
-}
-
-.tag-item {
-    background: var(--background-color);
-    border-radius: 12px;
-    padding: 1.5rem;
-    border: 1px solid var(--border-color);
-    transition: all 0.3s ease;
-}
-
-.tag-item:hover {
-    border-color: var(--secondary-color);
-    box-shadow: 0 4px 20px rgba(52, 152, 219, 0.1);
-}
-
-.tag-header {
-    margin-bottom: 1rem;
-}
-
-.tag-title {
-    color: var(--primary-color);
-    text-decoration: none;
-    font-size: 1.3rem;
-    font-weight: 600;
-    transition: color 0.3s ease;
-}
-
-.tag-title:hover {
-    color: var(--secondary-color);
-}
-
-.tag-posts {
-    display: grid;
-    gap: 0.8rem;
-}
-
-.tag-post-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem;
-    background: var(--white);
-    border-radius: 8px;
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
-}
-
-.tag-post-item:hover {
-    border-color: var(--secondary-color);
-    transform: translateX(5px);
-}
-
-.tag-post-link {
-    color: var(--text-color);
-    text-decoration: none;
-    font-weight: 500;
-    flex: 1;
-}
-
-.tag-post-link:hover {
-    color: var(--secondary-color);
-}
-
-.tag-post-date {
-    color: var(--text-light);
-    font-size: 0.9rem;
-    white-space: nowrap;
-    margin-left: 1rem;
-}
-
-/* 标签页面响应式设计 */
-@media (max-width: 768px) {
-    .tags-page, .tag-page {
-        padding: 1.5rem;
-        margin: 1rem 0;
-    }
-    
-    .page-header h1 {
-        font-size: 2rem;
-    }
-    
-    .tags-cloud {
-        gap: 0.8rem;
-    }
-    
-    .tag-cloud-item {
-        padding: 0.6rem 1.2rem;
-        font-size: 0.9rem;
-    }
-    
-    .tags-section h2 {
-        font-size: 1.5rem;
-    }
-    
-    .tag-item {
-        padding: 1rem;
-    }
-    
-    .tag-post-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .tag-post-date {
-        margin-left: 0;
-    }
-}
 
 
 
@@ -2402,8 +2116,6 @@ a:hover {
     }
     
     .post-page,
-    .tags-page,
-    .tag-page,
     .search-page {
         box-shadow: none !important;
         border: none !important;
@@ -2474,24 +2186,8 @@ a:hover {
         color: var(--text-color);
     }
     
-    .tag-filter-btn {
-        background: rgba(45, 55, 72, 0.8);
-        border-color: var(--border-color);
-        color: var(--text-color);
-    }
-    
     .result-item {
         background: rgba(45, 55, 72, 0.5);
-        border-color: var(--border-color);
-    }
-    
-    .tag-item {
-        background: rgba(45, 55, 72, 0.5);
-        border-color: var(--border-color);
-    }
-    
-    .tag-post-item {
-        background: rgba(45, 55, 72, 0.8);
         border-color: var(--border-color);
     }
     
@@ -2532,7 +2228,6 @@ a:hover {
     
     .btn-primary,
     .tag,
-    .tag-cloud-item,
     .fab {
         border: 2px solid currentColor;
     }

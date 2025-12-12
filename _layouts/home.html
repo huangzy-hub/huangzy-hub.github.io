@@ -62,16 +62,6 @@ layout: default
         <section class="posts-section">
             <div class="section-header">
                 <h3>📝 最新文章</h3>
-                <div class="tag-filter">
-                    <div class="tag-filters">
-                        <button class="tag-filter-btn active" data-tag="all">全部</button>
-                        {% assign all_tags = site.tags | sort %}
-                        {% for tag in all_tags %}
-                        {% assign tag_name = tag[0] %}
-                        <button class="tag-filter-btn" data-tag="{{ tag_name }}">#{{ tag_name }}</button>
-                        {% endfor %}
-                    </div>
-                </div>
             </div>
 
             <div class="posts-grid">

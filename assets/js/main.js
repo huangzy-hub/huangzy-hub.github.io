@@ -15,9 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // 搜索功能
     initSearch();
     
-    // 标签筛选功能
-    initTagFilter();
-    
     // 初始化滚动行为
     initScrollBehavior();
     
@@ -364,7 +361,6 @@ function initSearch() {
     // 搜索选项
     const searchTitle = document.getElementById('search-title');
     const searchContent = document.getElementById('search-content');
-    const searchTags = document.getElementById('search-tags');
     
     // 文章数据（从页面中提取）
     const articles = [];
@@ -373,14 +369,12 @@ function initSearch() {
         const excerpt = post.querySelector('.post-excerpt').textContent.trim();
         const url = post.querySelector('.post-title a').getAttribute('href');
         const date = post.querySelector('.post-date').textContent.trim();
-        const tags = Array.from(post.querySelectorAll('.tag')).map(tag => tag.textContent.replace('#', '').trim());
         
         articles.push({
             title,
             excerpt,
             url,
             date,
-            tags,
             element: post
         });
     });
@@ -396,7 +390,6 @@ function initSearch() {
         
         const searchInTitle = searchTitle.checked;
         const searchInContent = searchContent.checked;
-        const searchInTags = searchTags.checked;
         
         const results = articles.filter(article => {
             let match = false;
@@ -406,10 +399,6 @@ function initSearch() {
             }
             
             if (searchInContent && article.excerpt.toLowerCase().includes(query)) {
-                match = true;
-            }
-            
-            if (searchInTags && article.tags.some(tag => tag.toLowerCase().includes(query))) {
                 match = true;
             }
             
@@ -442,9 +431,6 @@ function initSearch() {
                 </div>
                 <div class="result-meta">
                     <span class="result-date">${article.date}</span>
-                    <div class="result-tags">
-                        ${article.tags.map(tag => `<a href="/tags/${tag}/" class="result-tag">#${tag}</a>`).join('')}
-                    </div>
                 </div>
             </div>
         `).join('');
@@ -466,7 +452,7 @@ function initSearch() {
         resultsContainer.innerHTML = `
             <div class="search-placeholder">
                 <p>💡 输入关键词开始搜索</p>
-                <p>您可以搜索文章标题、内容和标签</p>
+                <p>您可以搜索文章标题和内容</p>
             </div>
         `;
         searchStats.style.display = 'none';
@@ -477,7 +463,6 @@ function initSearch() {
         searchInput.value = '';
         searchTitle.checked = true;
         searchContent.checked = true;
-        searchTags.checked = true;
         showPlaceholder();
     }
     
@@ -504,7 +489,7 @@ function initSearch() {
     });
     
     // 搜索选项改变时重新搜索
-    [searchTitle, searchContent, searchTags].forEach(checkbox => {
+    [searchTitle, searchContent].forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             if (searchInput.value.trim()) {
                 performSearch();
@@ -513,277 +498,46 @@ function initSearch() {
     });
 }
 
-// 标签筛选功能 - 增强版本
-function initTagFilter() {
-    const tagFilterBtns = document.querySelectorAll('.tag-filter-btn');
-    const tagCloudItems = document.querySelectorAll('.tag-cloud-item');
-    const postCards = document.querySelectorAll('.post-card');
-    const postsSection = document.querySelector('.posts-section');
-    const sectionHeader = document.querySelector('.section-header h3');
+// 滚动行为初始化
+function initScrollBehavior() {
+    const mainContent = document.querySelector('.main-content');
+    const sidebar = document.querySelector('.sidebar');
     
-    if ((tagFilterBtns.length === 0 && tagCloudItems.length === 0) || postCards.length === 0) {
-        return; // 如果没有找到元素，不执行
-    }
+    if (!mainContent || !sidebar) return;
     
-    // 创建筛选结果提示
-    const filterResultInfo = document.createElement('div');
-    filterResultInfo.className = 'filter-result-info';
-    filterResultInfo.style.cssText = `
-        margin: 1rem 0;
-        padding: 0.8rem 1.2rem;
-        background: rgba(102, 126, 234, 0.1);
-        border: 1px solid rgba(102, 126, 234, 0.2);
-        border-radius: 8px;
-        color: var(--secondary-color);
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-align: center;
-        opacity: 0;
-        transform: translateY(-10px);
-        transition: all 0.3s ease;
-    `;
-    postsSection.insertBefore(filterResultInfo, postsSection.querySelector('.posts-grid'));
+    let isScrolling = false;
+    let scrollTimeout;
     
-    // 为每个筛选按钮添加点击事件
-    tagFilterBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const selectedTag = this.getAttribute('data-tag');
-            
-            // 更新按钮状态
-            tagFilterBtns.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            
-            // 筛选文章
-            let visibleCount = 0;
-            let filteredTags = [];
-            
-            postCards.forEach(card => {
-                if (selectedTag === 'all') {
-                    // 显示所有文章
-                    card.style.display = 'block';
-                    card.style.animation = 'fadeIn 0.5s ease';
-                    visibleCount++;
-                } else {
-                    // 检查文章是否包含选中的标签
-                    const tags = card.querySelectorAll('.tag');
-                    let hasTag = false;
-                    let currentTags = [];
-                    
-                    tags.forEach(tag => {
-                        const tagText = tag.textContent.replace('#', '').trim();
-                        currentTags.push(tagText);
-                        if (tagText === selectedTag) {
-                            hasTag = true;
-                        }
-                    });
-                    
-                    if (hasTag) {
-                        card.style.display = 'block';
-                        card.style.animation = 'fadeIn 0.5s ease';
-                        visibleCount++;
-                        filteredTags = filteredTags.concat(currentTags);
-                    } else {
-                        card.style.display = 'none';
-                        card.style.animation = 'fadeOut 0.3s ease';
-                    }
-                }
-            });
-            
-            // 更新筛选结果提示
-            updateFilterResult(selectedTag, visibleCount, filteredTags);
-            
-            // 更新URL参数
-            const url = new URL(window.location);
-            if (selectedTag === 'all') {
-                url.searchParams.delete('tag');
-            } else {
-                url.searchParams.set('tag', selectedTag);
-            }
-            window.history.pushState({}, '', url);
-            
-            // 如果筛选后有文章，滚动到文章区域
-            if (visibleCount > 0) {
-                setTimeout(() => {
-                    postsSection.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }, 100);
-            }
-        });
+    // 监听主内容区的滚动
+    mainContent.addEventListener('scroll', function() {
+        if (!isScrolling) {
+            sidebar.classList.add('sidebar-fixed');
+            mainContent.classList.add('scrolling');
+            isScrolling = true;
+        }
+        
+        // 清除之前的定时器
+        clearTimeout(scrollTimeout);
+        
+        // 设置新的定时器，滚动停止后移除固定效果
+        scrollTimeout = setTimeout(() => {
+            sidebar.classList.remove('sidebar-fixed');
+            mainContent.classList.remove('scrolling');
+            isScrolling = false;
+        }, 150);
     });
     
-    // 为标签云中的标签添加点击事件
-    tagCloudItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            const selectedTag = this.textContent.trim().replace('#', '').replace(/\(\d+\)/, '').trim();
-            
-            // 找到对应的筛选按钮并触发点击
-            const targetFilterBtn = document.querySelector(`.tag-filter-btn[data-tag="${selectedTag}"]`);
-            if (targetFilterBtn) {
-                targetFilterBtn.click();
-            } else {
-                // 如果没有对应的筛选按钮，直接执行筛选
-                performTagFilter(selectedTag);
-            }
-        });
+    // 监听窗口滚动
+    window.addEventListener('scroll', function() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (scrollTop > 200) {
+            document.body.style.backgroundAttachment = 'scroll';
+        } else {
+            document.body.style.backgroundAttachment = 'fixed';
+        }
     });
     
-    // 执行标签筛选的通用函数
-    function performTagFilter(selectedTag) {
-        // 更新所有筛选按钮状态
-        tagFilterBtns.forEach(btn => btn.classList.remove('active'));
-        
-        // 筛选文章
-        let visibleCount = 0;
-        let filteredTags = [];
-        
-        postCards.forEach(card => {
-            if (selectedTag === 'all') {
-                // 显示所有文章
-                card.style.display = 'block';
-                card.style.animation = 'fadeIn 0.5s ease';
-                visibleCount++;
-            } else {
-                // 检查文章是否包含选中的标签
-                const tags = card.querySelectorAll('.tag');
-                let hasTag = false;
-                let currentTags = [];
-                
-                tags.forEach(tag => {
-                    const tagText = tag.textContent.replace('#', '').trim();
-                    currentTags.push(tagText);
-                    if (tagText === selectedTag) {
-                        hasTag = true;
-                    }
-                });
-                
-                if (hasTag) {
-                    card.style.display = 'block';
-                    card.style.animation = 'fadeIn 0.5s ease';
-                    visibleCount++;
-                    filteredTags = filteredTags.concat(currentTags);
-                } else {
-                    card.style.display = 'none';
-                    card.style.animation = 'fadeOut 0.3s ease';
-                }
-            }
-        });
-        
-        // 更新筛选结果提示
-        updateFilterResult(selectedTag, visibleCount, filteredTags);
-        
-        // 更新URL参数
-        const url = new URL(window.location);
-        if (selectedTag === 'all') {
-            url.searchParams.delete('tag');
-        } else {
-            url.searchParams.set('tag', selectedTag);
-        }
-        window.history.pushState({}, '', url);
-        
-        // 如果筛选后有文章，滚动到文章区域
-        if (visibleCount > 0) {
-            setTimeout(() => {
-                postsSection.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }, 100);
-        }
-    }
-    
-    // 更新筛选结果提示
-    function updateFilterResult(selectedTag, visibleCount, filteredTags) {
-        if (selectedTag === 'all') {
-            filterResultInfo.innerHTML = `📚 显示全部 ${visibleCount} 篇文章`;
-            sectionHeader.innerHTML = '📝 最新文章';
-        } else {
-            filterResultInfo.innerHTML = `🏷️ 标签 <strong>#${selectedTag}</strong> - 共 ${visibleCount} 篇文章`;
-            sectionHeader.innerHTML = `🏷️ 标签 <strong>#${selectedTag}</strong>`;
-        }
-        
-        // 显示提示信息
-        filterResultInfo.style.opacity = '1';
-        filterResultInfo.style.transform = 'translateY(0)';
-        
-        // 1秒后淡出提示信息
-        setTimeout(() => {
-            filterResultInfo.style.opacity = '0';
-            filterResultInfo.style.transform = 'translateY(-10px)';
-        }, 1000);
-    }
-    
-    // 检查URL参数，如果有标签参数则自动筛选
-    const urlParams = new URLSearchParams(window.location.search);
-    const tagParam = urlParams.get('tag');
-    
-    if (tagParam) {
-        const targetBtn = document.querySelector(`.tag-filter-btn[data-tag="${tagParam}"]`);
-        if (targetBtn) {
-            targetBtn.click();
-        }
-    }
-    
-    // 添加淡出动画
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-        }
-    `;
-    document.head.appendChild(style);
-    
-    // 滚动行为初始化
-    function initScrollBehavior() {
-        const mainContent = document.querySelector('.main-content');
-        const sidebar = document.querySelector('.sidebar');
-        
-        if (!mainContent || !sidebar) return;
-        
-        let isScrolling = false;
-        let scrollTimeout;
-        
-        // 监听主内容区的滚动
-        mainContent.addEventListener('scroll', function() {
-            if (!isScrolling) {
-                sidebar.classList.add('sidebar-fixed');
-                mainContent.classList.add('scrolling');
-                isScrolling = true;
-            }
-            
-            // 清除之前的定时器
-            clearTimeout(scrollTimeout);
-            
-            // 设置新的定时器，滚动停止后移除固定效果
-            scrollTimeout = setTimeout(() => {
-                sidebar.classList.remove('sidebar-fixed');
-                mainContent.classList.remove('scrolling');
-                isScrolling = false;
-            }, 150);
-        });
-        
-        // 监听窗口滚动
-        window.addEventListener('scroll', function() {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            if (scrollTop > 200) {
-                document.body.style.backgroundAttachment = 'scroll';
-            } else {
-                document.body.style.backgroundAttachment = 'fixed';
-            }
-        });
-        
-    }
 }
 
 
