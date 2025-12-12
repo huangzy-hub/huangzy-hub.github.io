@@ -709,7 +709,7 @@ function initTagFilter() {
         filterResultInfo.style.opacity = '1';
         filterResultInfo.style.transform = 'translateY(0)';
         
-        // 3秒后淡出提示信息
+        // 1秒后淡出提示信息
         setTimeout(() => {
             filterResultInfo.style.opacity = '0';
             filterResultInfo.style.transform = 'translateY(-10px)';
