@@ -2640,3 +2640,45 @@ a:hover {
         animation: none !important;
     }
 }
+
+/* 时间轴点击定位功能 */
+.timeline-post {
+    cursor: pointer;
+    position: relative;
+}
+
+.timeline-post.active {
+    border: 3px solid var(--gradient);
+    box-shadow: 0 0 0 3px rgba(128, 90, 213, 0.2);
+    color: var(--primary-color);
+    border-radius: var(--radius-md);
+    padding: 1rem 1.5rem;
+    margin-left: -1rem;
+    transform: translateX(8px) scale(1.02);
+    transition: all 0.15s ease !important;
+    background: rgba(128, 90, 213, 0.1);
+}
+
+.timeline-post.active::before {
+    border-color: var(--gradient);
+    background: white;
+    transform: translateY(-50%) scale(1.4);
+}
+
+.timeline-post.active::after {
+    background: var(--gradient);
+    transform: translateY(-50%) scale(1.8);
+    box-shadow: 0 0 15px rgba(128, 90, 213, 0.8);
+}
+
+/* 对应文章高亮 */
+.post-card.highlighted {
+    border: 3px solid var(--gradient);
+    box-shadow: 0 0 0 3px rgba(128, 90, 213, 0.2);
+    transform: translateY(-4px);
+    background: rgba(128, 90, 213, 0.05);
+}
+
+.post-card.highlighted .post-title {
+    color: var(--accent-color);
+}

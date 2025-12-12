@@ -111,3 +111,86 @@ layout: cover
         </section>
     </main>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 时间轴点击定位功能
+    const timelinePosts = document.querySelectorAll('.timeline-post');
+    const postCards = document.querySelectorAll('.post-card');
+    
+    // 为每个时间轴项目添加点击事件
+    timelinePosts.forEach(post => {
+        post.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 移除所有高亮
+            timelinePosts.forEach(p => p.classList.remove('active'));
+            postCards.forEach(card => card.classList.remove('highlighted'));
+            
+            // 添加当前高亮
+            this.classList.add('active');
+            
+            // 获取文章数据
+            const date = this.getAttribute('data-date');
+            const title = this.getAttribute('data-title');
+            
+            // 查找对应的文章卡片
+            const targetPost = Array.from(postCards).find(card =>
+                card.getAttribute('data-date') === date &&
+                card.getAttribute('data-title') === title
+            );
+            
+            if (targetPost) {
+                // 高亮对应文章
+                targetPost.classList.add('highlighted');
+                
+                // 滚动到对应文章
+                targetPost.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                
+                // 3秒后移除高亮
+                setTimeout(() => {
+                    this.classList.remove('active');
+                    targetPost.classList.remove('highlighted');
+                }, 3000);
+            }
+        });
+    });
+    
+    // 文章卡片点击事件（可选：点击文章时也高亮时间轴）
+    postCards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            // 如果点击的是链接，不触发高亮
+            if (e.target.tagName === 'A' || e.target.closest('a')) {
+                return;
+            }
+            
+            // 移除所有高亮
+            timelinePosts.forEach(p => p.classList.remove('active'));
+            postCards.forEach(c => c.classList.remove('highlighted'));
+            
+            // 获取文章数据
+            const date = this.getAttribute('data-date');
+            const title = this.getAttribute('data-title');
+            
+            // 查找对应的时间轴项目
+            const targetTimeline = Array.from(timelinePosts).find(post =>
+                post.getAttribute('data-date') === date &&
+                post.getAttribute('data-title') === title
+            );
+            
+            if (targetTimeline) {
+                // 高亮时间轴项目
+                targetTimeline.classList.add('active');
+                
+                // 3秒后移除高亮
+                setTimeout(() => {
+                    targetTimeline.classList.remove('active');
+                }, 3000);
+            }
+        });
+    });
+});
+</script>
