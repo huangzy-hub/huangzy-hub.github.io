@@ -1950,67 +1950,6 @@ a:hover {
 }
 
 
-/* 响应式设计 */
-@media (max-width: 1024px) {
-    .home-layout {
-        grid-template-columns: 280px 1fr;
-        gap: 1.5rem;
-    }
-}
-
-@media (max-width: 768px) {
-    .home-layout {
-        grid-template-columns: 1fr;
-    }
-    
-    .sidebar {
-        position: static;
-        order: 2;
-        height: auto;
-        overflow-y: visible;
-    }
-    
-    .main-content {
-        order: 1;
-        height: auto;
-        overflow-y: visible;
-    }
-    
-    .header-content {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
-    
-    .site-nav {
-        gap: 1rem;
-    }
-    
-    .section-header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
-    
-    .header-actions {
-        justify-content: center;
-    }
-    
-    .post-page, .tags-page, .tag-page {
-        padding: 1.5rem;
-        margin: 1rem 0;
-    }
-    
-    .hero-content h2 {
-        font-size: 1.8rem;
-    }
-    
-    .footer-content {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
-}
 
 /* 动画效果 */
 @keyframes fadeIn {
