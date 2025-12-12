@@ -71,9 +71,25 @@ layout: default
     left: 0;
     width: 100%;
     height: 100%;
-    background: url('{{ "/assets/images/backgrounds/bg1.png" | relative_url }}') center/cover no-repeat;
-    filter: brightness(0.7);
+    background: linear-gradient(135deg, rgba(253, 251, 251, 0.3) 0%, rgba(235, 237, 238, 0.3) 100%);
+    background-size: cover;
+    background-attachment: fixed;
     transition: all 1s ease;
+}
+
+.cover-background::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(circle at 20% 50%, rgba(128, 90, 213, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(102, 126, 234, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(245, 101, 101, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
 }
 
 .cover-overlay {
@@ -82,10 +98,10 @@ layout: default
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, 
-        rgba(102, 126, 234, 0.8) 0%, 
-        rgba(118, 75, 162, 0.8) 50%,
-        rgba(245, 101, 101, 0.6) 100%);
+    background: linear-gradient(135deg,
+        rgba(102, 126, 234, 0.1) 0%,
+        rgba(118, 75, 162, 0.1) 50%,
+        rgba(245, 101, 101, 0.05) 100%);
     animation: overlayShift 8s ease-in-out infinite;
 }
 
@@ -346,28 +362,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const coverBtn = document.querySelector('.cover-btn');
     let isCoverVisible = true;
     
-    // 随机选择背景图片
-    function initRandomBackground() {
-        const backgrounds = [
-            '/assets/images/backgrounds/bg1.png',
-            '/assets/images/backgrounds/bg2.png',
-            '/assets/images/backgrounds/bg3.png'
-        ];
-        
-        // 从localStorage获取上次使用的背景索引，如果没有则随机选择
-        let lastBgIndex = parseInt(localStorage.getItem('lastBgIndex') || '-1');
-        
-        // 确保每次都是不同的背景
-        let newBgIndex;
-        do {
-            newBgIndex = Math.floor(Math.random() * backgrounds.length);
-        } while (backgrounds.length > 1 && newBgIndex === lastBgIndex);
-        
-        // 设置新的背景
-        coverBackground.style.backgroundImage = `url('${backgrounds[newBgIndex]}')`;
-        
-        // 保存当前背景索引
-        localStorage.setItem('lastBgIndex', newBgIndex.toString());
+    // 初始化背景 - 使用与主页一致的背景样式
+    function initBackground() {
+        // 设置与主页一致的背景样式
+        coverBackground.style.background = 'linear-gradient(135deg, rgba(253, 251, 251, 0.3) 0%, rgba(235, 237, 238, 0.3) 100%)';
+        coverBackground.style.backgroundSize = 'cover';
+        coverBackground.style.backgroundAttachment = 'fixed';
         
         // 添加背景加载动画
         coverBackground.style.opacity = '0';
@@ -377,8 +377,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 100);
     }
     
-    // 初始化随机背景
-    initRandomBackground();
+    // 初始化背景
+    initBackground();
     
     // 进入博客按钮点击事件
     if (coverBtn) {
@@ -388,18 +388,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 鼠标滚轮事件 - 阻止默认滚动行为
+    // 鼠标滚轮事件
     let isScrolling = false;
     window.addEventListener('wheel', function(e) {
-        if (!isCoverVisible) return;
-        
-        e.preventDefault();
+        if (isScrolling || !isCoverVisible) return;
         
         if (e.deltaY > 0) {
             // 向下滚动，隐藏封面
             hideCover();
         }
-    }, { passive: false });
+    }, { passive: true });
     
     // 触摸事件（移动端）
     let touchStartY = 0;
@@ -407,14 +405,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     coverPage.addEventListener('touchstart', function(e) {
         touchStartY = e.changedTouches[0].screenY;
-        e.preventDefault(); // 阻止默认滚动
-    }, { passive: false });
+    });
     
     coverPage.addEventListener('touchend', function(e) {
         touchEndY = e.changedTouches[0].screenY;
         handleSwipe();
-        e.preventDefault(); // 阻止默认滚动
-    }, { passive: false });
+    });
     
     function handleSwipe() {
         if (touchStartY - touchEndY > 50) {
