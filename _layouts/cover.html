@@ -267,14 +267,24 @@ layout: default
 
 /* 主要内容区域样式 */
 .main-content-wrapper {
-    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    transition: none;
     transform: translateY(0);
     opacity: 1;
+    background: transparent;
 }
 
 .main-content-wrapper.visible {
     transform: translateY(0);
     opacity: 1;
+}
+
+/* 主页内容在封面显示时隐藏 */
+.home-layout {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 响应式设计 */
@@ -378,16 +388,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // 鼠标滚轮事件
+    // 鼠标滚轮事件 - 阻止默认滚动行为
     let isScrolling = false;
     window.addEventListener('wheel', function(e) {
-        if (isScrolling || !isCoverVisible) return;
+        if (!isCoverVisible) return;
+        
+        e.preventDefault();
         
         if (e.deltaY > 0) {
             // 向下滚动，隐藏封面
             hideCover();
         }
-    }, { passive: true });
+    }, { passive: false });
     
     // 触摸事件（移动端）
     let touchStartY = 0;
@@ -395,12 +407,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     coverPage.addEventListener('touchstart', function(e) {
         touchStartY = e.changedTouches[0].screenY;
-    });
+        e.preventDefault(); // 阻止默认滚动
+    }, { passive: false });
     
     coverPage.addEventListener('touchend', function(e) {
         touchEndY = e.changedTouches[0].screenY;
         handleSwipe();
-    });
+        e.preventDefault(); // 阻止默认滚动
+    }, { passive: false });
     
     function handleSwipe() {
         if (touchStartY - touchEndY > 50) {
@@ -424,10 +438,18 @@ document.addEventListener('DOMContentLoaded', function() {
             if (mainContent) {
                 mainContent.style.opacity = '1';
                 mainContent.style.transform = 'translateY(0)';
+                
+                // 显示主页内容
+                const homeContent = document.querySelector('.home-layout');
+                if (homeContent) {
+                    homeContent.style.display = 'block';
+                    homeContent.style.opacity = '1';
+                    homeContent.style.transform = 'translateY(0)';
+                }
             }
         }, 400);
         
-        // 防止页面滚动
+        // 恢复页面滚动
         document.body.style.overflow = 'auto';
         
         // 移除事件监听器
