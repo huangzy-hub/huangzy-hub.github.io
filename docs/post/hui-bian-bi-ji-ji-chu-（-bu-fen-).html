@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/195115766?v=4"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="## 一、x86基础寄存器（逆向工程核心基础）
+x86架构的寄存器是指令操作的核心载体，逆向中需精准掌握寄存器的用途、分类及数据流向，32位x86核心寄存器分为以下几类：
+
+### 1. 通用寄存器（数据操作核心）
+通用寄存器用于存储数据、地址、参数等，32位寄存器可拆分为16位/8位子寄存器（如EAX→AX→AH/AL），逆向中需关注子寄存器的操作（如单字节/双字节数据处理）。">
+<meta property="og:title" content="汇编笔记基础（部分)">
+<meta property="og:description" content="## 一、x86基础寄存器（逆向工程核心基础）
+x86架构的寄存器是指令操作的核心载体，逆向中需精准掌握寄存器的用途、分类及数据流向，32位x86核心寄存器分为以下几类：
+
+### 1. 通用寄存器（数据操作核心）
+通用寄存器用于存储数据、地址、参数等，32位寄存器可拆分为16位/8位子寄存器（如EAX→AX→AH/AL），逆向中需关注子寄存器的操作（如单字节/双字节数据处理）。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://huangzy-hub.github.io/post/hui-bian-bi-ji-ji-chu-%EF%BC%88-bu-fen-%29.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/195115766?v=4">
+<title>汇编笔记基础（部分)</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">汇编笔记基础（部分)</h1>
+<div class="title-right">
+    <a href="https://huangzy-hub.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/huangzy-hub/huangzy-hub.github.io/issues/6" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h2>一、x86基础寄存器（逆向工程核心基础）</h2>
+<p>x86架构的寄存器是指令操作的核心载体，逆向中需精准掌握寄存器的用途、分类及数据流向，32位x86核心寄存器分为以下几类：</p>
+<h3>1. 通用寄存器（数据操作核心）</h3>
+<p>通用寄存器用于存储数据、地址、参数等，32位寄存器可拆分为16位/8位子寄存器（如EAX→AX→AH/AL），逆向中需关注子寄存器的操作（如单字节/双字节数据处理）。</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>32位寄存器</th>
+<th>16位子寄存器</th>
+<th>8位子寄存器</th>
+<th>核心用途（逆向场景）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EAX</td>
+<td>AX</td>
+<td>AH/AL</td>
+<td>累加器：算术运算、函数返回值（Windows API返回值默认存EAX）、系统调用号</td>
+</tr>
+<tr>
+<td>EBX</td>
+<td>BX</td>
+<td>BH/BL</td>
+<td>基址寄存器：全局变量指针、内存基址（如PEB/TEB偏移计算）</td>
+</tr>
+<tr>
+<td>ECX</td>
+<td>CX</td>
+<td>CH/CL</td>
+<td>计数器：循环计数（REP指令）、Fastcall/Thiscall参数传递（第1参数/this指针）</td>
+</tr>
+<tr>
+<td>EDX</td>
+<td>DX</td>
+<td>DH/DL</td>
+<td>数据寄存器：大数运算（除法余数、64位数据高32位）、Fastcall第2参数</td>
+</tr>
+<tr>
+<td>ESI</td>
+<td>SI</td>
+<td>SIL</td>
+<td>源变址寄存器：字符串操作（MOVS/LODS）源地址、数据拷贝源指针</td>
+</tr>
+<tr>
+<td>EDI</td>
+<td>DI</td>
+<td>DIL</td>
+<td>目的变址寄存器：字符串操作（MOVS/STOS）目的地址、数据拷贝目的指针</td>
+</tr>
+<tr>
+<td>EBP</td>
+<td>BP</td>
+<td>BPL</td>
+<td>基址指针：栈帧基址（逆向中通过EBP偏移定位局部变量/参数）</td>
+</tr>
+<tr>
+<td>ESP</td>
+<td>SP</td>
+<td>SPL</td>
+<td>栈指针：始终指向栈顶（逆向中跟踪栈帧变化、栈平衡）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>逆向关键</strong>：</p>
+<ul>
+<li>EAX是逆向中最常关注的寄存器（函数返回值、运算结果、系统调用号）；</li>
+<li>EBP/ESP是栈帧分析的核心，通过<code class="notranslate">EBP+偏移</code>定位参数，<code class="notranslate">EBP-偏移</code>定位局部变量；</li>
+<li>ESI/EDI是字符串/内存操作的专属寄存器，REP指令依赖这两个寄存器+ECX（长度）。</li>
+</ul>
+<h3>2. 段寄存器（内存寻址辅助）</h3>
+<p>段寄存器在保护模式下用于定位内存段，逆向中需重点关注FS寄存器（关联TEB/PEB）：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>寄存器</th>
+<th>核心用途（逆向场景）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CS</td>
+<td>代码段：指向当前执行指令的代码段（.text段）</td>
+</tr>
+<tr>
+<td>DS</td>
+<td>数据段：指向全局数据段（.data/.rdata）</td>
+</tr>
+<tr>
+<td>SS</td>
+<td>栈段：指向栈段（栈帧所在内存区域）</td>
+</tr>
+<tr>
+<td>ES/FS/GS</td>
+<td>附加段：FS在Windows中指向TEB（线程环境块），是反调试分析的核心</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3>3. 指令指针寄存器（执行流核心）</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>寄存器</th>
+<th>32位名称</th>
+<th>核心用途（逆向场景）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IP</td>
+<td>EIP</td>
+<td>指令指针：指向当前即将执行的指令地址（逆向中跟踪执行流、断点设置核心）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>逆向关键</strong>：EIP无法直接修改（仅能通过JMP/CALL/RET/INT等指令间接修改），是控制流分析的核心。</p>
+<h3>4. 标志寄存器（状态判断核心）</h3>
+<p>标志寄存器（EFLAGS）存储指令执行后的状态，是条件跳转（Jcc）、条件移动（CMOVcc）的判断依据，核心标志位如下：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>标志位缩写</th>
+<th>名称</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ZF</td>
+<td>零标志</td>
+<td>运算结果为0则置1，否则置0（JE/JNE的判断依据）</td>
+</tr>
+<tr>
+<td>SF</td>
+<td>符号标志</td>
+<td>运算结果最高位为1（负数）则置1，否则置0（JG/JL的判断依据）</td>
+</tr>
+<tr>
+<td>CF</td>
+<td>进位标志</td>
+<td>无符号运算产生进位/借位则置1（JA/JB/ADC/SBB的判断依据）</td>
+</tr>
+<tr>
+<td>OF</td>
+<td>溢出标志</td>
+<td>有符号运算溢出则置1（JO/JNO/JG/JL的判断依据）</td>
+</tr>
+<tr>
+<td>PF</td>
+<td>奇偶标志</td>
+<td>运算结果低8位中1的个数为偶数则置1（位运算/字节操作辅助判断）</td>
+</tr>
+<tr>
+<td>IF</td>
+<td>中断标志</td>
+<td>控制CPU是否响应可屏蔽中断（反调试中可能通过CLI/STI修改）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h2>二、汇编基本结构（x86实模式/保护模式）</h2>
+<p>x86汇编程序的核心结构分为<strong>段定义</strong>、<strong>数据段</strong>、<strong>代码段</strong>、<strong>栈段</strong>三大部分，逆向中需重点关注内存布局与指令执行流：</p>
+<h3>1. 段结构（保护模式下）</h3>
+<div class="highlight highlight-source-assembly"><pre class="notranslate"><span class="pl-c">; 典型NASM格式结构</span>
+<span class="pl-c1">section</span><span class="pl-en"> .data</span><span class="pl-c">       ; 数据段：只读/可读写常量（全局变量、字符串、常量）</span>
+<span class="pl-en">    msg db </span><span class="pl-s">"hello"</span><span class="pl-s1">,</span><span class="pl-c1">0x00</span>
+<span class="pl-en">    num dd </span><span class="pl-c1">123</span><span class="pl-c">      ; 4字节整型常量</span>
+
+<span class="pl-c1">section</span><span class="pl-en"> .bss</span><span class="pl-c">        ; 未初始化数据段：逆向中常为全局未初始化变量</span>
+<span class="pl-en">    buf resb </span><span class="pl-c1">100</span><span class="pl-c">    ; 预留100字节缓冲区</span>
+
+<span class="pl-c1">section</span><span class="pl-en"> .text</span><span class="pl-c">       ; 代码段：指令执行区，逆向核心分析区域</span>
+    <span class="pl-c1">global</span> <span class="pl-en">_start</span><span class="pl-c">   ; 入口点（Linux）/ main（Windows）</span>
+<span class="pl-en">_start:</span>
+<span class="pl-c">    ; 指令执行流</span>
+<span class="pl-en">    </span><span class="pl-k">mov</span><span class="pl-en"> </span><span class="pl-v">eax</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-c1">1</span><span class="pl-c">      ; sys_exit调用</span>
+<span class="pl-en">    </span><span class="pl-k">int</span><span class="pl-en"> </span><span class="pl-c1">0x80</span><span class="pl-c">        ; 系统调用</span></pre></div>
+<h3>2. 逆向视角的结构要点</h3>
+<ul>
+<li>数据段（.data/.rdata）：逆向中通过常量、字符串定位功能（如错误提示、密钥）；</li>
+<li>代码段（.text）：指令的机器码与汇编对应，是反汇编、动态调试的核心；</li>
+<li>栈段（stack）：运行时动态分配，存储局部变量、函数调用上下文，逆向中需跟踪栈帧变化。</li>
+</ul>
+<h2>三、核心指令体系（逆向高频指令）</h2>
+<h3>1. 数据传输指令（逆向最基础、最高频）</h3>
+<p>数据传输指令负责在寄存器、内存、立即数间移动数据，逆向中需关注数据流向（如参数传递、加密数据搬运）。</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>指令</th>
+<th>格式</th>
+<th>功能</th>
+<th>逆向场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MOV</td>
+<td>MOV reg, mem/imm/reg</td>
+<td>数据移动（不影响标志位）</td>
+<td>变量赋值、参数传递</td>
+</tr>
+<tr>
+<td>LEA</td>
+<td>LEA reg, mem</td>
+<td>加载有效地址（计算地址）</td>
+<td>数组索引、指针运算</td>
+</tr>
+<tr>
+<td>PUSH/POP</td>
+<td>PUSH reg/mem; POP reg</td>
+<td>入栈/出栈</td>
+<td>函数调用、栈帧构建</td>
+</tr>
+<tr>
+<td>XCHG</td>
+<td>XCHG reg, reg/mem</td>
+<td>交换数据</td>
+<td>加密算法、寄存器暂存</td>
+</tr>
+<tr>
+<td>CMOVcc</td>
+<td>CMOVZ reg, mem</td>
+<td>条件移动（依标志位）</td>
+<td>无分支条件判断（反调试）</td>
+</tr>
+<tr>
+<td>MOVSX/MOVZX</td>
+<td>MOVSX reg, reg8/16</td>
+<td>符号/零扩展移动</td>
+<td>整型类型转换（如char→int）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>逆向示例</strong>：</p>
+<div class="highlight highlight-source-assembly"><pre class="notranslate"><span class="pl-k">lea</span><span class="pl-en"> </span><span class="pl-v">eax</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-s1">[</span><span class="pl-v">ebp</span><span class="pl-s1">+</span><span class="pl-en">var_4</span><span class="pl-s1">]</span><span class="pl-c">  ; 计算局部变量var_4的地址（而非取值）</span>
+<span class="pl-k">movsx</span><span class="pl-en"> </span><span class="pl-v">ebx</span><span class="pl-s1">,</span><span class="pl-en"> byte ptr </span><span class="pl-s1">[</span><span class="pl-v">eax</span><span class="pl-s1">]</span><span class="pl-c"> ; 单字节符号扩展为4字节（处理负数）</span></pre></div>
+<h3>2. 算数运算指令（逆向中加密/校验/数值计算核心）</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>指令</th>
+<th>格式</th>
+<th>功能</th>
+<th>影响标志位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ADD/SUB</td>
+<td>ADD reg, mem/imm</td>
+<td>加减运算</td>
+<td>ZF/SF/CF/OF/AF/PF</td>
+</tr>
+<tr>
+<td>MUL/IMUL</td>
+<td>IMUL reg, mem/imm</td>
+<td>无符号/有符号乘法</td>
+<td>CF/OF（MUL）</td>
+</tr>
+<tr>
+<td>DIV/IDIV</td>
+<td>DIV reg</td>
+<td>无符号/有符号除法</td>
+<td>无（商→AX，余数→DX）</td>
+</tr>
+<tr>
+<td>INC/DEC</td>
+<td>INC reg</td>
+<td>自增/自减（不影响CF）</td>
+<td>ZF/SF/OF/AF/PF</td>
+</tr>
+<tr>
+<td>NEG</td>
+<td>NEG reg</td>
+<td>取反（等价于0 - reg）</td>
+<td>同SUB</td>
+</tr>
+<tr>
+<td>ADC/SBB</td>
+<td>ADC reg, imm</td>
+<td>带进位/借位加减</td>
+<td>同ADD/SUB</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>逆向关键</strong>：</p>
+<ul>
+<li>IMUL/DIV常出现在加密算法（如RC4、AES）的数值计算；</li>
+<li>ADC/SBB用于大数运算（如64位以上整数加减，逆向中关注CF标志）；</li>
+<li>INC/DEC不影响CF，需注意与ADD reg,1的区别（后者影响CF）。</li>
+</ul>
+<h3>3. 位操作指令（逆向中加密/压缩/硬件交互核心）</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>指令</th>
+<th>格式</th>
+<th>功能</th>
+<th>影响标志位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AND/OR/XOR</td>
+<td>XOR reg, mem/imm</td>
+<td>按位与/或/异或</td>
+<td>ZF/SF/PF（CF/OF=0）</td>
+</tr>
+<tr>
+<td>NOT</td>
+<td>NOT reg</td>
+<td>按位取反</td>
+<td>无</td>
+</tr>
+<tr>
+<td>SHL/SHR</td>
+<td>SHL reg, imm</td>
+<td>逻辑左移/右移（空位补0）</td>
+<td>CF/ZF/SF/OF/PF</td>
+</tr>
+<tr>
+<td>SAL/SAR</td>
+<td>SAR reg, imm</td>
+<td>算术左移/右移（SAR补符号位）</td>
+<td>同SHL/SHR</td>
+</tr>
+<tr>
+<td>ROL/ROR</td>
+<td>ROL reg, imm</td>
+<td>循环左移/右移（进位参与循环）</td>
+<td>同SHL</td>
+</tr>
+<tr>
+<td>BT/BTC/BTR</td>
+<td>BT reg, imm</td>
+<td>位测试/测试并取反/测试并复位</td>
+<td>CF（目标位值）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>逆向示例</strong>：</p>
+<div class="highlight highlight-source-assembly"><pre class="notranslate"><span class="pl-k">xor</span><span class="pl-en"> </span><span class="pl-v">eax</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-v">eax</span><span class="pl-c">        ; 快速清零寄存器（比mov eax,0更高效）</span>
+<span class="pl-k">shl</span><span class="pl-en"> </span><span class="pl-v">ebx</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-c1">3</span><span class="pl-c">          ; 等价于ebx *= 8（逆向中识别乘除优化）</span>
+<span class="pl-k">bt</span><span class="pl-en"> </span><span class="pl-v">ecx</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-c1">7</span><span class="pl-c">           ; 测试ecx第7位是否为1（结果存CF）</span></pre></div>
+<h3>4. 逻辑比较指令（控制流分支的基础）</h3>
+<p>比较指令本质是“减法但不保存结果，仅更新标志位”，逆向中需结合标志位分析分支条件。</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>指令</th>
+<th>格式</th>
+<th>功能</th>
+<th>影响标志位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CMP</td>
+<td>CMP reg, mem/imm</td>
+<td>比较（reg - mem/imm）</td>
+<td>同SUB</td>
+</tr>
+<tr>
+<td>TEST</td>
+<td>TEST reg, mem/imm</td>
+<td>按位与（仅更新标志位）</td>
+<td>同AND</td>
+</tr>
+<tr>
+<td>SCAS</td>
+<td>SCASB/SCASW/SCASD</td>
+<td>串比较（AL/AX/EAX - [EDI]）</td>
+<td>同CMP</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>逆向关键</strong>：</p>
+<ul>
+<li>TEST eax, eax：快速判断eax是否为0（等价于CMP eax,0，更高效）；</li>
+<li>CMP后紧跟Jcc（条件跳转），是逆向中分析分支逻辑的核心；</li>
+<li>SCAS常用于字符串长度计算、内存数据校验（如缓冲区对比）。</li>
+</ul>
+<h3>5. 控制转移指令（逆向中分析执行流的核心）</h3>
+<p>控制转移指令改变EIP（指令指针），分为<strong>无条件跳转</strong>、<strong>条件跳转</strong>、<strong>函数调用/返回</strong>三类：</p>
+<h4>（1）无条件转移</h4>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>指令</th>
+<th>功能</th>
+<th>逆向场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JMP</td>
+<td>无条件跳转</td>
+<td>分支、循环、壳的跳转</td>
+</tr>
+<tr>
+<td>CALL</td>
+<td>调用函数（PUSH EIP+JMP）</td>
+<td>函数调用、API调用</td>
+</tr>
+<tr>
+<td>RET/RETN</td>
+<td>函数返回（POP EIP）</td>
+<td>函数结束、栈平衡</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h4>（2）条件跳转（Jcc）</h4>
+<p>基于标志寄存器的组合判断，是逆向中分析逻辑的核心：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>指令</th>
+<th>别名</th>
+<th>条件</th>
+<th>标志位组合</th>
+<th>典型逆向场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JE</td>
+<td>JZ</td>
+<td>相等/零</td>
+<td>ZF=1</td>
+<td>字符串比较结束、循环终止</td>
+</tr>
+<tr>
+<td>JNE</td>
+<td>JNZ</td>
+<td>不等/非零</td>
+<td>ZF=0</td>
+<td>循环继续、条件分支</td>
+</tr>
+<tr>
+<td>JG</td>
+<td>JNLE</td>
+<td>有符号大于</td>
+<td>SF=OF 且 ZF=0</td>
+<td>数值范围判断（如x&gt;10）</td>
+</tr>
+<tr>
+<td>JGE</td>
+<td>JNL</td>
+<td>有符号大于等于</td>
+<td>SF=OF</td>
+<td>数值判断（x≥0）</td>
+</tr>
+<tr>
+<td>JL</td>
+<td>JNGE</td>
+<td>有符号小于</td>
+<td>SF≠OF</td>
+<td>数值判断（x&lt;5）</td>
+</tr>
+<tr>
+<td>JLE</td>
+<td>JNG</td>
+<td>有符号小于等于</td>
+<td>SF≠OF 或 ZF=1</td>
+<td>数值判断（x≤0）</td>
+</tr>
+<tr>
+<td>JA</td>
+<td>JNBE</td>
+<td>无符号高于</td>
+<td>CF=0 且 ZF=0</td>
+<td>地址/长度比较（如buf_len&gt;100）</td>
+</tr>
+<tr>
+<td>JAE</td>
+<td>JNB</td>
+<td>无符号高于等于</td>
+<td>CF=0</td>
+<td>地址判断（ptr≥0x400000）</td>
+</tr>
+<tr>
+<td>JB</td>
+<td>JNAE</td>
+<td>无符号低于</td>
+<td>CF=1</td>
+<td>长度判断（len&lt;256）</td>
+</tr>
+<tr>
+<td>JBE</td>
+<td>JNA</td>
+<td>无符号低于等于</td>
+<td>CF=1 或 ZF=1</td>
+<td>长度判断（len≤512）</td>
+</tr>
+<tr>
+<td>JS</td>
+<td>-</td>
+<td>结果为负</td>
+<td>SF=1</td>
+<td>负数处理、符号校验</td>
+</tr>
+<tr>
+<td>JNS</td>
+<td>-</td>
+<td>结果非负</td>
+<td>SF=0</td>
+<td>正数判断</td>
+</tr>
+<tr>
+<td>JO</td>
+<td>-</td>
+<td>溢出</td>
+<td>OF=1</td>
+<td>溢出异常检测、数值越界</td>
+</tr>
+<tr>
+<td>JNO</td>
+<td>-</td>
+<td>无溢出</td>
+<td>OF=0</td>
+<td>正常数值运算</td>
+</tr>
+<tr>
+<td>JC</td>
+<td>-</td>
+<td>有进位</td>
+<td>CF=1</td>
+<td>大数运算、校验和计算</td>
+</tr>
+<tr>
+<td>JNC</td>
+<td>-</td>
+<td>无进位</td>
+<td>CF=0</td>
+<td>大数运算正常分支</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3>6. 栈操作指令（逆向中栈帧分析核心）</h3>
+<p>栈是x86逆向的核心（函数调用、局部变量、参数传递均依赖栈），栈操作指令需结合栈帧结构分析：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>指令</th>
+<th>格式</th>
+<th>功能</th>
+<th>逆向注意点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PUSH</td>
+<td>PUSH reg/mem/imm</td>
+<td>栈顶指针ESP-4，数据入栈</td>
+<td>逆向中跟踪栈内容变化</td>
+</tr>
+<tr>
+<td>POP</td>
+<td>POP reg</td>
+<td>栈顶数据出栈，ESP+4</td>
+<td>注意POP后寄存器值变化</td>
+</tr>
+<tr>
+<td>PUSHA/POPA</td>
+<td>-</td>
+<td>所有通用寄存器入栈/出栈</td>
+<td>保护现场（壳/调试器常用）</td>
+</tr>
+<tr>
+<td>ENTER/LEAVE</td>
+<td>ENTER imm16, imm8</td>
+<td>构建/销毁栈帧（等价于PUSH EBP; MOV EBP,ESP; SUB ESP,imm）</td>
+<td>函数入口/出口快速识别</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>逆向核心</strong>：栈的生长方向为<strong>高地址→低地址</strong>，ESP始终指向栈顶，EBP为栈帧基址（逆向中通过EBP偏移定位参数/局部变量）。</p>
+<h3>7. 字符串操作指令（逆向中字符串处理/内存拷贝核心）</h3>
+<p>字符串指令通过ESI（源地址）、EDI（目的地址）、ECX（长度）、EAX（比较值）配合，批量处理内存数据，逆向中常出现在字符串拷贝、加密、校验场景：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>指令</th>
+<th>格式</th>
+<th>功能</th>
+<th>逆向场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MOVS</td>
+<td>MOVSB/MOVSW/MOVSD</td>
+<td>串拷贝（[ESI]→[EDI]）</td>
+<td>内存拷贝、数据搬运</td>
+</tr>
+<tr>
+<td>LODS</td>
+<td>LODSB/LODSW/LODSD</td>
+<td>串加载（[ESI]→AL/AX/EAX）</td>
+<td>读取字符串/数据块</td>
+</tr>
+<tr>
+<td>STOS</td>
+<td>STOSB/STOSW/STOSD</td>
+<td>串存储（AL/AX/EAX→[EDI]）</td>
+<td>内存填充（如memset）</td>
+</tr>
+<tr>
+<td>REP</td>
+<td>REP MOVSB</td>
+<td>重复执行（ECX≠0）</td>
+<td>批量拷贝（如strcpy）</td>
+</tr>
+<tr>
+<td>REPE/REPNE</td>
+<td>REPE SCASB</td>
+<td>相等/不等时重复</td>
+<td>字符串比较（如strcmp）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>逆向示例</strong>：</p>
+<div class="highlight highlight-source-assembly"><pre class="notranslate"><span class="pl-c">; 等价于memset(edi, 0, ecx)</span>
+<span class="pl-k">xor</span><span class="pl-en"> </span><span class="pl-v">eax</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-v">eax</span><span class="pl-c">    ; 填充值为0</span>
+<span class="pl-k">rep</span><span class="pl-en"> </span><span class="pl-k">stosb</span><span class="pl-c">       ; 重复将AL写入[EDI]，ECX次，EDI自动递增</span></pre></div>
+<h2>四、TEB/PEB与反调试技术（逆向核心对抗场景）</h2>
+<p>TEB（线程环境块）、PEB（进程环境块）是Windows系统中存储进程/线程信息的核心结构，反调试技术常通过读取这些结构中的标志位检测调试器。</p>
+<h3>1. 核心结构关系</h3>
+<ul>
+<li>PEB：位于进程地址空间（32位：0x7FFDF000），存储进程基本信息（如是否调试、模块列表）；</li>
+<li>TEB：每个线程独有（32位：FS:[0]指向TEB），TEB偏移0x30指向PEB；</li>
+<li>关键偏移（32位Windows）：
+<div class="highlight highlight-source-assembly"><pre class="notranslate"><span class="pl-en">TEB </span><span class="pl-s1">+</span><span class="pl-en"> </span><span class="pl-c1">0x30</span><span class="pl-en"> → PEB</span>
+<span class="pl-en">PEB </span><span class="pl-s1">+</span><span class="pl-en"> </span><span class="pl-c1">0x02</span><span class="pl-en"> → BeingDebugged（</span><span class="pl-c1">1</span><span class="pl-en">字节，调试时为</span><span class="pl-c1">1</span><span class="pl-en">）</span>
+<span class="pl-en">PEB </span><span class="pl-s1">+</span><span class="pl-en"> </span><span class="pl-c1">0x68</span><span class="pl-en"> → Ldr（模块加载器）</span>
+<span class="pl-en">PEB </span><span class="pl-s1">+</span><span class="pl-en"> </span><span class="pl-c1">0x10</span><span class="pl-en"> → ProcessHeap（进程堆）</span></pre></div>
+</li>
+</ul>
+<h3>2. 基于TEB/PEB的反调试方法（逆向需识别）</h3>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>反调试方式</th>
+<th>汇编实现</th>
+<th>逆向识别要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>检测BeingDebugged标志</td>
+<td>mov eax, fs:[0x30] <br> mov al, [eax+0x02] <br> test al, al <br> jnz Debugged</td>
+<td>跟踪FS:[0x30]访问，检查PEB+0x02</td>
+</tr>
+<tr>
+<td>检测PEB堆标志</td>
+<td>mov eax, fs:[0x30] <br> mov eax, [eax+0x10] <br> test dword ptr [eax+0x14], 0x40</td>
+<td>访问ProcessHeap+0x14（HeapFlags）</td>
+</tr>
+<tr>
+<td>检测调试端口（PEB+0xBC）</td>
+<td>mov eax, fs:[0x30] <br> cmp dword ptr [eax+0xBC], 0 <br> jne Debugged</td>
+<td>PEB+0xBC为调试端口，非0则调试</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3>3. 逆向应对思路</h3>
+<ul>
+<li>动态调试：修改BeingDebugged标志为0，或Hook相关内存访问；</li>
+<li>静态分析：识别FS:[0x30]、PEB偏移访问指令，定位反调试分支。</li>
+</ul>
+<h2>五、函数调用与栈帧（逆向中函数分析核心）</h2>
+<h3>1. 函数的标准汇编结构（32位x86，以Stdcall为例）</h3>
+<p>一个完整的函数在汇编层面分为<strong>函数序言</strong>、<strong>函数体</strong>、<strong>函数尾声</strong>三部分，逆向中可通过这三部分快速识别函数边界：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th align="left">函数阶段</th>
+<th align="left">典型汇编指令</th>
+<th align="left">核心作用</th>
+<th align="left">逆向识别特征</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">函数序言（Prologue）</td>
+<td align="left">push ebp <br> mov ebp, esp <br> sub esp, n <br> push ebx/esi/edi（可选）</td>
+<td align="left">1. 保存旧栈帧基址（EBP）<br>2. 建立新栈帧（EBP=ESP）<br>3. 分配局部变量空间（ESP-n）<br>4. 保护非易失性寄存器（EBX/ESI/EDI）</td>
+<td align="left">函数开头固定出现<code class="notranslate">push ebp + mov ebp, esp</code>，是识别函数入口的核心特征</td>
+</tr>
+<tr>
+<td align="left">函数体（Body）</td>
+<td align="left">各类业务指令（运算、分支、调用子函数等）</td>
+<td align="left">实现函数核心逻辑</td>
+<td align="left">包含业务相关的指令流，如参数访问（EBP+8/12）、局部变量访问（EBP-4/8）、子函数CALL等</td>
+</tr>
+<tr>
+<td align="left">函数尾声（Epilogue）</td>
+<td align="left">pop ebx/esi/edi（可选）<br> mov esp, ebp <br> pop ebp <br> retn n（Stdcall）/ ret（Cdecl）</td>
+<td align="left">1. 恢复非易失性寄存器<br>2. 销毁栈帧（ESP=EBP）<br>3. 恢复旧EBP<br>4. 函数返回并平衡栈</td>
+<td align="left">函数结尾固定出现<code class="notranslate">mov esp, ebp + pop ebp + ret/retn</code>，是识别函数出口的核心特征</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>逆向示例</strong>：标准函数结构汇编代码</p>
+<div class="highlight highlight-source-assembly"><pre class="notranslate"><span class="pl-c">; 函数：int Add(int a, int b) （Stdcall调用约定）</span>
+<span class="pl-k">Add</span><span class="pl-en">:</span>
+<span class="pl-c">    ; 函数序言</span>
+<span class="pl-en">    </span><span class="pl-k">push</span><span class="pl-en"> </span><span class="pl-v">ebp</span><span class="pl-c">         ; 保存旧EBP</span>
+<span class="pl-en">    </span><span class="pl-k">mov</span><span class="pl-en"> </span><span class="pl-v">ebp</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-v">esp</span><span class="pl-c">     ; 建立新栈帧</span>
+<span class="pl-en">    </span><span class="pl-k">sub</span><span class="pl-en"> </span><span class="pl-v">esp</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-c1">0x4</span><span class="pl-c">     ; 分配1个局部变量（4字节）空间</span>
+<span class="pl-en">    </span><span class="pl-k">push</span><span class="pl-en"> </span><span class="pl-v">esi</span><span class="pl-c">         ; 保护非易失性寄存器ESI</span>
+<span class="pl-en">    </span>
+<span class="pl-c">    ; 函数体</span>
+<span class="pl-en">    </span><span class="pl-k">mov</span><span class="pl-en"> </span><span class="pl-v">eax</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-s1">[</span><span class="pl-v">ebp</span><span class="pl-s1">+</span><span class="pl-c1">8</span><span class="pl-s1">]</span><span class="pl-c">  ; 读取参数a（EBP+8为第一个参数）</span>
+<span class="pl-en">    </span><span class="pl-k">mov</span><span class="pl-en"> </span><span class="pl-v">esi</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-s1">[</span><span class="pl-v">ebp</span><span class="pl-s1">+</span><span class="pl-c1">12</span><span class="pl-s1">]</span><span class="pl-c"> ; 读取参数b（EBP+12为第二个参数）</span>
+<span class="pl-en">    </span><span class="pl-k">add</span><span class="pl-en"> </span><span class="pl-v">eax</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-v">esi</span><span class="pl-c">      ; a + b，结果存EAX（返回值）</span>
+<span class="pl-en">    </span><span class="pl-k">mov</span><span class="pl-en"> </span><span class="pl-s1">[</span><span class="pl-v">ebp</span><span class="pl-s1">-</span><span class="pl-c1">4</span><span class="pl-s1">],</span><span class="pl-en"> </span><span class="pl-v">eax</span><span class="pl-c">  ; 临时存入局部变量（可选）</span>
+<span class="pl-en">    </span>
+<span class="pl-c">    ; 函数尾声</span>
+<span class="pl-en">    </span><span class="pl-k">pop</span><span class="pl-en"> </span><span class="pl-v">esi</span><span class="pl-c">          ; 恢复ESI</span>
+<span class="pl-en">    </span><span class="pl-k">mov</span><span class="pl-en"> </span><span class="pl-v">esp</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-v">ebp</span><span class="pl-c">     ; 销毁局部变量空间（ESP回到EBP）</span>
+<span class="pl-en">    </span><span class="pl-k">pop</span><span class="pl-en"> </span><span class="pl-v">ebp</span><span class="pl-c">          ; 恢复旧EBP</span>
+<span class="pl-en">    retn </span><span class="pl-c1">0x8</span><span class="pl-c">         ; 返回，平衡栈（参数a+b共8字节，Stdcall由被调用者平衡）</span></pre></div>
+<h3>2. 函数嵌套堆栈结构（32位x86）</h3>
+<p>以“函数A调用函数B，B有2个局部变量、2个参数”为例，栈帧结构（高地址→低地址）：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>后</th>
+<th>函数A的栈帧</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>函数B的局部变量2</td>
+</tr>
+<tr>
+<td></td>
+<td>函数B的局部变量1</td>
+</tr>
+<tr>
+<td></td>
+<td>上一层的ebp</td>
+</tr>
+<tr>
+<td></td>
+<td>返回地址</td>
+</tr>
+<tr>
+<td></td>
+<td>参数1</td>
+</tr>
+<tr>
+<td></td>
+<td>参数2</td>
+</tr>
+<tr>
+<td>先</td>
+<td>函数B的栈顶（ESP）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<h3>3. 函数调用约定（逆向中识别参数传递/栈平衡）</h3>
+<p>调用约定决定参数传递顺序、栈平衡责任、寄存器使用，是逆向中还原函数原型的关键：</p>
+<markdown-accessiblity-table><table role="table">
+<thead>
+<tr>
+<th>调用约定</th>
+<th>参数传递顺序</th>
+<th>栈平衡责任</th>
+<th>寄存器使用</th>
+<th>典型场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cdecl</td>
+<td>右→左</td>
+<td>调用者</td>
+<td>无</td>
+<td>C/C++默认、可变参数函数（printf）</td>
+</tr>
+<tr>
+<td>Stdcall</td>
+<td>右→左</td>
+<td>被调用者</td>
+<td>无</td>
+<td>Windows API（如MessageBoxA）</td>
+</tr>
+<tr>
+<td>Fastcall</td>
+<td>右→左</td>
+<td>被调用者</td>
+<td>ECX(第1参数)、EDX(第2参数)</td>
+<td>快速调用（编译器优化）</td>
+</tr>
+<tr>
+<td>Thiscall</td>
+<td>右→左</td>
+<td>被调用者</td>
+<td>ECX=this指针</td>
+<td>C++类成员函数</td>
+</tr>
+<tr>
+<td>Syscall</td>
+<td>寄存器</td>
+<td>内核</td>
+<td>EAX(系统调用号)、EBX/ECX/EDX(参数)</td>
+<td>Windows内核系统调用（如NtReadFile）</td>
+</tr>
+</tbody>
+</table></markdown-accessiblity-table>
+<p><strong>逆向识别要点</strong>：</p>
+<ul>
+<li>Cdecl：函数返回后调用者执行<code class="notranslate">ADD ESP, n</code>平衡栈；</li>
+<li>Stdcall：函数返回时执行<code class="notranslate">RETN n</code>（n为参数总字节数）；</li>
+<li>Fastcall：优先看ECX/EDX是否传递参数；</li>
+<li>Thiscall：C++代码中ECX在函数开头赋值，大概率为this指针。</li>
+</ul>
+<h2>六、标志寄存器的高级用法（逆向中分析分支/运算）</h2>
+<h3>1. 高级应用场景</h3>
+<ul>
+<li><strong>无分支条件判断</strong>：通过CMOVcc/SETcc指令替代Jcc，减少分支（反调试/壳常用）：
+<div class="highlight highlight-source-assembly"><pre class="notranslate"><span class="pl-c">; 等价于if (eax == 0) ebx = 1; else ebx = 2;</span>
+<span class="pl-k">xor</span><span class="pl-en"> </span><span class="pl-v">ecx</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-v">ecx</span>
+<span class="pl-k">cmp</span><span class="pl-en"> </span><span class="pl-v">eax</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-c1">0</span>
+<span class="pl-k">mov</span><span class="pl-en"> </span><span class="pl-v">ecx</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-c1">2</span>
+<span class="pl-en">cmovz </span><span class="pl-v">ecx</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-c1">1</span><span class="pl-c">  ; ZF=1时，ecx=1</span>
+<span class="pl-k">mov</span><span class="pl-en"> </span><span class="pl-v">ebx</span><span class="pl-s1">,</span><span class="pl-en"> </span><span class="pl-v">ecx</span></pre></div>
+</li>
+<li><strong>大数运算校验</strong>：ADC/SBB结合CF标志实现64位以上整数运算，逆向中需跟踪CF的传递；</li>
+<li><strong>溢出检测</strong>：JO指令捕获有符号运算溢出（如int32超出范围），逆向中识别异常处理逻辑；</li>
+<li><strong>反调试混淆</strong>：故意修改标志位（如CLI/STI修改IF标志），干扰调试器跟踪。</li>
+</ul>
+<h2>七、逆向工程核心技巧总结</h2>
+<ol>
+<li><strong>指令流分析</strong>：从入口点开始，跟踪EIP变化，结合Jcc/Call/Ret分析执行流；</li>
+<li><strong>栈帧还原</strong>：通过EBP偏移定位参数（EBP+8开始）、局部变量（EBP-4开始），还原函数原型；</li>
+<li><strong>标志位跟踪</strong>：CMP/TEST后紧跟Jcc，需先分析标志位组合，再判断分支逻辑；</li>
+<li><strong>反调试识别</strong>：关注FS:[0x30]（TEB）、PEB偏移访问、标志位异常修改指令；</li>
+<li><strong>调用约定还原</strong>：通过栈平衡指令（ADD ESP/RETN n）、寄存器使用（ECX/EDX）识别调用约定。</li>
+</ol></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://huangzy-hub.github.io">huangzy</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","huangzy-hub/huangzy-hub.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>
