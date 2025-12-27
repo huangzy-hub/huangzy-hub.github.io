@@ -93,86 +93,9 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>在Markdown中，插入图片的基本语法如下：</p>
 <div class="highlight highlight-text-md"><pre class="notranslate"><span class="pl-s">![</span>图片描述<span class="pl-s">]</span><span class="pl-s">(</span><span class="pl-corl">图片路径</span><span class="pl-s">)</span></pre></div>
 <p>例如：</p>
-<div class="highlight highlight-text-md"><pre class="notranslate"><span class="pl-s">![</span>示例图片<span class="pl-s">]</span><span class="pl-s">(</span><span class="pl-corl">/photo/sample-image.png</span><span class="pl-s">)</span></pre></div>
+<div class="highlight highlight-text-md"><pre class="notranslate"><span class="pl-s">![</span>示例图片1<span class="pl-s">]</span><span class="pl-s">(</span><span class="pl-corl">https://github.com/huangzy-hub/huangzy-hub.github.io/raw/main/photo/sample_image.png</span><span class="pl-s">)</span></pre></div>
 <p>效果如下：</p>
-<p><a target="_blank" rel="noopener noreferrer" href="/photo/sample-image.png"><img src="/photo/sample-image.png" alt="示例图片" style="max-width: 100%;"></a></p>
-<h2>图片路径的几种方式</h2>
-<h3>1. 相对路径</h3>
-<p>使用相对于当前文章的路径：</p>
-<div class="highlight highlight-text-md"><pre class="notranslate"><span class="pl-s">![</span>示例图片<span class="pl-s">]</span><span class="pl-s">(</span><span class="pl-corl">../../posts/sample-image.png</span><span class="pl-s">)</span></pre></div>
-<h3>2. 绝对路径</h3>
-<p>从网站根目录开始的路径：</p>
-<div class="highlight highlight-text-md"><pre class="notranslate"><span class="pl-s">![</span>示例图片<span class="pl-s">]</span><span class="pl-s">(</span><span class="pl-corl">/photo/sample-image.png</span><span class="pl-s">)</span></pre></div>
-<h3>3. 网络图片</h3>
-<p>也可以直接使用网络上的图片：</p>
-<div class="highlight highlight-text-md"><pre class="notranslate"><span class="pl-s">![</span>网络图片<span class="pl-s">]</span><span class="pl-s">(</span><span class="pl-corl">https://example.com/image.jpg</span><span class="pl-s">)</span></pre></div>
-<h2>图片的高级用法</h2>
-<h3>指定图片尺寸</h3>
-<p>可以使用HTML标签来指定图片尺寸：</p>
-<div class="highlight highlight-text-html-basic"><pre class="notranslate"><span class="pl-kos">&lt;</span><span class="pl-ent">img</span> <span class="pl-c1">src</span>="<span class="pl-s">/photo/sample-image.png</span>" <span class="pl-c1">alt</span>="<span class="pl-s">示例图片</span>" <span class="pl-c1">width</span>="<span class="pl-s">300</span>" <span class="pl-c1">height</span>="<span class="pl-s">200</span>"<span class="pl-kos">&gt;</span></pre></div>
-<p>效果如下：</p>
-<p><a target="_blank" rel="noopener noreferrer" href="/photo/sample-image.png"><img src="/photo/sample-image.png" alt="示例图片" width="300" height="200" style="max-width: 100%; height: auto; max-height: 200px;"></a></p>
-<h3>添加图片链接</h3>
-<p>将图片包裹在链接中：</p>
-<div class="highlight highlight-text-md"><pre class="notranslate"><span class="pl-s">[</span><span class="pl-s">![</span>示例图片<span class="pl-s">]</span><span class="pl-s">(</span><span class="pl-corl">/photo/sample-image.png</span><span class="pl-s">)]</span><span class="pl-s">(</span><span class="pl-corl">/about</span><span class="pl-s">)</span></pre></div>
-<p>效果如下：</p>
-<p><a href="/about"><img src="/photo/sample-image.png" alt="示例图片" style="max-width: 100%;"></a></p>
-<h3>图片对齐方式</h3>
-<p>使用HTML标签控制图片对齐：</p>
-<div class="highlight highlight-text-html-basic"><pre class="notranslate"><span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">style</span>="<span class="pl-s">text-align: center;</span>"<span class="pl-kos">&gt;</span>
-  <span class="pl-kos">&lt;</span><span class="pl-ent">img</span> <span class="pl-c1">src</span>="<span class="pl-s">/photo/sample-image.png</span>" <span class="pl-c1">alt</span>="<span class="pl-s">居中图片</span>" <span class="pl-c1">style</span>="<span class="pl-s">width: 200px;</span>"<span class="pl-kos">&gt;</span>
-<span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
-
-<span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">style</span>="<span class="pl-s">float: right; margin-left: 20px;</span>"<span class="pl-kos">&gt;</span>
-  <span class="pl-kos">&lt;</span><span class="pl-ent">img</span> <span class="pl-c1">src</span>="<span class="pl-s">/photo/sample-image.png</span>" <span class="pl-c1">alt</span>="<span class="pl-s">右对齐图片</span>" <span class="pl-c1">style</span>="<span class="pl-s">width: 150px;</span>"<span class="pl-kos">&gt;</span>
-<span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span>
-
-<span class="pl-kos">&lt;</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>这是一段文字，图片会显示在右侧。当文字足够多时，会围绕图片排列。<span class="pl-kos">&lt;/</span><span class="pl-ent">p</span><span class="pl-kos">&gt;</span>
-
-<span class="pl-kos">&lt;</span><span class="pl-ent">div</span> <span class="pl-c1">style</span>="<span class="pl-s">clear: both;</span>"<span class="pl-kos">&gt;</span><span class="pl-kos">&lt;/</span><span class="pl-ent">div</span><span class="pl-kos">&gt;</span></pre></div>
-<p>效果如下：</p>
-<div>
-  <a target="_blank" rel="noopener noreferrer" href="/photo/sample-image.png"><img src="/photo/sample-image.png" alt="居中图片" style="max-width: 100%;"></a>
-</div>
-<div>
-  <a target="_blank" rel="noopener noreferrer" href="/photo/sample-image.png"><img src="/photo/sample-image.png" alt="右对齐图片" style="max-width: 100%;"></a>
-</div>
-<p>这是一段文字，图片会显示在右侧。当文字足够多时，会围绕图片排列。Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-<div></div>
-<h2>图片优化建议</h2>
-<ol>
-<li><strong>压缩图片</strong>：使用工具如TinyPNG压缩图片大小</li>
-<li><strong>选择合适的格式</strong>：
-<ul>
-<li>JPEG：适合照片类图片</li>
-<li>PNG：适合图标和透明背景图片</li>
-<li>WebP：现代格式，压缩率高</li>
-</ul>
-</li>
-<li><strong>指定尺寸</strong>：根据显示需求指定合适的图片尺寸</li>
-<li><strong>添加alt属性</strong>：提高可访问性和SEO</li>
-</ol>
-<h2>常见问题</h2>
-<h3>图片不显示</h3>
-<p>检查以下几点：</p>
-<ul>
-<li>图片路径是否正确</li>
-<li>图片文件是否存在</li>
-<li>图片文件名是否区分大小写</li>
-<li>图片权限是否正确</li>
-</ul>
-<h3>图片加载慢</h3>
-<p>优化方法：</p>
-<ul>
-<li>压缩图片文件大小</li>
-<li>使用CDN加速</li>
-<li>实现懒加载</li>
-<li>使用响应式图片</li>
-</ul>
-<h2>总结</h2>
-<p>正确使用图片可以让你的博客文章更加丰富多彩。掌握基本的图片插入语法和一些高级技巧，可以帮助你创建更加吸引人的内容。</p>
-<p>记住要优化图片大小和格式，确保良好的用户体验。同时，也要注意图片的版权问题，使用自己拥有版权或获得授权的图片。</p>
-<p>希望这篇教程对你有所帮助！</p></div>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/huangzy-hub/huangzy-hub.github.io/raw/main/photo/sample_image.png"><img src="https://github.com/huangzy-hub/huangzy-hub.github.io/raw/main/photo/sample_image.png" alt="示例图片1" style="max-width: 100%;"></a></p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
@@ -231,7 +154,11 @@ console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 
 <script>
 document.getElementById("pathHome").setAttribute("d",IconList["home"]);
 document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
-
+cmButton=document.getElementById("cmButton");
+    span=document.createElement("span");
+    span.setAttribute("class","Counter");
+    span.innerHTML="3";
+    cmButton.appendChild(span);
 
 
 function openComments(){
