@@ -93,9 +93,9 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 <p>在Markdown中，插入图片的基本语法如下：</p>
 <div class="highlight highlight-text-md"><pre class="notranslate"><span class="pl-s">![</span>图片描述<span class="pl-s">]</span><span class="pl-s">(</span><span class="pl-corl">图片路径</span><span class="pl-s">)</span></pre></div>
 <p>例如：</p>
-<div class="highlight highlight-text-md"><pre class="notranslate"><span class="pl-s">![</span>示例图片1<span class="pl-s">]</span><span class="pl-s">(</span><span class="pl-corl">https://github.com/huangzy-hub/huangzy-hub.github.io/raw/main/photo/sample_image.png</span><span class="pl-s">)</span></pre></div>
+<div class="highlight highlight-text-md"><pre class="notranslate"><span class="pl-s">![</span>示例图片1<span class="pl-s">]</span><span class="pl-s">(</span><span class="pl-corl">https://github.com/huangzy-hub/huangzy-hub.github.io/photo/sample_image.png</span><span class="pl-s">)</span></pre></div>
 <p>效果如下：</p>
-<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/huangzy-hub/huangzy-hub.github.io/raw/main/photo/sample_image.png"><img src="https://github.com/huangzy-hub/huangzy-hub.github.io/raw/main/photo/sample_image.png" alt="示例图片1" style="max-width: 100%;"></a></p></div>
+<p><a target="_blank" rel="noopener noreferrer" href="https://github.com/huangzy-hub/huangzy-hub.github.io/photo/sample_image.png"><img src="https://github.com/huangzy-hub/huangzy-hub.github.io/photo/sample_image.png" alt="示例图片1" style="max-width: 100%;"></a></p></div>
 <div style="font-size:small;margin-top:8px;float:right;"></div>
 
 <button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
@@ -154,11 +154,7 @@ console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 
 <script>
 document.getElementById("pathHome").setAttribute("d",IconList["home"]);
 document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
-cmButton=document.getElementById("cmButton");
-    span=document.createElement("span");
-    span.setAttribute("class","Counter");
-    span.innerHTML="4";
-    cmButton.appendChild(span);
+
 
 
 function openComments(){
