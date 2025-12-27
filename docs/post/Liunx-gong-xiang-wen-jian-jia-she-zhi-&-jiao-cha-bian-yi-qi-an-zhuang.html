@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html data-color-mode="light" data-dark-theme="dark" data-light-theme="light" lang="zh-CN">
+<head>
+    <meta content="text/html; charset=utf-8" http-equiv="content-type" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link href='https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/Primer/21.0.7/primer.css' rel='stylesheet' />
+    
+    <link rel="icon" href="https://avatars.githubusercontent.com/u/195115766?v=4"><script>
+        let theme = localStorage.getItem("meek_theme") || "light";
+        document.documentElement.setAttribute("data-color-mode", theme);
+    </script>
+<meta name="description" content="# 一、主机 ↔ 虚拟机 文本复制（剪贴板共享）相关命令与操作
+## 1. 检查/安装VMware剪贴板共享工具
+```bash
+# 检查open-vm-tools是否已安装
+sudo apt list --installed | grep open-vm-tools
+
+# 未安装则执行安装（Ubuntu系统）
+sudo apt update && sudo apt install open-vm-tools open-vm-tools-desktop
+
+# 重启工具服务（修复剪贴板失效）
+sudo systemctl restart open-vm-tools
+
+# 手动加载剪贴板模块（可选应急方案）
+sudo vmware-user-suid-wrapper
+```
+
+## 2. 验证剪贴板功能
+```bash
+# 虚拟机内复制文本（示例：复制当前目录路径）
+pwd | xclip -sel clip  # 需先安装xclip：sudo apt install xclip
+# 主机粘贴即可；反之主机复制，虚拟机内执行以下命令粘贴
+xclip -o sel clip
+```
+
+# 二、文件挂载相关命令（主机-虚拟机、开发板-虚拟机）
+## （一）主机 ↔ 虚拟机 共享文件夹挂载（VMware共享文件夹）
+```bash
+# 1. 虚拟机端检查共享文件夹是否挂载
+vmware-hgfsclient
+```
+[参考视频地址](https://www.bilibili.com/video/BV1HwuczVEG4/?spm_id_from=333.337.search-card.all.click&vd_source=3881e95a6111e5a025dbc0531ef2a219)
+
+
+## （二）开发板 ↔ 虚拟机 NFS共享挂载（核心命令）
+### 虚拟机端（NFS服务器配置）
+```bash
+# 1. 安装NFS服务
+sudo apt update && sudo apt install nfs-kernel-server
+
+# 2. 创建共享目录
+mkdir -p /mnt/hgfs/share  # 或 ~/nfs_share
+sudo chmod -R 777 /mnt/hgfs/share
+
+# 3. 配置NFS共享权限
+sudo nano /etc/exports
+# 在文件末尾添加（允许开发板网段访问，添加fsid=0适配NFSv4）
+/mnt/hgfs/share 192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash,fsid=0)
+
+# 4. 重新加载NFS配置并重启服务
+sudo exportfs -r
+sudo systemctl restart nfs-kernel-server
+sudo systemctl enable nfs-kernel-server  # 设置NFS服务开机自启
+
+# 5. 验证NFS共享目录列表
+showmount -e localhost
+```
+
+### 开发板端（NFS客户端挂载）
+```bash
+# 1. 创建本地挂载目录
+mkdir -p /mnt/host_share
+
+# 2. 手动挂载虚拟机NFS共享目录
+mount -t nfs 192.168.1.221:/mnt/hgfs/share /mnt/host_share
+
+# 3. 验证挂载是否成功
+df -h | grep /mnt/host_share  # 查看挂载状态
+ls /mnt/host_share  # 查看共享文件
+
+# 4. 配置开机自动挂载（永久生效）
+sudo nano /etc/fstab
+# 在文件末尾添加
+192.168.1.221:/mnt/hgfs/share /mnt/host_share nfs defaults 0 0
+
+# 5. 验证自动挂载（重启后执行）
+df -h | grep /mnt/host_share
+```
+
+### 总结
+1.  主机与虚拟机文本复制核心依赖`open-vm-tools`，需确保服务正常运行+VMware剪贴板勾选；
+2.  主机与虚拟机文件共享用VMware自带共享文件夹（挂载点`/mnt/hgfs`），开发板与虚拟机用NFS（虚拟机为服务端、开发板为客户端）；
+3.  所有挂载需先创建本地目录，NFS需配置`/etc/exports`并重启服务，开机自动挂载需配置`/etc/fstab`；
+4.  Ubuntu 24.04需替换过时软件包名（如`libbsd1.2-dev`→`libbsd-dev`、`openjdk-8-jdk`→`openjdk-17-jdk`），并启用32位架构
+
+
+
+
+# 三、交叉编译器安装
+
+
+搞了一个下午终于搞定了，不知道为什么虚拟机又进不了桌面，然后昨天设置好的共享目录为什么又突然不行了，差点给我整破防了。">
+<meta property="og:title" content="Liunx共享文件夹设置&交叉编译器安装">
+<meta property="og:description" content="# 一、主机 ↔ 虚拟机 文本复制（剪贴板共享）相关命令与操作
+## 1. 检查/安装VMware剪贴板共享工具
+```bash
+# 检查open-vm-tools是否已安装
+sudo apt list --installed | grep open-vm-tools
+
+# 未安装则执行安装（Ubuntu系统）
+sudo apt update && sudo apt install open-vm-tools open-vm-tools-desktop
+
+# 重启工具服务（修复剪贴板失效）
+sudo systemctl restart open-vm-tools
+
+# 手动加载剪贴板模块（可选应急方案）
+sudo vmware-user-suid-wrapper
+```
+
+## 2. 验证剪贴板功能
+```bash
+# 虚拟机内复制文本（示例：复制当前目录路径）
+pwd | xclip -sel clip  # 需先安装xclip：sudo apt install xclip
+# 主机粘贴即可；反之主机复制，虚拟机内执行以下命令粘贴
+xclip -o sel clip
+```
+
+# 二、文件挂载相关命令（主机-虚拟机、开发板-虚拟机）
+## （一）主机 ↔ 虚拟机 共享文件夹挂载（VMware共享文件夹）
+```bash
+# 1. 虚拟机端检查共享文件夹是否挂载
+vmware-hgfsclient
+```
+[参考视频地址](https://www.bilibili.com/video/BV1HwuczVEG4/?spm_id_from=333.337.search-card.all.click&vd_source=3881e95a6111e5a025dbc0531ef2a219)
+
+
+## （二）开发板 ↔ 虚拟机 NFS共享挂载（核心命令）
+### 虚拟机端（NFS服务器配置）
+```bash
+# 1. 安装NFS服务
+sudo apt update && sudo apt install nfs-kernel-server
+
+# 2. 创建共享目录
+mkdir -p /mnt/hgfs/share  # 或 ~/nfs_share
+sudo chmod -R 777 /mnt/hgfs/share
+
+# 3. 配置NFS共享权限
+sudo nano /etc/exports
+# 在文件末尾添加（允许开发板网段访问，添加fsid=0适配NFSv4）
+/mnt/hgfs/share 192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash,fsid=0)
+
+# 4. 重新加载NFS配置并重启服务
+sudo exportfs -r
+sudo systemctl restart nfs-kernel-server
+sudo systemctl enable nfs-kernel-server  # 设置NFS服务开机自启
+
+# 5. 验证NFS共享目录列表
+showmount -e localhost
+```
+
+### 开发板端（NFS客户端挂载）
+```bash
+# 1. 创建本地挂载目录
+mkdir -p /mnt/host_share
+
+# 2. 手动挂载虚拟机NFS共享目录
+mount -t nfs 192.168.1.221:/mnt/hgfs/share /mnt/host_share
+
+# 3. 验证挂载是否成功
+df -h | grep /mnt/host_share  # 查看挂载状态
+ls /mnt/host_share  # 查看共享文件
+
+# 4. 配置开机自动挂载（永久生效）
+sudo nano /etc/fstab
+# 在文件末尾添加
+192.168.1.221:/mnt/hgfs/share /mnt/host_share nfs defaults 0 0
+
+# 5. 验证自动挂载（重启后执行）
+df -h | grep /mnt/host_share
+```
+
+### 总结
+1.  主机与虚拟机文本复制核心依赖`open-vm-tools`，需确保服务正常运行+VMware剪贴板勾选；
+2.  主机与虚拟机文件共享用VMware自带共享文件夹（挂载点`/mnt/hgfs`），开发板与虚拟机用NFS（虚拟机为服务端、开发板为客户端）；
+3.  所有挂载需先创建本地目录，NFS需配置`/etc/exports`并重启服务，开机自动挂载需配置`/etc/fstab`；
+4.  Ubuntu 24.04需替换过时软件包名（如`libbsd1.2-dev`→`libbsd-dev`、`openjdk-8-jdk`→`openjdk-17-jdk`），并启用32位架构
+
+
+
+
+# 三、交叉编译器安装
+
+
+搞了一个下午终于搞定了，不知道为什么虚拟机又进不了桌面，然后昨天设置好的共享目录为什么又突然不行了，差点给我整破防了。">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://huangzy-hub.github.io/post/Liunx-gong-xiang-wen-jian-jia-she-zhi-%26-jiao-cha-bian-yi-qi-an-zhuang.html">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/195115766?v=4">
+<title>Liunx共享文件夹设置&交叉编译器安装</title>
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
+
+
+</head>
+<style>
+body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;padding: 45px;font-size: 16px;font-family: sans-serif;line-height: 1.25;}
+#header{display:flex;padding-bottom:8px;border-bottom: 1px solid var(--borderColor-muted, var(--color-border-muted));margin-bottom: 16px;}
+#footer {margin-top:64px; text-align: center;font-size: small;}
+
+</style>
+
+<style>
+.postTitle{margin: auto 0;font-size:40px;font-weight:bold;}
+.title-right{display:flex;margin:auto 0 0 auto;}
+.title-right .circle{padding: 14px 16px;margin-right:8px;}
+#postBody{border-bottom: 1px solid var(--color-border-default);padding-bottom:36px;}
+#postBody hr{height:2px;}
+#cmButton{height:48px;margin-top:48px;}
+#comments{margin-top:64px;}
+.g-emoji{font-size:24px;}
+@media (max-width: 600px) {
+    body {padding: 8px;}
+    .postTitle{font-size:24px;}
+}
+.copy-feedback {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    color: var(--color-fg-on-emphasis);
+    background-color: var(--color-fg-muted);
+    border-radius: 3px;
+    padding: 5px 8px;
+    font-size: 12px;
+}
+</style>
+
+
+
+
+<body>
+    <div id="header">
+<h1 class="postTitle">Liunx共享文件夹设置&交叉编译器安装</h1>
+<div class="title-right">
+    <a href="https://huangzy-hub.github.io" id="buttonHome" class="btn btn-invisible circle" title="首页">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathHome" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+    <a href="https://github.com/huangzy-hub/huangzy-hub.github.io/issues/9" target="_blank" class="btn btn-invisible circle" title="Issue">
+        <svg class="octicon" width="16" height="16">
+            <path id="pathIssue" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+    
+
+    <a class="btn btn-invisible circle" onclick="modeSwitch();" title="切换主题">
+        <svg class="octicon" width="16" height="16" >
+            <path id="themeSwitch" fill-rule="evenodd"></path>
+        </svg>
+    </a>
+
+</div>
+</div>
+    <div id="content">
+<div class="markdown-body" id="postBody"><h1>一、主机 ↔ 虚拟机 文本复制（剪贴板共享）相关命令与操作</h1>
+<h2>1. 检查/安装VMware剪贴板共享工具</h2>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 检查open-vm-tools是否已安装</span>
+sudo apt list --installed <span class="pl-k">|</span> grep open-vm-tools
+
+<span class="pl-c"><span class="pl-c">#</span> 未安装则执行安装（Ubuntu系统）</span>
+sudo apt update <span class="pl-k">&amp;&amp;</span> sudo apt install open-vm-tools open-vm-tools-desktop
+
+<span class="pl-c"><span class="pl-c">#</span> 重启工具服务（修复剪贴板失效）</span>
+sudo systemctl restart open-vm-tools
+
+<span class="pl-c"><span class="pl-c">#</span> 手动加载剪贴板模块（可选应急方案）</span>
+sudo vmware-user-suid-wrapper</pre></div>
+<h2>2. 验证剪贴板功能</h2>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 虚拟机内复制文本（示例：复制当前目录路径）</span>
+<span class="pl-c1">pwd</span> <span class="pl-k">|</span> xclip -sel clip  <span class="pl-c"><span class="pl-c">#</span> 需先安装xclip：sudo apt install xclip</span>
+<span class="pl-c"><span class="pl-c">#</span> 主机粘贴即可；反之主机复制，虚拟机内执行以下命令粘贴</span>
+xclip -o sel clip</pre></div>
+<h1>二、文件挂载相关命令（主机-虚拟机、开发板-虚拟机）</h1>
+<h2>（一）主机 ↔ 虚拟机 共享文件夹挂载（VMware共享文件夹）</h2>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 1. 虚拟机端检查共享文件夹是否挂载</span>
+vmware-hgfsclient</pre></div>
+<p><a href="https://www.bilibili.com/video/BV1HwuczVEG4/?spm_id_from=333.337.search-card.all.click&amp;vd_source=3881e95a6111e5a025dbc0531ef2a219" rel="nofollow">参考视频地址</a></p>
+<h2>（二）开发板 ↔ 虚拟机 NFS共享挂载（核心命令）</h2>
+<h3>虚拟机端（NFS服务器配置）</h3>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 1. 安装NFS服务</span>
+sudo apt update <span class="pl-k">&amp;&amp;</span> sudo apt install nfs-kernel-server
+
+<span class="pl-c"><span class="pl-c">#</span> 2. 创建共享目录</span>
+mkdir -p /mnt/hgfs/share  <span class="pl-c"><span class="pl-c">#</span> 或 ~/nfs_share</span>
+sudo chmod -R 777 /mnt/hgfs/share
+
+<span class="pl-c"><span class="pl-c">#</span> 3. 配置NFS共享权限</span>
+sudo nano /etc/exports
+<span class="pl-c"><span class="pl-c">#</span> 在文件末尾添加（允许开发板网段访问，添加fsid=0适配NFSv4）</span>
+/mnt/hgfs/share 192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash,fsid=0)
+
+<span class="pl-c"><span class="pl-c">#</span> 4. 重新加载NFS配置并重启服务</span>
+sudo exportfs -r
+sudo systemctl restart nfs-kernel-server
+sudo systemctl <span class="pl-c1">enable</span> nfs-kernel-server  <span class="pl-c"><span class="pl-c">#</span> 设置NFS服务开机自启</span>
+
+<span class="pl-c"><span class="pl-c">#</span> 5. 验证NFS共享目录列表</span>
+showmount -e localhost</pre></div>
+<h3>开发板端（NFS客户端挂载）</h3>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 1. 创建本地挂载目录</span>
+mkdir -p /mnt/host_share
+
+<span class="pl-c"><span class="pl-c">#</span> 2. 手动挂载虚拟机NFS共享目录</span>
+mount -t nfs 192.168.1.221:/mnt/hgfs/share /mnt/host_share
+
+<span class="pl-c"><span class="pl-c">#</span> 3. 验证挂载是否成功</span>
+df -h <span class="pl-k">|</span> grep /mnt/host_share  <span class="pl-c"><span class="pl-c">#</span> 查看挂载状态</span>
+ls /mnt/host_share  <span class="pl-c"><span class="pl-c">#</span> 查看共享文件</span>
+
+<span class="pl-c"><span class="pl-c">#</span> 4. 配置开机自动挂载（永久生效）</span>
+sudo nano /etc/fstab
+<span class="pl-c"><span class="pl-c">#</span> 在文件末尾添加</span>
+192.168.1.221:/mnt/hgfs/share /mnt/host_share nfs defaults 0 0
+
+<span class="pl-c"><span class="pl-c">#</span> 5. 验证自动挂载（重启后执行）</span>
+df -h <span class="pl-k">|</span> grep /mnt/host_share</pre></div>
+<h3>总结</h3>
+<ol>
+<li>主机与虚拟机文本复制核心依赖<code class="notranslate">open-vm-tools</code>，需确保服务正常运行+VMware剪贴板勾选；</li>
+<li>主机与虚拟机文件共享用VMware自带共享文件夹（挂载点<code class="notranslate">/mnt/hgfs</code>），开发板与虚拟机用NFS（虚拟机为服务端、开发板为客户端）；</li>
+<li>所有挂载需先创建本地目录，NFS需配置<code class="notranslate">/etc/exports</code>并重启服务，开机自动挂载需配置<code class="notranslate">/etc/fstab</code>；</li>
+<li>Ubuntu 24.04需替换过时软件包名（如<code class="notranslate">libbsd1.2-dev</code>→<code class="notranslate">libbsd-dev</code>、<code class="notranslate">openjdk-8-jdk</code>→<code class="notranslate">openjdk-17-jdk</code>），并启用32位架构</li>
+</ol>
+<h1>三、交叉编译器安装</h1>
+<p>搞了一个下午终于搞定了，不知道为什么虚拟机又进不了桌面，然后昨天设置好的共享目录为什么又突然不行了，差点给我整破防了。ai给的命令行还京经常把“-”和“_”，我还以为今天完成不了了。</p>
+<h2>1. 下载交叉编译工具</h2>
+<p><a href="https://gitee.com/tanzhtanzh/kickpi-book/blob/master/a133/zh/04-SDK%E7%BC%96%E8%AF%91/01-%E7%BC%96%E8%AF%91%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA.md" rel="nofollow">安装工具地址</a></p>
+<h2>2. 在linux里面解压</h2>
+<div class="highlight highlight-source-shell"><pre class="notranslate">tar -xvf gcc-linaro-7.2.1-2017.11-x86_64-arm-linux-gnueabi.tar.xz</pre></div>
+<p>如果在windows里面解压就会出现一些乱七八糟的问题，这里耗了我好多时间。</p>
+<h2>3.找到对应文件设置环境变量</h2>
+<ul>
+<li>
+<ol>
+<li>临时生效（当前终端可用）</li>
+</ol>
+</li>
+</ul>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 桌面解压后的bin目录绝对路径</span>
+<span class="pl-k">export</span> PATH=<span class="pl-smi">$PATH</span>:/home/huangzy/桌面/gcc-linaro-7.2.1-2017.11-x86_64-arm-linux-gnueabi/bin</pre></div>
+<ul>
+<li>
+<ol start="2">
+<li>永久生效（重启终端仍可用，推荐）</li>
+</ol>
+</li>
+</ul>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 编辑用户环境变量配置文件</span>
+vim <span class="pl-k">~</span>/.bashrc
+
+<span class="pl-c"><span class="pl-c">#</span> 在文件末尾粘贴上述export命令（路径务必准确）</span>
+<span class="pl-c"><span class="pl-c">#</span> 保存退出：按Esc → 输入:wq → 回车</span>
+
+<span class="pl-c"><span class="pl-c">#</span> 强制生效配置</span>
+<span class="pl-c1">source</span> <span class="pl-k">~</span>/.bashrc</pre></div>
+<ul>
+<li>
+<ol start="3">
+<li>验证交叉编译器是否正常</li>
+</ol>
+</li>
+</ul>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 查看编译器版本,若输出版本信息（gcc 7.2.1 Linaro），说明编译器配置成功。</span>
+arm-linux-gnueabi-gcc -v</pre></div>
+<h2>4、静态连接方式</h2>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 在虚拟机执行（添加-static参数）</span>
+arm-linux-gnueabi-gcc test.c -o test_static -static</pre></div>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 在开发板终端</span>
+chmod +x test_static
+./test_static</pre></div>
+<h2>5、动态连接</h2>
+<ul>
+<li>检查开发板中原本有没有相应文件</li>
+</ul>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span>若存在这些文件，说明支持动态链接</span>
+ls /lib/libc.so.6  <span class="pl-c"><span class="pl-c">#</span> 检查C标准库</span>
+ls /lib/ld-linux.so.3  <span class="pl-c"><span class="pl-c">#</span> 检查链接器</span>
+</pre></div>
+<ul>
+<li>如果没有就工具包里找</li>
+</ul>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 虚拟机中查找库文件</span>
+find /usr/arm-linux-gnueabi/ -name <span class="pl-s"><span class="pl-pds">"</span>libc.so.6<span class="pl-pds">"</span></span>
+find /usr/arm-linux-gnueabi/ -name <span class="pl-s"><span class="pl-pds">"</span>ld-linux.so.3<span class="pl-pds">"</span></span></pre></div>
+<ul>
+<li>将库文件拷贝到共享目录<br>
+在虚拟机终端，进入库文件所在目录，把文件复制到共享目录（比如/mnt/share）</li>
+</ul>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 进入库文件目录（根据你的实际路径调整）</span>
+<span class="pl-c1">cd</span> /桌面/gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabi/arm-linux-gnueabi/libc/lib/
+
+<span class="pl-c"><span class="pl-c">#</span> 复制到共享目录</span>
+cp libc.so.6 ld-linux.so.3 /mnt/share/</pre></div>
+<ul>
+<li>在开发板中拷贝到 /lib 目录</li>
+</ul>
+<p>在开发板终端，进入共享目录，把库文件移动到/lib：</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 进入共享目录</span>
+<span class="pl-c1">cd</span> /mnt/host_share
+
+<span class="pl-c"><span class="pl-c">#</span> 拷贝到开发板的/lib目录（需要root权限）</span>
+cp libc.so.6 ld-linux.so.3 /lib/</pre></div>
+<ul>
+<li>验证动态链接程序</li>
+</ul>
+<p>虚拟机编译动态程序：</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">arm-linux-gnueabi-gcc test.c -o test_dynamic</pre></div>
+<p>传输到开发板后运行：</p>
+<div class="highlight highlight-source-shell"><pre class="notranslate">./test_dynamic</pre></div></div>
+<div style="font-size:small;margin-top:8px;float:right;"></div>
+
+<button class="btn btn-block" type="button" onclick="openComments()" id="cmButton">评论</button>
+<div class="comments" id="comments"></div>
+
+</div>
+    <div id="footer"><div id="footer1">Copyright © <span id="copyrightYear"></span> <a href="https://huangzy-hub.github.io">huangzy</a></div>
+<div id="footer2">
+    <span id="runday"></span><span>Powered by <a href="https://meekdai.com/Gmeek.html" target="_blank">Gmeek</a></span>
+</div>
+
+<script>
+var now=new Date();
+document.getElementById("copyrightYear").innerHTML=now.getFullYear();
+
+if(""!=""){
+    var startSite=new Date("");
+    var diff=now.getTime()-startSite.getTime();
+    var diffDay=Math.floor(diff/(1000*60*60*24));
+    document.getElementById("runday").innerHTML="网站运行"+diffDay+"天"+" • ";
+}
+</script></div>
+</body>
+<script>
+var IconList={'sun': 'M8 10.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zM8 12a4 4 0 100-8 4 4 0 000 8zM8 0a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0V.75A.75.75 0 018 0zm0 13a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 018 13zM2.343 2.343a.75.75 0 011.061 0l1.06 1.061a.75.75 0 01-1.06 1.06l-1.06-1.06a.75.75 0 010-1.06zm9.193 9.193a.75.75 0 011.06 0l1.061 1.06a.75.75 0 01-1.06 1.061l-1.061-1.06a.75.75 0 010-1.061zM16 8a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0116 8zM3 8a.75.75 0 01-.75.75H.75a.75.75 0 010-1.5h1.5A.75.75 0 013 8zm10.657-5.657a.75.75 0 010 1.061l-1.061 1.06a.75.75 0 11-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zm-9.193 9.193a.75.75 0 010 1.06l-1.06 1.061a.75.75 0 11-1.061-1.06l1.06-1.061a.75.75 0 011.061 0z', 'moon': 'M9.598 1.591a.75.75 0 01.785-.175 7 7 0 11-8.967 8.967.75.75 0 01.961-.96 5.5 5.5 0 007.046-7.046.75.75 0 01.175-.786zm1.616 1.945a7 7 0 01-7.678 7.678 5.5 5.5 0 107.678-7.678z', 'sync': 'M1.705 8.005a.75.75 0 0 1 .834.656 5.5 5.5 0 0 0 9.592 2.97l-1.204-1.204a.25.25 0 0 1 .177-.427h3.646a.25.25 0 0 1 .25.25v3.646a.25.25 0 0 1-.427.177l-1.38-1.38A7.002 7.002 0 0 1 1.05 8.84a.75.75 0 0 1 .656-.834ZM8 2.5a5.487 5.487 0 0 0-4.131 1.869l1.204 1.204A.25.25 0 0 1 4.896 6H1.25A.25.25 0 0 1 1 5.75V2.104a.25.25 0 0 1 .427-.177l1.38 1.38A7.002 7.002 0 0 1 14.95 7.16a.75.75 0 0 1-1.49.178A5.5 5.5 0 0 0 8 2.5Z', 'home': 'M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z', 'github': 'M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z', 'copy': 'M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z', 'check': 'M13.78 4.22a.75.75 0 0 1 0 1.06l-7.25 7.25a.75.75 0 0 1-1.06 0L2.22 9.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018L6 10.94l6.72-6.72a.75.75 0 0 1 1.06 0Z'};
+var utterancesLoad=0;
+
+let themeSettings={
+    "dark": ["dark","moon","#00f0ff","dark-blue"],
+    "light": ["light","sun","#ff5000","github-light"],
+    "auto": ["auto","sync","","preferred-color-scheme"]
+};
+function changeTheme(mode, icon, color, utheme){
+    document.documentElement.setAttribute("data-color-mode",mode);
+    document.getElementById("themeSwitch").setAttribute("d",value=IconList[icon]);
+    document.getElementById("themeSwitch").parentNode.style.color=color;
+    if(utterancesLoad==1){utterancesTheme(utheme);}
+}
+function modeSwitch(){
+    let currentMode=document.documentElement.getAttribute('data-color-mode');
+    let newMode = currentMode === "light" ? "dark" : currentMode === "dark" ? "auto" : "light";
+    localStorage.setItem("meek_theme", newMode);
+    if(themeSettings[newMode]){
+        changeTheme(...themeSettings[newMode]);
+    }
+}
+function utterancesTheme(theme){
+    const message={type:'set-theme',theme: theme};
+    const iframe=document.getElementsByClassName('utterances-frame')[0];
+    iframe.contentWindow.postMessage(message,'https://utteranc.es');
+}
+if(themeSettings[theme]){changeTheme(...themeSettings[theme]);}
+console.log("\n %c Gmeek last https://github.com/Meekdai/Gmeek \n","padding:5px 0;background:#02d81d;color:#fff");
+</script>
+
+<script>
+document.getElementById("pathHome").setAttribute("d",IconList["home"]);
+document.getElementById("pathIssue").setAttribute("d",IconList["github"]);
+
+
+
+function openComments(){
+    cm=document.getElementById("comments");
+    cmButton=document.getElementById("cmButton");
+    cmButton.innerHTML="loading";
+    span=document.createElement("span");
+    span.setAttribute("class","AnimatedEllipsis");
+    cmButton.appendChild(span);
+
+    script=document.createElement("script");
+    script.setAttribute("src","https://utteranc.es/client.js");
+    script.setAttribute("repo","huangzy-hub/huangzy-hub.github.io");
+    script.setAttribute("issue-term","title");
+    
+    if(localStorage.getItem("meek_theme")=="dark"){script.setAttribute("theme","dark-blue");}
+    else if(localStorage.getItem("meek_theme")=="light") {script.setAttribute("theme","github-light");}
+    else{script.setAttribute("theme","preferred-color-scheme");}
+    
+    script.setAttribute("crossorigin","anonymous");
+    script.setAttribute("async","");
+    cm.appendChild(script);
+
+    int=self.setInterval("iFrameLoading()",200);
+}
+
+function iFrameLoading(){
+    var utterances=document.getElementsByClassName('utterances');
+    if(utterances.length==1){
+        if(utterances[0].style.height!=""){
+            utterancesLoad=1;
+            int=window.clearInterval(int);
+            document.getElementById("cmButton").style.display="none";
+            console.log("utterances Load OK");
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const createClipboardHTML = (codeContent, additionalClasses = '') => `
+        <pre class="notranslate"><code class="notranslate">${codeContent}</code></pre>
+        <div class="clipboard-container position-absolute right-0 top-0 ${additionalClasses}">
+            <clipboard-copy class="ClipboardButton btn m-2 p-0" role="button" style="display: inherit;">
+                <svg height="16" width="16" class="octicon octicon-copy m-2"><path d="${IconList["copy"]}"></path></svg>
+                <svg height="16" width="16" class="octicon octicon-check color-fg-success m-2 d-none"><path d="${IconList["check"]}"></path></svg>
+            </clipboard-copy>
+            <div class="copy-feedback">Copied!</div>
+        </div>
+    `;
+
+    const handleCodeElements = (selector = '') => {
+        document.querySelectorAll(selector).forEach(codeElement => {
+            const codeContent = codeElement.innerHTML;
+            const newStructure = document.createElement('div');
+            newStructure.className = 'snippet-clipboard-content position-relative overflow-auto';
+            newStructure.innerHTML = createClipboardHTML(codeContent);
+
+            const parentElement = codeElement.parentElement;
+            if (selector.includes('highlight')) {
+                parentElement.insertBefore(newStructure, codeElement.nextSibling);
+                parentElement.removeChild(codeElement);
+            } else {
+                parentElement.parentElement.replaceChild(newStructure, parentElement);
+            }
+        });
+    };
+
+    handleCodeElements('pre.notranslate > code.notranslate');
+    handleCodeElements('div.highlight > pre.notranslate');
+
+    let currentFeedback = null;
+    document.querySelectorAll('clipboard-copy').forEach(copyButton => {
+        copyButton.addEventListener('click', () => {
+            const codeContent = copyButton.closest('.snippet-clipboard-content').innerText;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = codeContent;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const copyIcon = copyButton.querySelector('.octicon-copy');
+            const checkIcon = copyButton.querySelector('.octicon-check');
+            const copyFeedback = copyButton.nextElementSibling;
+
+            if (currentFeedback && currentFeedback !== copyFeedback) {currentFeedback.style.display = 'none';}
+            currentFeedback = copyFeedback;
+
+            copyIcon.classList.add('d-none');
+            checkIcon.classList.remove('d-none');
+            copyFeedback.style.display = 'block';
+            copyButton.style.borderColor = 'var(--color-success-fg)';
+
+            setTimeout(() => {
+                copyIcon.classList.remove('d-none');
+                checkIcon.classList.add('d-none');
+                copyFeedback.style.display = 'none';
+                copyButton.style.borderColor = '';
+            }, 2000);
+        });
+    });
+});
+
+</script>
+
+
+</html>

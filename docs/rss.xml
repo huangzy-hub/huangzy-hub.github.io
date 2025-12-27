@@ -1,5 +1,95 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>huangzy</title><link>https://huangzy-hub.github.io</link><description>hello</description><copyright>huangzy</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/195115766?v=4</url><title>avatar</title><link>https://huangzy-hub.github.io</link></image><lastBuildDate>Sat, 27 Dec 2025 14:20:42 +0000</lastBuildDate><managingEditor>huangzy</managingEditor><ttl>60</ttl><webMaster>huangzy</webMaster><item><title>逆向RC4加密算法题目</title><link>https://huangzy-hub.github.io/post/ni-xiang-RC4-jia-mi-suan-fa-ti-mu.html</link><description>## 引言
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>huangzy</title><link>https://huangzy-hub.github.io</link><description>hello</description><copyright>huangzy</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/195115766?v=4</url><title>avatar</title><link>https://huangzy-hub.github.io</link></image><lastBuildDate>Sat, 27 Dec 2025 14:24:49 +0000</lastBuildDate><managingEditor>huangzy</managingEditor><ttl>60</ttl><webMaster>huangzy</webMaster><item><title>Liunx共享文件夹设置&amp;交叉编译器安装</title><link>https://huangzy-hub.github.io/post/Liunx-gong-xiang-wen-jian-jia-she-zhi-%26-jiao-cha-bian-yi-qi-an-zhuang.html</link><description># 一、主机 ↔ 虚拟机 文本复制（剪贴板共享）相关命令与操作
+## 1. 检查/安装VMware剪贴板共享工具
+```bash
+# 检查open-vm-tools是否已安装
+sudo apt list --installed | grep open-vm-tools
+
+# 未安装则执行安装（Ubuntu系统）
+sudo apt update &amp;&amp; sudo apt install open-vm-tools open-vm-tools-desktop
+
+# 重启工具服务（修复剪贴板失效）
+sudo systemctl restart open-vm-tools
+
+# 手动加载剪贴板模块（可选应急方案）
+sudo vmware-user-suid-wrapper
+```
+
+## 2. 验证剪贴板功能
+```bash
+# 虚拟机内复制文本（示例：复制当前目录路径）
+pwd | xclip -sel clip  # 需先安装xclip：sudo apt install xclip
+# 主机粘贴即可；反之主机复制，虚拟机内执行以下命令粘贴
+xclip -o sel clip
+```
+
+# 二、文件挂载相关命令（主机-虚拟机、开发板-虚拟机）
+## （一）主机 ↔ 虚拟机 共享文件夹挂载（VMware共享文件夹）
+```bash
+# 1. 虚拟机端检查共享文件夹是否挂载
+vmware-hgfsclient
+```
+[参考视频地址](https://www.bilibili.com/video/BV1HwuczVEG4/?spm_id_from=333.337.search-card.all.click&amp;vd_source=3881e95a6111e5a025dbc0531ef2a219)
+
+
+## （二）开发板 ↔ 虚拟机 NFS共享挂载（核心命令）
+### 虚拟机端（NFS服务器配置）
+```bash
+# 1. 安装NFS服务
+sudo apt update &amp;&amp; sudo apt install nfs-kernel-server
+
+# 2. 创建共享目录
+mkdir -p /mnt/hgfs/share  # 或 ~/nfs_share
+sudo chmod -R 777 /mnt/hgfs/share
+
+# 3. 配置NFS共享权限
+sudo nano /etc/exports
+# 在文件末尾添加（允许开发板网段访问，添加fsid=0适配NFSv4）
+/mnt/hgfs/share 192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash,fsid=0)
+
+# 4. 重新加载NFS配置并重启服务
+sudo exportfs -r
+sudo systemctl restart nfs-kernel-server
+sudo systemctl enable nfs-kernel-server  # 设置NFS服务开机自启
+
+# 5. 验证NFS共享目录列表
+showmount -e localhost
+```
+
+### 开发板端（NFS客户端挂载）
+```bash
+# 1. 创建本地挂载目录
+mkdir -p /mnt/host_share
+
+# 2. 手动挂载虚拟机NFS共享目录
+mount -t nfs 192.168.1.221:/mnt/hgfs/share /mnt/host_share
+
+# 3. 验证挂载是否成功
+df -h | grep /mnt/host_share  # 查看挂载状态
+ls /mnt/host_share  # 查看共享文件
+
+# 4. 配置开机自动挂载（永久生效）
+sudo nano /etc/fstab
+# 在文件末尾添加
+192.168.1.221:/mnt/hgfs/share /mnt/host_share nfs defaults 0 0
+
+# 5. 验证自动挂载（重启后执行）
+df -h | grep /mnt/host_share
+```
+
+### 总结
+1.  主机与虚拟机文本复制核心依赖`open-vm-tools`，需确保服务正常运行+VMware剪贴板勾选；
+2.  主机与虚拟机文件共享用VMware自带共享文件夹（挂载点`/mnt/hgfs`），开发板与虚拟机用NFS（虚拟机为服务端、开发板为客户端）；
+3.  所有挂载需先创建本地目录，NFS需配置`/etc/exports`并重启服务，开机自动挂载需配置`/etc/fstab`；
+4.  Ubuntu 24.04需替换过时软件包名（如`libbsd1.2-dev`→`libbsd-dev`、`openjdk-8-jdk`→`openjdk-17-jdk`），并启用32位架构
+
+
+
+
+# 三、交叉编译器安装
+
+
+搞了一个下午终于搞定了，不知道为什么虚拟机又进不了桌面，然后昨天设置好的共享目录为什么又突然不行了，差点给我整破防了。</description><guid isPermaLink="true">https://huangzy-hub.github.io/post/Liunx-gong-xiang-wen-jian-jia-she-zhi-%26-jiao-cha-bian-yi-qi-an-zhuang.html</guid><pubDate>Sat, 27 Dec 2025 14:24:22 +0000</pubDate></item><item><title>逆向RC4加密算法题目</title><link>https://huangzy-hub.github.io/post/ni-xiang-RC4-jia-mi-suan-fa-ti-mu.html</link><description>## 引言
 
 RC4（Rivest Cipher 4）是一种经典的流密码加密算法，因其实现简单、运行高效而被广泛应用于早期的网络安全场景中。</description><guid isPermaLink="true">https://huangzy-hub.github.io/post/ni-xiang-RC4-jia-mi-suan-fa-ti-mu.html</guid><pubDate>Sat, 27 Dec 2025 14:20:11 +0000</pubDate></item><item><title>CTF逆向RC4题目：勒索病毒题解（异或解密+RC4算法实战）</title><link>https://huangzy-hub.github.io/post/CTF-ni-xiang-RC4-ti-mu-%EF%BC%9A-le-suo-bing-du-ti-jie-%EF%BC%88-yi-huo-jie-mi-%2BRC4-suan-fa-shi-zhan-%EF%BC%89.html</link><description>## 引言
 
