@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>huangzy</title><link>https://huangzy-hub.github.io</link><description>hello</description><copyright>huangzy</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/195115766?v=4</url><title>avatar</title><link>https://huangzy-hub.github.io</link></image><lastBuildDate>Sat, 27 Dec 2025 14:24:49 +0000</lastBuildDate><managingEditor>huangzy</managingEditor><ttl>60</ttl><webMaster>huangzy</webMaster><item><title>Liunx共享文件夹设置&amp;交叉编译器安装</title><link>https://huangzy-hub.github.io/post/Liunx-gong-xiang-wen-jian-jia-she-zhi-%26-jiao-cha-bian-yi-qi-an-zhuang.html</link><description># 一、主机 ↔ 虚拟机 文本复制（剪贴板共享）相关命令与操作
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>huangzy</title><link>https://huangzy-hub.github.io</link><description>hello</description><copyright>huangzy</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/195115766?v=4</url><title>avatar</title><link>https://huangzy-hub.github.io</link></image><lastBuildDate>Sat, 27 Dec 2025 14:25:51 +0000</lastBuildDate><managingEditor>huangzy</managingEditor><ttl>60</ttl><webMaster>huangzy</webMaster><item><title>Liunx共享文件夹设置&amp;交叉编译器安装</title><link>https://huangzy-hub.github.io/post/Liunx-gong-xiang-wen-jian-jia-she-zhi-%26-jiao-cha-bian-yi-qi-an-zhuang.html</link><description># 一、主机 ↔ 虚拟机 文本复制（剪贴板共享）相关命令与操作
 ## 1. 检查/安装VMware剪贴板共享工具
 ```bash
 # 检查open-vm-tools是否已安装
@@ -89,7 +89,10 @@ df -h | grep /mnt/host_share
 # 三、交叉编译器安装
 
 
-搞了一个下午终于搞定了，不知道为什么虚拟机又进不了桌面，然后昨天设置好的共享目录为什么又突然不行了，差点给我整破防了。</description><guid isPermaLink="true">https://huangzy-hub.github.io/post/Liunx-gong-xiang-wen-jian-jia-she-zhi-%26-jiao-cha-bian-yi-qi-an-zhuang.html</guid><pubDate>Sat, 27 Dec 2025 14:24:22 +0000</pubDate></item><item><title>逆向RC4加密算法题目</title><link>https://huangzy-hub.github.io/post/ni-xiang-RC4-jia-mi-suan-fa-ti-mu.html</link><description>## 引言
+搞了一个下午终于搞定了，不知道为什么虚拟机又进不了桌面，然后昨天设置好的共享目录为什么又突然不行了，差点给我整破防了。</description><guid isPermaLink="true">https://huangzy-hub.github.io/post/Liunx-gong-xiang-wen-jian-jia-she-zhi-%26-jiao-cha-bian-yi-qi-an-zhuang.html</guid><pubDate>Sat, 27 Dec 2025 14:24:22 +0000</pubDate></item><item><title>ida pro使用方法&amp;x64dbg使用方法&amp;汇编编译方法</title><link>https://huangzy-hub.github.io/post/ida%20pro-shi-yong-fang-fa-%26x64dbg-shi-yong-fang-fa-%26-hui-bian-bian-yi-fang-fa.html</link><description>## 一、笔记：ida pro使用
+
+### 1. 查找字符串
+- shift+Fn+f12。</description><guid isPermaLink="true">https://huangzy-hub.github.io/post/ida%20pro-shi-yong-fang-fa-%26x64dbg-shi-yong-fang-fa-%26-hui-bian-bian-yi-fang-fa.html</guid><pubDate>Sat, 27 Dec 2025 14:23:10 +0000</pubDate></item><item><title>逆向RC4加密算法题目</title><link>https://huangzy-hub.github.io/post/ni-xiang-RC4-jia-mi-suan-fa-ti-mu.html</link><description>## 引言
 
 RC4（Rivest Cipher 4）是一种经典的流密码加密算法，因其实现简单、运行高效而被广泛应用于早期的网络安全场景中。</description><guid isPermaLink="true">https://huangzy-hub.github.io/post/ni-xiang-RC4-jia-mi-suan-fa-ti-mu.html</guid><pubDate>Sat, 27 Dec 2025 14:20:11 +0000</pubDate></item><item><title>CTF逆向RC4题目：勒索病毒题解（异或解密+RC4算法实战）</title><link>https://huangzy-hub.github.io/post/CTF-ni-xiang-RC4-ti-mu-%EF%BC%9A-le-suo-bing-du-ti-jie-%EF%BC%88-yi-huo-jie-mi-%2BRC4-suan-fa-shi-zhan-%EF%BC%89.html</link><description>## 引言
 
