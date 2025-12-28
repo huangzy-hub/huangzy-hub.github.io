@@ -1,5 +1,27 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>huangzy</title><link>https://huangzy-hub.github.io</link><description>hello</description><copyright>huangzy</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/195115766?v=4</url><title>avatar</title><link>https://huangzy-hub.github.io</link></image><lastBuildDate>Sat, 27 Dec 2025 14:35:00 +0000</lastBuildDate><managingEditor>huangzy</managingEditor><ttl>60</ttl><webMaster>huangzy</webMaster><item><title>Liunx共享文件夹设置&amp;交叉编译器安装</title><link>https://huangzy-hub.github.io/post/Liunx-gong-xiang-wen-jian-jia-she-zhi-%26-jiao-cha-bian-yi-qi-an-zhuang.html</link><description># 一、主机 ↔ 虚拟机 文本复制（剪贴板共享）相关命令与操作
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>huangzy</title><link>https://huangzy-hub.github.io</link><description>hello</description><copyright>huangzy</copyright><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://avatars.githubusercontent.com/u/195115766?v=4</url><title>avatar</title><link>https://huangzy-hub.github.io</link></image><lastBuildDate>Sun, 28 Dec 2025 10:00:23 +0000</lastBuildDate><managingEditor>huangzy</managingEditor><ttl>60</ttl><webMaster>huangzy</webMaster><item><title>第一个驱动程序</title><link>https://huangzy-hub.github.io/post/di-yi-ge-qu-dong-cheng-xu.html</link><description># 第一个驱动程序
+## 一、
+
+```
+linux-4.9/
+├── arch/        # 架构专属代码（核心：arm/32位ARM、arm64/64位ARM64）
+├── include/     # 全局头文件目录（驱动编译核心依赖，含linux/、asm/、asm-generic/）
+│   ├── linux/   # 内核通用头文件（如module.h、init.h、types.h，驱动必包含）
+│   ├── asm/     # 架构专属头文件（软链接，32位指向asm-arm，64位指向asm-arm64）
+│   └── asm-generic/ # 跨架构通用头文件（兜底兼容，解决架构头文件缺失）
+├── kernel/      # 内核核心功能代码（进程、调度等，驱动编译间接依赖）
+└── scripts/     # 编译脚本、工具链（驱动编译的Makefile依赖此目录脚本）
+```
+
+## 三、Linux驱动核心框架（字符设备驱动，全文实操的驱动类型）
+全文实现的是 **Linux最基础、最通用的字符设备驱动**，是嵌入式驱动开发入门核心框架，完整分层+核心要素如下：
+### 1. 驱动整体分层（用户层 ↔ 内核层）
+```
+应用程序（APP） → 系统调用 → Linux内核 → 字符设备驱动 → 硬件
+```
+- 应用层：通过 `open/read/write/ioctl` 等标准接口操作驱动，无需关心硬件细节；
+- 内核层：驱动作为内核模块，注册字符设备节点，承接应用层调用，实现硬件操作逻辑；
+- 核心特点：**驱动与应用解耦、驱动与内核版本绑定、以模块（.ko）形式动态加载到内核**。</description><guid isPermaLink="true">https://huangzy-hub.github.io/post/di-yi-ge-qu-dong-cheng-xu.html</guid><pubDate>Sun, 28 Dec 2025 09:59:55 +0000</pubDate></item><item><title>Liunx共享文件夹设置&amp;交叉编译器安装</title><link>https://huangzy-hub.github.io/post/Liunx-gong-xiang-wen-jian-jia-she-zhi-%26-jiao-cha-bian-yi-qi-an-zhuang.html</link><description># 一、主机 ↔ 虚拟机 文本复制（剪贴板共享）相关命令与操作
 ## 1. 检查/安装VMware剪贴板共享工具
 ```bash
 # 检查open-vm-tools是否已安装
