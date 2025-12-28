@@ -25,8 +25,11 @@ xclip -o sel clip
 # 二、文件挂载相关命令（主机-虚拟机、开发板-虚拟机）
 ## （一）主机 ↔ 虚拟机 共享文件夹挂载（VMware共享文件夹）
 ```bash
-# 1. 虚拟机端检查共享文件夹是否挂载
+# 虚拟机端检查共享文件夹是否挂载
 vmware-hgfsclient
+
+# 手动挂载共享文件夹
+sudo vmhgfs-fuse .host:/ /mnt/hgfs -o allow_other
 ```
 [参考视频地址](https://www.bilibili.com/video/BV1HwuczVEG4/?spm_id_from=333.337.search-card.all.click&vd_source=3881e95a6111e5a025dbc0531ef2a219)
 
@@ -74,6 +77,12 @@ sudo nano /etc/fstab
 
 # 5. 验证自动挂载（重启后执行）
 df -h | grep /mnt/host_share
+
+
+# 6. open-vm-tools已运行，但可能缺少桌面环境依赖，执行以下命令安装完整组件：
+bash
+运行
+sudo apt install open-vm-tools-desktop
 ```
 
 ### 总结
