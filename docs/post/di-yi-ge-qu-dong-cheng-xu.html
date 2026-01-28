@@ -61,7 +61,7 @@ linux-4.9/
 <meta property="og:url" content="https://huangzy-hub.github.io/post/di-yi-ge-qu-dong-cheng-xu.html">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/195115766?v=4">
 <title>第一个驱动程序</title>
-
+<link href="//unpkg.com/@wooorm/starry-night@2.1.1/style/both.css" rel="stylesheet" />
 
 
 </head>
@@ -156,168 +156,155 @@ body{box-sizing: border-box;min-width: 200px;max-width: 900px;margin: 20px auto;
 </ul>
 <h4>（2）4个核心设备操作函数（应用层接口映射）</h4>
 <p>驱动需实现 <code class="notranslate">file_operations</code> 结构体，绑定应用层接口对应的内核处理函数，核心必实现：</p>
-<pre lang="c" class="notranslate"><code class="notranslate">.open   // 应用层open()调用时执行（设备打开，初始化硬件/状态）
-.read   // 应用层read()调用时执行（硬件→内核→应用，数据读取）
-.write  // 应用层write()调用时执行（应用→内核→硬件，数据写入）
-.release// 应用层close()调用时执行（设备关闭，释放临时资源）
-</code></pre>
+<div class="highlight highlight-source-c"><pre class="notranslate">.<span class="pl-s1">open</span>   <span class="pl-c">// 应用层open()调用时执行（设备打开，初始化硬件/状态）</span>
+.<span class="pl-c1">read</span>   <span class="pl-c">// 应用层read()调用时执行（硬件→内核→应用，数据读取）</span>
+.<span class="pl-c1">write</span>  <span class="pl-c">// 应用层write()调用时执行（应用→内核→硬件，数据写入）</span>
+.<span class="pl-c1">release</span><span class="pl-c">// 应用层close()调用时执行（设备关闭，释放临时资源）</span></pre></div>
 <h4>（3）驱动核心宏定义（必加，标识驱动信息）</h4>
-<pre lang="c" class="notranslate"><code class="notranslate">MODULE_LICENSE("GPL");    // 声明开源协议（必须，否则内核加载警告）
-MODULE_AUTHOR("XXX");     // 驱动作者（可选）
-MODULE_DESCRIPTION("XXX");// 驱动描述（可选）
-</code></pre>
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-en">MODULE_LICENSE</span>(<span class="pl-s">"GPL"</span>);    <span class="pl-c">// 声明开源协议（必须，否则内核加载警告）</span>
+<span class="pl-en">MODULE_AUTHOR</span>(<span class="pl-s">"XXX"</span>);     <span class="pl-c">// 驱动作者（可选）</span>
+<span class="pl-en">MODULE_DESCRIPTION</span>(<span class="pl-s">"XXX"</span>);<span class="pl-c">// 驱动描述（可选）</span></pre></div>
 <h2>四、全文实操：驱动代码 + 应用程序代码</h2>
 <h3>1. 核心驱动代码（my_drv.c，字符设备驱动最简实现）</h3>
-<pre lang="c" class="notranslate"><code class="notranslate">#include &lt;linux/init.h&gt;
-#include &lt;linux/module.h&gt;
-#include &lt;linux/fs.h&gt;
-#include &lt;linux/uaccess.h&gt;
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;linux/init.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;linux/module.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;linux/fs.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;linux/uaccess.h&gt;</span>
 
-// 设备号、设备名定义
-#define DEV_NAME "my_char_dev"
-static int major;
+<span class="pl-c">// 设备号、设备名定义</span>
+<span class="pl-k">#define</span> <span class="pl-c1">DEV_NAME</span> "my_char_dev"
+<span class="pl-k">static</span> <span class="pl-smi">int</span> <span class="pl-s1">major</span>;
 
-// 1. 设备打开函数
-static int my_drv_open(struct inode *inode, struct file *filp) {
-    printk("my_drv open success!\n");
-    return 0;
+<span class="pl-c">// 1. 设备打开函数</span>
+<span class="pl-k">static</span> <span class="pl-smi">int</span> <span class="pl-en">my_drv_open</span>(<span class="pl-k">struct</span> <span class="pl-smi">inode</span> <span class="pl-c1">*</span><span class="pl-s1">inode</span>, <span class="pl-k">struct</span> <span class="pl-smi">file</span> <span class="pl-c1">*</span><span class="pl-s1">filp</span>) {
+    <span class="pl-en">printk</span>(<span class="pl-s">"my_drv open success!\n"</span>);
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
 }
 
-// 2. 设备读取函数
-static ssize_t my_drv_read(struct file *filp, char __user *buf, size_t size, loff_t *off) {
-    char data[] = "Hello Driver!";
-    copy_to_user(buf, data, sizeof(data)); // 内核→用户层数据拷贝
-    return sizeof(data);
+<span class="pl-c">// 2. 设备读取函数</span>
+<span class="pl-k">static</span> <span class="pl-smi">ssize_t</span> <span class="pl-en">my_drv_read</span>(<span class="pl-k">struct</span> <span class="pl-smi">file</span> <span class="pl-c1">*</span><span class="pl-s1">filp</span>, <span class="pl-smi">char</span> <span class="pl-s1">__user</span> <span class="pl-c1">*</span><span class="pl-s1">buf</span>, <span class="pl-smi">size_t</span> <span class="pl-s1">size</span>, <span class="pl-smi">loff_t</span> <span class="pl-c1">*</span><span class="pl-s1">off</span>) {
+    <span class="pl-smi">char</span> <span class="pl-s1">data</span>[] <span class="pl-c1">=</span> <span class="pl-s">"Hello Driver!"</span>;
+    <span class="pl-en">copy_to_user</span>(<span class="pl-s1">buf</span>, <span class="pl-s1">data</span>, <span class="pl-k">sizeof</span>(<span class="pl-s1">data</span>)); <span class="pl-c">// 内核→用户层数据拷贝</span>
+    <span class="pl-k">return</span> <span class="pl-k">sizeof</span>(<span class="pl-s1">data</span>);
 }
 
-// 3. 设备写入函数
-static ssize_t my_drv_write(struct file *filp, const char __user *buf, size_t size, loff_t *off) {
-    char kbuf[128] = {0};
-    copy_from_user(kbuf, buf, size); // 用户层→内核数据拷贝
-    printk("APP write data: %s\n", kbuf);
-    return size;
+<span class="pl-c">// 3. 设备写入函数</span>
+<span class="pl-k">static</span> <span class="pl-smi">ssize_t</span> <span class="pl-en">my_drv_write</span>(<span class="pl-k">struct</span> <span class="pl-smi">file</span> <span class="pl-c1">*</span><span class="pl-s1">filp</span>, <span class="pl-k">const</span> <span class="pl-smi">char</span> <span class="pl-s1">__user</span> <span class="pl-c1">*</span><span class="pl-s1">buf</span>, <span class="pl-smi">size_t</span> <span class="pl-s1">size</span>, <span class="pl-smi">loff_t</span> <span class="pl-c1">*</span><span class="pl-s1">off</span>) {
+    <span class="pl-smi">char</span> <span class="pl-s1">kbuf</span>[<span class="pl-c1">128</span>] <span class="pl-c1">=</span> {<span class="pl-c1">0</span>};
+    <span class="pl-en">copy_from_user</span>(<span class="pl-s1">kbuf</span>, <span class="pl-s1">buf</span>, <span class="pl-s1">size</span>); <span class="pl-c">// 用户层→内核数据拷贝</span>
+    <span class="pl-en">printk</span>(<span class="pl-s">"APP write data: %s\n"</span>, <span class="pl-s1">kbuf</span>);
+    <span class="pl-k">return</span> <span class="pl-s1">size</span>;
 }
 
-// 4. 设备关闭函数
-static int my_drv_release(struct inode *inode, struct file *filp) {
-    printk("my_drv close success!\n");
-    return 0;
+<span class="pl-c">// 4. 设备关闭函数</span>
+<span class="pl-k">static</span> <span class="pl-smi">int</span> <span class="pl-en">my_drv_release</span>(<span class="pl-k">struct</span> <span class="pl-smi">inode</span> <span class="pl-c1">*</span><span class="pl-s1">inode</span>, <span class="pl-k">struct</span> <span class="pl-smi">file</span> <span class="pl-c1">*</span><span class="pl-s1">filp</span>) {
+    <span class="pl-en">printk</span>(<span class="pl-s">"my_drv close success!\n"</span>);
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
 }
 
-// 绑定操作函数集
-static struct file_operations fops = {
-    .owner   = THIS_MODULE,
-    .open    = my_drv_open,
-    .read    = my_drv_read,
-    .write   = my_drv_write,
-    .release = my_drv_release,
+<span class="pl-c">// 绑定操作函数集</span>
+<span class="pl-k">static</span> <span class="pl-k">struct</span> <span class="pl-smi">file_operations</span> <span class="pl-s1">fops</span> <span class="pl-c1">=</span> {
+    .<span class="pl-c1">owner</span>   <span class="pl-c1">=</span> <span class="pl-c1">THIS_MODULE</span>,
+    .<span class="pl-c1">open</span>    <span class="pl-c1">=</span> <span class="pl-s1">my_drv_open</span>,
+    .<span class="pl-c1">read</span>    <span class="pl-c1">=</span> <span class="pl-s1">my_drv_read</span>,
+    .<span class="pl-c1">write</span>   <span class="pl-c1">=</span> <span class="pl-s1">my_drv_write</span>,
+    .<span class="pl-c1">release</span> <span class="pl-c1">=</span> <span class="pl-s1">my_drv_release</span>,
 };
 
-// 驱动加载入口
-static int __init my_drv_init(void) {
-    // 注册字符设备，自动分配主设备号
-    major = register_chrdev(0, DEV_NAME, &amp;fops);
-    if (major &lt; 0) {
-        printk("driver register failed!\n");
-        return major;
+<span class="pl-c">// 驱动加载入口</span>
+<span class="pl-k">static</span> <span class="pl-smi">int</span> <span class="pl-s1">__init</span> <span class="pl-en">my_drv_init</span>(<span class="pl-smi">void</span>) {
+    <span class="pl-c">// 注册字符设备，自动分配主设备号</span>
+    <span class="pl-s1">major</span> <span class="pl-c1">=</span> <span class="pl-en">register_chrdev</span>(<span class="pl-c1">0</span>, <span class="pl-c1">DEV_NAME</span>, <span class="pl-c1">&amp;</span><span class="pl-s1">fops</span>);
+    <span class="pl-k">if</span> (<span class="pl-s1">major</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">0</span>) {
+        <span class="pl-en">printk</span>(<span class="pl-s">"driver register failed!\n"</span>);
+        <span class="pl-k">return</span> <span class="pl-s1">major</span>;
     }
-    printk("driver register success! major = %d\n", major);
-    return 0;
+    <span class="pl-en">printk</span>(<span class="pl-s">"driver register success! major = %d\n"</span>, <span class="pl-s1">major</span>);
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
 }
 
-// 驱动卸载出口
-static void __exit my_drv_exit(void) {
-    unregister_chrdev(major, DEV_NAME); // 注销字符设备
-    printk("driver unregister success!\n");
+<span class="pl-c">// 驱动卸载出口</span>
+<span class="pl-k">static</span> <span class="pl-smi">void</span> <span class="pl-s1">__exit</span> <span class="pl-en">my_drv_exit</span>(<span class="pl-smi">void</span>) {
+    <span class="pl-en">unregister_chrdev</span>(<span class="pl-s1">major</span>, <span class="pl-c1">DEV_NAME</span>); <span class="pl-c">// 注销字符设备</span>
+    <span class="pl-en">printk</span>(<span class="pl-s">"driver unregister success!\n"</span>);
 }
 
-module_init(my_drv_init);
-module_exit(my_drv_exit);
+<span class="pl-en">module_init</span>(<span class="pl-s1">my_drv_init</span>);
+<span class="pl-en">module_exit</span>(<span class="pl-s1">my_drv_exit</span>);
 
-MODULE_LICENSE("GPL");
-MODULE_AUTHOR("huangzy");
-MODULE_DESCRIPTION("A133 Simple Char Driver");
-</code></pre>
+<span class="pl-en">MODULE_LICENSE</span>(<span class="pl-s">"GPL"</span>);
+<span class="pl-en">MODULE_AUTHOR</span>(<span class="pl-s">"huangzy"</span>);
+<span class="pl-en">MODULE_DESCRIPTION</span>(<span class="pl-s">"A133 Simple Char Driver"</span>);</pre></div>
 <h3>2. 配套应用程序代码（app.c，操作驱动的用户层程序）</h3>
-<pre lang="c" class="notranslate"><code class="notranslate">#include &lt;stdio.h&gt;
-#include &lt;sys/types.h&gt;
-#include &lt;sys/stat.h&gt;
-#include &lt;fcntl.h&gt;
-#include &lt;unistd.h&gt;
-#include &lt;string.h&gt;
+<div class="highlight highlight-source-c"><pre class="notranslate"><span class="pl-k">#include</span> <span class="pl-s">&lt;stdio.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/types.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;sys/stat.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;fcntl.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;unistd.h&gt;</span>
+<span class="pl-k">#include</span> <span class="pl-s">&lt;string.h&gt;</span>
 
-int main() {
-    int fd;
-    char r_buf[128] = {0};
-    char w_buf[] = "Hello APP to Driver!";
+<span class="pl-smi">int</span> <span class="pl-en">main</span>() {
+    <span class="pl-smi">int</span> <span class="pl-s1">fd</span>;
+    <span class="pl-smi">char</span> <span class="pl-s1">r_buf</span>[<span class="pl-c1">128</span>] <span class="pl-c1">=</span> {<span class="pl-c1">0</span>};
+    <span class="pl-smi">char</span> <span class="pl-s1">w_buf</span>[] <span class="pl-c1">=</span> <span class="pl-s">"Hello APP to Driver!"</span>;
     
-    // 1. 打开驱动设备（需先手动创建设备节点：mknod /dev/mydev c 主设备号 0）
-    fd = open("/dev/mydev", O_RDWR);
-    if (fd &lt; 0) {
-        perror("open dev failed");
-        return -1;
+    <span class="pl-c">// 1. 打开驱动设备（需先手动创建设备节点：mknod /dev/mydev c 主设备号 0）</span>
+    <span class="pl-s1">fd</span> <span class="pl-c1">=</span> <span class="pl-en">open</span>(<span class="pl-s">"/dev/mydev"</span>, <span class="pl-c1">O_RDWR</span>);
+    <span class="pl-k">if</span> (<span class="pl-s1">fd</span> <span class="pl-c1">&lt;</span> <span class="pl-c1">0</span>) {
+        <span class="pl-en">perror</span>(<span class="pl-s">"open dev failed"</span>);
+        <span class="pl-k">return</span> <span class="pl-c1">-1</span>;
     }
     
-    // 2. 读取驱动数据
-    read(fd, r_buf, sizeof(r_buf));
-    printf("read from driver: %s\n", r_buf);
+    <span class="pl-c">// 2. 读取驱动数据</span>
+    <span class="pl-en">read</span>(<span class="pl-s1">fd</span>, <span class="pl-s1">r_buf</span>, <span class="pl-k">sizeof</span>(<span class="pl-s1">r_buf</span>));
+    <span class="pl-en">printf</span>(<span class="pl-s">"read from driver: %s\n"</span>, <span class="pl-s1">r_buf</span>);
     
-    // 3. 向驱动写入数据
-    write(fd, w_buf, strlen(w_buf));
+    <span class="pl-c">// 3. 向驱动写入数据</span>
+    <span class="pl-en">write</span>(<span class="pl-s1">fd</span>, <span class="pl-s1">w_buf</span>, <span class="pl-en">strlen</span>(<span class="pl-s1">w_buf</span>));
     
-    // 4. 关闭驱动设备
-    close(fd);
-    return 0;
-}
-</code></pre>
+    <span class="pl-c">// 4. 关闭驱动设备</span>
+    <span class="pl-en">close</span>(<span class="pl-s1">fd</span>);
+    <span class="pl-k">return</span> <span class="pl-c1">0</span>;
+}</pre></div>
 <h2>五、全文核心Makefile</h2>
 <h1>驱动Makefile（32位ARM，适配A133开发板）</h1>
-<pre lang="makefile" class="notranslate"><code class="notranslate">obj-m := my_drv.o  # 要编译的驱动文件（xxx.c → xxx.o → xxx.ko）
-KERNELDIR := /home/huangzy/桌面/a133-linux/kernel/linux-4.9  # 内核源码路径
-PWD := $(shell pwd)  # 当前驱动目录路径
-ARCH := arm  # 指定32位ARM架构
-CROSS_COMPILE := arm-linux-gnueabi-  # 32位ARM交叉编译器
+<div class="highlight highlight-source-makefile"><pre class="notranslate"><span class="pl-smi">obj-m</span> := my_drv.o  <span class="pl-c"><span class="pl-c">#</span> 要编译的驱动文件（xxx.c → xxx.o → xxx.ko）</span>
+KERNELDIR := /home/huangzy/桌面/a133-linux/kernel/linux-4.9  <span class="pl-c"><span class="pl-c">#</span> 内核源码路径</span>
+PWD := <span class="pl-s">$(<span class="pl-c1">shell</span> pwd)</span>  <span class="pl-c"><span class="pl-c">#</span> 当前驱动目录路径</span>
+ARCH := arm  <span class="pl-c"><span class="pl-c">#</span> 指定32位ARM架构</span>
+CROSS_COMPILE := arm-linux-gnueabi-  <span class="pl-c"><span class="pl-c">#</span> 32位ARM交叉编译器</span>
 
-# 编译驱动模块（固定规则）
-all:
-	$(MAKE) -C $(KERNELDIR) M=$(PWD) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) modules
+<span class="pl-c"><span class="pl-c">#</span> 编译驱动模块（固定规则）</span>
+<span class="pl-en">all</span>:
+	<span class="pl-s">$(<span class="pl-c1">MAKE</span>)</span> -C <span class="pl-s">$(<span class="pl-smi">KERNELDIR</span>)</span> M=<span class="pl-s">$(<span class="pl-smi">PWD</span>)</span> ARCH=<span class="pl-s">$(<span class="pl-smi">ARCH</span>)</span> CROSS_COMPILE=<span class="pl-s">$(<span class="pl-smi">CROSS_COMPILE</span>)</span> modules
 
-# 清理编译产物
-clean:
-	$(MAKE) -C $(KERNELDIR) M=$(PWD) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) clean
-</code></pre>
+<span class="pl-c"><span class="pl-c">#</span> 清理编译产物</span>
+<span class="pl-en">clean</span>:
+	<span class="pl-s">$(<span class="pl-c1">MAKE</span>)</span> -C <span class="pl-s">$(<span class="pl-smi">KERNELDIR</span>)</span> M=<span class="pl-s">$(<span class="pl-smi">PWD</span>)</span> ARCH=<span class="pl-s">$(<span class="pl-smi">ARCH</span>)</span> CROSS_COMPILE=<span class="pl-s">$(<span class="pl-smi">CROSS_COMPILE</span>)</span> clean</pre></div>
 <h2>六、全文所有核心指令（编译、加载、运行、调试，按流程排序）</h2>
 <h3>【第一阶段】驱动编译指令（驱动目录执行，生成.ko文件）</h3>
-<pre lang="bash" class="notranslate"><code class="notranslate">make clean &amp;&amp; make  # 直接执行Makefile，生成my_drv.ko
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">make clean <span class="pl-k">&amp;&amp;</span> make  <span class="pl-c"><span class="pl-c">#</span> 直接执行Makefile，生成my_drv.ko</span></pre></div>
 <h3>【第二阶段】应用程序编译指令（应用程序目录执行，生成可执行文件）</h3>
-<pre lang="bash" class="notranslate"><code class="notranslate">arm-linux-gnueabi-gcc app.c -o app  # 生成32位APP可执行文件
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">arm-linux-gnueabi-gcc app.c -o app  <span class="pl-c"><span class="pl-c">#</span> 生成32位APP可执行文件</span></pre></div>
 <h3>【第三阶段】开发板端核心指令（驱动加载、运行、调试，关键流程）</h3>
 <h4>1. 驱动加载（将.ko模块动态加载到内核）</h4>
-<pre lang="bash" class="notranslate"><code class="notranslate"># 驱动加载
-insmod my_drv.ko
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 驱动加载</span>
+insmod my_drv.ko</pre></div>
 <h4>2. 查看驱动加载状态（验证是否加载成功）</h4>
-<pre lang="bash" class="notranslate"><code class="notranslate">lsmod | grep my_drv  # 过滤驱动名，显示则加载成功
-dmesg | tail -10     # 查看内核打印信息，确认驱动注册状态
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">lsmod <span class="pl-k">|</span> grep my_drv  <span class="pl-c"><span class="pl-c">#</span> 过滤驱动名，显示则加载成功</span>
+dmesg <span class="pl-k">|</span> tail -10     <span class="pl-c"><span class="pl-c">#</span> 查看内核打印信息，确认驱动注册状态</span></pre></div>
 <h4>3. 创建设备节点（应用层操作驱动的唯一入口，必须执行）</h4>
-<pre lang="bash" class="notranslate"><code class="notranslate"># 格式：mknod /dev/设备名 c 主设备号 次设备号（次设备号填0即可）
-mknod /dev/mydev c 240 0  # 主设备号从dmesg打印的日志中获取
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate"><span class="pl-c"><span class="pl-c">#</span> 格式：mknod /dev/设备名 c 主设备号 次设备号（次设备号填0即可）</span>
+mknod /dev/mydev c 240 0  <span class="pl-c"><span class="pl-c">#</span> 主设备号从dmesg打印的日志中获取</span></pre></div>
 <h4>4. 运行应用程序（操作驱动，测试读写功能）</h4>
-<pre lang="bash" class="notranslate"><code class="notranslate">chmod +x app  # 赋予执行权限
-./app         # 运行APP，触发驱动的open/read/write操作
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">chmod +x app  <span class="pl-c"><span class="pl-c">#</span> 赋予执行权限</span>
+./app         <span class="pl-c"><span class="pl-c">#</span> 运行APP，触发驱动的open/read/write操作</span></pre></div>
 <h4>5. 驱动卸载（从内核中移除驱动模块）</h4>
-<pre lang="bash" class="notranslate"><code class="notranslate">rmmod my_drv  # 卸载驱动（直接写驱动名，无需加.ko）
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">rmmod my_drv  <span class="pl-c"><span class="pl-c">#</span> 卸载驱动（直接写驱动名，无需加.ko）</span></pre></div>
 <h2>七、遇到问题</h2>
 <h3>驱动加载失败(未解决)</h3>
-<pre lang="bash" class="notranslate"><code class="notranslate">root@kickpi:/mnt/host_share# insmod my_drv.ko
-insmod: ERROR: could not insert module my_drv.ko: Invalid module format
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">root@kickpi:/mnt/host_share# insmod my_drv.ko
+insmod: ERROR: could not insert module my_drv.ko: Invalid module format</pre></div>
 <h3>可能原因</h3>
 <ol>
 <li>虚拟机使用x86.</li>
@@ -340,8 +327,7 @@ insmod: ERROR: could not insert module my_drv.ko: Invalid module format
 <li>
 <p><strong>安装gparted</strong><br>
 启动Ubuntu，打开终端执行：</p>
-<pre lang="bash" class="notranslate"><code class="notranslate">sudo apt install gparted
-</code></pre>
+<div class="highlight highlight-source-shell"><pre class="notranslate">sudo apt install gparted</pre></div>
 </li>
 <li>
 <p><strong>打开gparted并识别磁盘</strong><br>
